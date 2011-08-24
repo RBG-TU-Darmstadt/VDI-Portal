@@ -1,0 +1,27 @@
+body {
+	margin:0; padding:0; border:0;
+	font-family:Helvetica, Arial, sans-serif;
+	color:#333333;
+	font-size:12px;
+}
+
+.welcome-view {
+	position:relative;
+	padding-top:60px; 
+	margin:10px auto 0;
+	border:0;
+	width:600px;
+	background-image:url(../images/rbg.jpg);
+	background-position:right top;
+	background-repeat:no-repeat;
+}
+
+.welcome-login {
+	margin-top:30px;
+	text-align:center;
+}
+
+.welcome-login a {
+	font-size:14pt;
+	color:black;
+}

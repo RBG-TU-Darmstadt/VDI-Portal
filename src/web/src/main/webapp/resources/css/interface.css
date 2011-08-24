@@ -1,0 +1,209 @@
+a img {
+	border:none;
+}
+
+/*
+ * Layout
+ */
+
+body {
+	margin:0; padding:0; border:0;
+	font-family:Helvetica, Arial, sans-serif;
+	color:#333333;
+	font-size:12px;
+}
+
+.vdi-view {
+	position:relative;
+	margin:10px auto 0;
+	border:0;
+	width:900px;
+}
+
+.vdi-view .vdi-header {
+	height:110px;
+	line-height:80px;
+	background-image:url(../images/rbg.jpg);
+	background-position:right center;
+	background-repeat:no-repeat;
+}
+
+.vdi-view .vdi-header h1 {
+	font-size:30px;
+}
+
+.vdi-view .vdi-control {
+	margin:0 0 10px 200px;
+}
+
+.vdi-view .vdi-control .vdi-create-vm {
+	display:block;
+	background-image:url('../images/plus.png');
+	background-repeat:no-repeat;
+	width:90px;
+	height:24px;
+	line-height:28px;
+	font-size:14pt;
+	padding-left:28px;
+	cursor:pointer;
+	text-decoration:none;
+}
+
+.vdi-view .vdi-nav {
+	position:relative;
+	width:200px;
+	float:left;
+}
+
+.vdi-view .vdi-nav ul {
+	padding-left:20px;
+}
+
+.vdi-view .vdi-nav ul li {
+	list-style:none;
+	padding-bottom:5px;
+}
+
+.vdi-view .vdi-nav ul li a {
+	text-decoration:none;
+}
+
+.vdi-view .vdi-content {
+	padding:5px;
+	float:right;
+	width:690px;
+	background-color:#eee;
+	border-radius:0 10px 10px 0;
+	min-height:500px;
+}
+
+.clear-layout {
+	clear:both;
+}
+
+/*
+ * VM Liste
+ */
+
+.vdi-view .vdi-content .vdi-machine-drawer {
+	background-color:#fff;
+	padding:10px;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine {
+	line-height:16px;
+	margin-bottom:5px;
+	padding-bottom:5px;
+	border-bottom:1px dotted gray;
+	height:100px;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine:last-child {
+	margin-bottom:0;
+	padding-bottom:0;
+	border-bottom:none;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-remove {
+	float:right;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
+	float:left;
+	padding:0 5px;
+	width:120px;
+	height:90px;
+	position:relative;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot img {
+	width:120px;
+	height:90px;
+	position:absolute;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos span.vdi-machine-info-title {
+	font-weight:bold;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions {
+	float:right;
+	margin-top:58px;
+	height:32px;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions span {
+	color:blue;
+	cursor:pointer;
+	font-weight:bold;
+}
+
+/*
+ * Dialogs
+ */
+
+div.vdi-dialog-container {
+	display:none;
+}
+
+div.vdi-dialog h2 {
+	margin-top:0;
+}
+
+/*
+ * Create dialog
+ */
+
+#vdi-create-vm-dialog {
+	width:500px;
+	height:300px;
+}
+
+#vdi-create-vm-dialog div.vdi-dialog-option {
+	margin-bottom:3px;
+}
+
+#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-label {
+	display:inline-block;
+	vertical-align:top;
+	width:120px;
+}
+
+#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input {
+	display:inline-block;
+}
+
+#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input span.vdi-dialog-option-input-description {
+	display:inline-block;
+	width:100px;
+}
+
+#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input input {
+	margin:0;
+	padding:0;
+}
+
+#vdi-create-vm-dialog div.dialog-button {
+	margin-top:30px;
+}
+
+/*
+ * Mount dialog
+ */
+
+#vdi-mount-image-dialog {
+	width:400px;
+	height:200px;
+}
+
+#vdi-mount-image-dialog div.vdi-mount-image-machine-info {
+	margin-bottom:5px;
+}
+
+#vdi-mount-image-dialog div.vdi-mount-image-machine-info span.vdi-mount-image-machine-name-title {
+	font-weight:bold;
+}
+
+#vdi-mount-image-dialog div.dialog-button {
+	margin-top:50px;
+}

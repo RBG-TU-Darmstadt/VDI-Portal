@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+
+	<display-name>WebInterface</display-name>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>Interface</servlet-name>
+		<servlet-class>vdi.webinterface.servlet.Interface</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Interface</servlet-name>
+		<url-pattern>/secure/</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Screenshot</servlet-name>
+		<servlet-class>vdi.webinterface.servlet.Screenshot</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Screenshot</servlet-name>
+		<url-pattern>/secure/screenshot/</url-pattern>
+	</servlet-mapping>
+	
+		<servlet>
+		<servlet-name>RDP</servlet-name>
+		<servlet-class>vdi.webinterface.servlet.RDP</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>RDP</servlet-name>
+		<url-pattern>/secure/rdp/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Direct Web Remoting servlet -->
+	<servlet>
+		<servlet-name>dwr-invoker</servlet-name>
+		<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>activeReverseAjaxEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>accessLogLevel</param-name>
+			<param-value>EXCEPTION</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Map DWR access to the DWR servlet -->
+	<servlet-mapping>
+		<servlet-name>dwr-invoker</servlet-name>
+		<url-pattern>/dwr/*</url-pattern>
+	</servlet-mapping>
+
+	<listener>
+		<listener-class>
+			vdi.webinterface.connection.InitializeContext
+		</listener-class>
+	</listener>
+
+</web-app>

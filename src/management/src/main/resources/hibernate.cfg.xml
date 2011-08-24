@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<!-- Database connection settings -->
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.characterEncoding">UTF-8</property>
+		<property name="hibernate.connection.hibernate.connection.useUnicode">true</property>
+		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+		<!-- Deployment -->
+		<property name="connection.url">jdbc:postgresql://localhost:5432/VDIPortal</property>
+		<property name="connection.username">postgres</property>
+		<property name="connection.password">postgres</property>
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
+
+		<!-- Auto commit -->
+		<property name="connection.autocommit">true</property>
+
+		<!-- JDBC connection pool (use the built-in) -->
+		<property name="connection.pool_size">5</property>
+
+		<!-- Enable Hibernate's automatic session context management -->
+		<property name="current_session_context_class">thread</property>
+
+		<!-- Disable the second-level cache -->
+		<property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+		<!-- Echo all executed SQL to stdout -->
+		<property name="show_sql">false</property>
+
+		<mapping class="vdi.management.storage.entities.User" />
+		<mapping class="vdi.management.storage.entities.Tag" />
+		<mapping class="vdi.management.storage.entities.VirtualMachine" />
+		<mapping class="vdi.management.storage.entities.Node" />
+
+	</session-factory>
+</hibernate-configuration>
