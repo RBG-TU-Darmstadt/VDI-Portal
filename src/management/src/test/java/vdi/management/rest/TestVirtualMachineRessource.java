@@ -14,8 +14,10 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
+import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
 
 /**
@@ -26,6 +28,24 @@ public class TestVirtualMachineRessource {
 	private ManagementCreateVMRequest createVMRequest;
 	private String userID = "0x7EEEEEEE";
 
+	boolean init = false;
+
+	private void skipOnInitFailure() {
+		Assume.assumeTrue(init);
+	}
+
+	private ManagementVM getVMByName(String name) {
+		List<ManagementVM> machines = vmr.getVMs(userID,null);
+		if (machines != null) {
+			for (ManagementVM machine : machines) {
+				if (machine.name.equals(name)) {
+					return machine;
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Initializing {@link VirtualMachineRessource} and
 	 * {@link ManagementCreateVMRequest} used by tests.
@@ -49,6 +69,18 @@ public class TestVirtualMachineRessource {
 		createVMRequest.vramSize = 32L;
 		createVMRequest.accelerate2d = false;
 		createVMRequest.accelerate3d = false;
+		
+		ManagementVM vm = getVMByName(createVMRequest.name);
+		if(vm != null)
+		{
+			System.out.println("Warning: found ''"+createVMRequest.name+"'. Trying to delete.");
+			if(vm.status != VirtualMachineStatus.STOPPED){
+				ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
+				request.status = VirtualMachineStatus.STOPPED;
+				vmr.updateVirtualMachine(userID, vm.machineId, request );
+			}
+			vmr.removeVirtualMachine(userID, vm.machineId);
+		}
 	}
 
 	/**
@@ -82,12 +114,10 @@ public class TestVirtualMachineRessource {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
 				machineID = response.machineId;
 			} catch (ClientResponseFailure e) {
-				if (e.getResponse() != null) {
-					if (e.getResponse().getEntity() != null) {
-						System.out.println(e.getResponse().getEntity());
-					}
-				}
 				e.printStackTrace();
+				if (e.getResponse() != null) {
+					System.out.println(e.getResponse().getResponseStatus());
+				}
 				// something went wrong. TODO: find out what...
 			}
 

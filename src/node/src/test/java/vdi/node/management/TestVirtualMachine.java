@@ -23,6 +23,7 @@ import vdi.node.management.VirtualMachine;
 public class TestVirtualMachine {
 	boolean init = false;
 	String vm_name = "Unit_Test_VM";
+	VirtualMachine vm = null;
 
 	private void skipOnInitFailure() {
 		Assume.assumeTrue(init);
@@ -74,6 +75,9 @@ public class TestVirtualMachine {
 			VirtualMachine vm = getVMByName(vm_name);
 			if (vm != null) {
 				System.out.println("Warning: found '" + vm_name + "'. Trying to delete...");
+				if (vm.getState() != VirtualMachineStatus.STOPPED) {
+					vm.stop();
+				}
 				vm.delete();
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
@@ -87,6 +91,8 @@ public class TestVirtualMachine {
 	public void cleanup() {
 		// trying to delete machine if something went wrong
 		try {
+			if (vm != null)
+				vm.delete();
 			getVMByName(vm_name).delete();
 		} catch (Throwable e) {
 		}
@@ -117,7 +123,7 @@ public class TestVirtualMachine {
 	public void searchNonExistingMachine() throws MachineNotFoundException {
 		skipOnInitFailure();
 
-		new VirtualMachine("NOT_EXISTING_MACHINE");
+		vm = new VirtualMachine("NOT_EXISTING_MACHINE");
 	}
 
 	@Test
@@ -138,8 +144,7 @@ public class TestVirtualMachine {
 		int machineCount = VirtualMachine.getAllMachines().size();
 
 		try {
-			VirtualMachine vm = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L, false,
-					false, 32L);
+			vm = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L, false, false, 32L);
 
 			Assert.assertTrue("getMachines().size() not increased by one after createMachine()", VirtualMachine
 					.getAllMachines().size() == machineCount + 1);
@@ -152,7 +157,9 @@ public class TestVirtualMachine {
 			}
 
 			try {
-				new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L, false, false, 32L);
+				VirtualMachine vm2 = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L,
+						false, false, 32L);
+				vm2.delete();
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
 			}
@@ -180,8 +187,10 @@ public class TestVirtualMachine {
 	 *            a short description helping to debug if deleting vm failed
 	 * @return Virtual Machine to test VM class
 	 */
-	private VirtualMachine getTestVM(String description) {
+	private void getTestVM(String description) {
 		skipOnInitFailure();
+
+		Assume.assumeTrue(vm == null);
 
 		String osTypeId = null;
 		try {
@@ -190,8 +199,6 @@ public class TestVirtualMachine {
 			Assume.assumeNoException(t);
 		}
 
-		VirtualMachine vm = null;
-
 		try {
 			vm = new VirtualMachine(vm_name, osTypeId, description, 128L, 512L, false, false, 32L);
 		} catch (DuplicateMachineNameException e) {
@@ -199,13 +206,11 @@ public class TestVirtualMachine {
 		}
 
 		Assume.assumeNotNull(vm);
-
-		return vm;
 	}
 
 	@Test
 	public void vmStartPauseResumeTest() {
-		VirtualMachine vm = getTestVM("vm status test");
+		getTestVM("vm status test");
 
 		VirtualMachineStatus vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
@@ -239,7 +244,7 @@ public class TestVirtualMachine {
 
 	@Test
 	public void vmStartPauseResumeIncorrectUseTest() {
-		VirtualMachine vm = getTestVM("vm incorrect start/pause/resume/stop test");
+		getTestVM("vm incorrect start/pause/resume/stop test");
 
 		VirtualMachineStatus vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
