@@ -74,7 +74,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		NodeVM responseVM = new NodeVM();
@@ -96,7 +96,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		NodeUpdateVMResponse response = new NodeUpdateVMResponse();
@@ -129,7 +129,7 @@ public class VirtualMachineResource implements NodeVMService {
 
 		// image handling
 		if (request.image != null) {
-			String currentImage = machine.getMoundedMediumLocation();
+			String currentImage = machine.getMountedMediumLocation();
 
 			if (request.image == "") {
 				if (currentImage != null) {
@@ -181,7 +181,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		machine.delete();
@@ -193,7 +193,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
 		return machine.getThumbnail(width, height);

@@ -126,7 +126,7 @@ public class VirtualMachine {
 	 *            3D-acceleration
 	 * @param vramSize
 	 *            Video-RAM size in MB
-	 * @throws DuplicateMachineNameException
+	 * @throws DuplicateMachineNameException Indicates, that a machine with the given name already exists.
 	 */
 	public VirtualMachine(String name, String osTypeId, String description,
 			Long memorySize, Long hddSize, boolean accelerate2d,
@@ -230,7 +230,7 @@ public class VirtualMachine {
 	 * 
 	 * @return the ISO path or null, if no image is mounted
 	 */
-	public synchronized String getMoundedMediumLocation() {
+	public synchronized String getMountedMediumLocation() {
 		IMedium medium = getMountedMedium();
 
 		if (medium == null) {
