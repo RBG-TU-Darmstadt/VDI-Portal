@@ -30,10 +30,6 @@ public class TestVirtualMachineRessource {
 
 	boolean init = false;
 
-	private void skipOnInitFailure() {
-		Assume.assumeTrue(init);
-	}
-
 	private ManagementVM getVMByName(String name) {
 		List<ManagementVM> machines = vmr.getVMs(userID,null);
 		if (machines != null) {
@@ -61,7 +57,7 @@ public class TestVirtualMachineRessource {
 		String osTypeID = vmTypes.values().iterator().next().keySet().iterator().next();
 
 		createVMRequest = new ManagementCreateVMRequest();
-		createVMRequest.name = "Unit_Test_VM";
+		createVMRequest.name = "Integration_Test_VM";
 		createVMRequest.osTypeId = osTypeID;
 		createVMRequest.description = "testing create delete vm";
 		createVMRequest.memorySize = 128L;
