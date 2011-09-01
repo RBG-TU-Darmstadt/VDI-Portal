@@ -91,15 +91,23 @@ public class TestVirtualMachine {
 	public void cleanup() {
 		// trying to delete machine if something went wrong
 		try {
-			if (vm != null)
+			if (vm != null) {
+				if (vm.getState() != VirtualMachineStatus.STOPPED)
+					vm.stop();
 				vm.delete();
+				vm = null;
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		try {
 			vm = getVMByName(vm_name);
-			if (vm != null)
+			if (vm != null) {
+				if (vm.getState() != VirtualMachineStatus.STOPPED)
+					vm.stop();
 				vm.delete();
+				vm = null;
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -247,5 +255,10 @@ public class TestVirtualMachine {
 		vm.stop();
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
+
+		
+		// delete machine:
+		vm.delete();
+		vm = null;
 	}
 }
