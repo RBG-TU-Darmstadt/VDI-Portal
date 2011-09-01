@@ -248,29 +248,4 @@ public class TestVirtualMachine {
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 	}
-
-	// TODO: disabled until error handling is implemented.
-	// @Test
-	public void vmStartPauseResumeIncorrectUseTest() {
-		getTestVM("vm incorrect start/pause/resume/stop test");
-
-		VirtualMachineStatus vmStatus = vm.getState();
-		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
-
-		// stop stopped Machine:
-		vm.stop();
-		vmStatus = vm.getState();
-		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
-
-		// pause stopped Machine:
-		vm.pause();
-		vmStatus = vm.getState();
-		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
-
-		// resume stopped Machine:
-		Socket s = vm.resume();
-		Assert.assertNull("resuming stopped vm worked", s);
-
-		// TODO: expected behavior on starting started machine?
-	}
 }

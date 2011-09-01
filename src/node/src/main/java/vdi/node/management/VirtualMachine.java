@@ -62,7 +62,8 @@ public class VirtualMachine {
 	}
 
 	/**
-	 * Returns a list of all virtual machines managed by this virtual box instance.
+	 * Returns a list of all virtual machines managed by this virtual box
+	 * instance.
 	 * 
 	 * @return a list of machines
 	 */
@@ -82,8 +83,7 @@ public class VirtualMachine {
 			if (!osTypes.containsKey(type.getFamilyId())) {
 				osTypes.put(type.getFamilyId(), new HashMap<String, String>());
 			}
-			osTypes.get(type.getFamilyId()).put(type.getId(),
-					type.getDescription());
+			osTypes.get(type.getFamilyId()).put(type.getId(), type.getDescription());
 		}
 
 		return osTypes;
@@ -98,7 +98,12 @@ public class VirtualMachine {
 	 *             thrown if no machine with this ID could be found
 	 */
 	public VirtualMachine(String machineId) throws MachineNotFoundException {
-		machine = virtualBox.findMachine(machineId);
+		try {
+			machine = virtualBox.findMachine(machineId);
+		} catch (VBoxException e) {
+			LOGGER.fine(e.getMessage());
+			LOGGER.finest(e.getStackTrace().toString());
+		}
 
 		if (this.machine == null) {
 			LOGGER.warning("Could not find virtual machine with ID " + machineId);
@@ -126,11 +131,11 @@ public class VirtualMachine {
 	 *            3D-acceleration
 	 * @param vramSize
 	 *            Video-RAM size in MB
-	 * @throws DuplicateMachineNameException Indicates, that a machine with the given name already exists.
+	 * @throws DuplicateMachineNameException
+	 *             Indicates, that a machine with the given name already exists.
 	 */
-	public VirtualMachine(String name, String osTypeId, String description,
-			Long memorySize, Long hddSize, boolean accelerate2d,
-			boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
+	public VirtualMachine(String name, String osTypeId, String description, Long memorySize, Long hddSize,
+			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		IMachine newMachine = null;
 		try {
 			newMachine = virtualBox.createMachine(null, name, osTypeId, null, false);
@@ -287,9 +292,12 @@ public class VirtualMachine {
 	 */
 	public static synchronized VirtualMachineStatus getState(IMachine machine) {
 		switch (machine.getState()) {
-		case Running: return VirtualMachineStatus.STARTED;
-		case PoweredOff: return VirtualMachineStatus.STOPPED;
-		case Paused: return VirtualMachineStatus.PAUSED;
+		case Running:
+			return VirtualMachineStatus.STARTED;
+		case PoweredOff:
+			return VirtualMachineStatus.STOPPED;
+		case Paused:
+			return VirtualMachineStatus.PAUSED;
 		default:
 			LOGGER.warning("Unmapped machine state: " + machine.getState());
 			return null;
@@ -326,7 +334,8 @@ public class VirtualMachine {
 	/**
 	 * Launches the virtual machine and starts the RDE server.
 	 * 
-	 * @return null, if the launch failed, or an object with IP and port for the RDE-connection
+	 * @return null, if the launch failed, or an object with IP and port for the
+	 *         RDE-connection
 	 */
 	public synchronized Socket launch() {
 		ISession session1 = manager.getSessionObject();
