@@ -65,6 +65,7 @@ public final class Hibernate {
 			session.delete(o);
 			session.getTransaction().commit();
 		} catch (Exception e) {
+			// TODO: handle Exception
 			e.printStackTrace();
 		}
 	}

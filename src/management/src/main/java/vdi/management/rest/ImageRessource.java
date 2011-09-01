@@ -10,7 +10,7 @@ import vdi.commons.node.interfaces.NodeImageService;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
 
 /**
- * This class exports the ManagementImageService Interface for the WebInterface,
+ * This class exports the {@link ManagementImageService} Interface for the WebInterface,
  * in order to receive images for the VirtualMachines on the NodeController.
  */
 @Path("/images")

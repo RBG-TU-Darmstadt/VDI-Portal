@@ -16,7 +16,7 @@ import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.entities.Node;
 
 /**
- * This class implements the NodeRegistraion Interface to enable NodeController
+ * This class implements the {@link NodeRegistraion} Interface to enable NodeController
  * to register with the ManagementServer.
  */
 @Path("/node")

@@ -30,7 +30,7 @@ import vdi.management.storage.entities.User;
 import vdi.management.storage.entities.VirtualMachine;
 
 /**
- * Exports the ManagementVMSercive Interface for the WebInterface.
+ * Exports the {@link ManagementVMSercive} Interface for the WebInterface.
  */
 @Path("/vm")
 public class VirtualMachineRessource implements ManagementVMService {
@@ -38,7 +38,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	private NodeVMService nodeVMService;
 
 	/**
-	 * The contructor connects to the NodeController.
+	 * The constructor connects to the NodeController.
 	 */
 	public VirtualMachineRessource() {
 		nodeVMService = ProxyFactory.create(NodeVMService.class,
