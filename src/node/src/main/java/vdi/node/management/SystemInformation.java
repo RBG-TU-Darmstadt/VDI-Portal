@@ -37,15 +37,17 @@ public class SystemInformation {
 	}
 
 	/**
-	 * @return the CPU load
+	 * Returns the system load average for the last minute.
+	 * 
+	 * @return the CPU load average; negative value if not available
 	 */
 	public static double getCpuLoad() {
 		MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
 
 		OperatingSystemMXBean osMBean;
 		try {
-			osMBean = ManagementFactory.newPlatformMXBeanProxy(mbsc,
-					ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
+			osMBean = ManagementFactory.newPlatformMXBeanProxy(mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME,
+					OperatingSystemMXBean.class);
 		} catch (IOException e) {
 			LOGGER.warning("Couldn't get CPU load information object.");
 			return -1;
@@ -55,7 +57,7 @@ public class SystemInformation {
 	}
 
 	/**
-	 * @return the free disk space
+	 * @return the free disk space in bytes
 	 */
 	public static long getFreeDiskSpace() {
 		File file = new File("/");
