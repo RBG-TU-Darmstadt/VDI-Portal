@@ -12,7 +12,9 @@ import vdi.commons.node.objects.NodeRegisterRequest;
 import vdi.commons.node.objects.NodeRegisterResponse;
 
 /**
- * The NodeRegistrationService Interface.
+ * The {@link NodeRegistrationService} Interface.
+ * 
+ * Used for register and unregister nodes from the management server.
  */
 public interface NodeRegistrationService {
 

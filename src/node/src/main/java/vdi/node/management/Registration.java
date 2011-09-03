@@ -9,7 +9,6 @@ import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
 import vdi.commons.node.interfaces.NodeRegistrationService;
-import vdi.commons.node.objects.NodeGetResourcesResponse;
 import vdi.commons.node.objects.NodeRegisterRequest;
 import vdi.commons.node.objects.NodeRegisterResponse;
 import vdi.node.rest.Resources;

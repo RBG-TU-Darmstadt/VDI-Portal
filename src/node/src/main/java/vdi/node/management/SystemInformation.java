@@ -29,9 +29,13 @@ public class SystemInformation {
 		while (ports.contains(port)) {
 			port++;
 		}
+		ports.add(port);
 		return port;
 	}
 
+	/**
+	 * @return the ram size in MB
+	 */
 	public static Long getRamSize() {
 		return VirtualMachine.getHostInformation().getMemorySize();
 	}

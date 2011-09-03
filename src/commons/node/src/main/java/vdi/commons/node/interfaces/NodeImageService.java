@@ -7,7 +7,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * The NodeImageService interface.
+ * The {@link NodeImageService} interface.
+ * 
+ * Used for managing ISO-images.
  */
 public interface NodeImageService {
 

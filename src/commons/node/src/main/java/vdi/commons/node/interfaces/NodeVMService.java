@@ -20,7 +20,9 @@ import vdi.commons.node.objects.NodeUpdateVMResponse;
 import vdi.commons.node.objects.NodeVM;
 
 /**
- * The {@link NodeVMService}.
+ * The {@link NodeVMService} interface.
+ * 
+ * Used to control an VirtualBox instance.
  */
 public interface NodeVMService {
 

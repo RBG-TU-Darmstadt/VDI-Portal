@@ -8,6 +8,8 @@ import vdi.commons.node.objects.NodeGetResourcesResponse;
 
 /**
  * The {@link NodeResourceService} Interface.
+ * 
+ * Used to get resource information from a node. 
  */
 public interface NodeResourceService {
 
