@@ -2,11 +2,13 @@ package vdi.management.rest;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ws.rs.core.Response.Status;
 
 import junit.framework.AssertionFailedError;
 
+import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.junit.After;
 import org.junit.Assert;
@@ -24,6 +26,8 @@ import vdi.commons.web.rest.objects.ManagementVM;
  * Tests for {@link vdi.management.rest.VirtualMachineRessource}.
  */
 public class TestVirtualMachineRessource {
+	private static Logger LOGGER = Logger.getLogger(TestVirtualMachineRessource.class.getName());
+
 	private VirtualMachineRessource vmr;
 	private ManagementCreateVMRequest createVMRequest;
 	private String userID = "0x7EEEEEEE";
@@ -31,7 +35,7 @@ public class TestVirtualMachineRessource {
 	boolean init = false;
 
 	private ManagementVM getVMByName(String name) {
-		List<ManagementVM> machines = vmr.getVMs(userID,null);
+		List<ManagementVM> machines = vmr.getVMs(userID, null);
 		if (machines != null) {
 			for (ManagementVM machine : machines) {
 				if (machine.name.equals(name)) {
@@ -41,7 +45,7 @@ public class TestVirtualMachineRessource {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Initializing {@link VirtualMachineRessource} and
 	 * {@link ManagementCreateVMRequest} used by tests.
@@ -65,15 +69,14 @@ public class TestVirtualMachineRessource {
 		createVMRequest.vramSize = 32L;
 		createVMRequest.accelerate2d = false;
 		createVMRequest.accelerate3d = false;
-		
+
 		ManagementVM vm = getVMByName(createVMRequest.name);
-		if(vm != null)
-		{
-			System.out.println("Warning: found ''"+createVMRequest.name+"'. Trying to delete.");
-			if(vm.status != VirtualMachineStatus.STOPPED){
+		if (vm != null) {
+			System.out.println("Warning: found ''" + createVMRequest.name + "'. Trying to delete.");
+			if (vm.status != VirtualMachineStatus.STOPPED) {
 				ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 				request.status = VirtualMachineStatus.STOPPED;
-				vmr.updateVirtualMachine(userID, vm.machineId, request );
+				vmr.updateVirtualMachine(userID, vm.machineId, request);
 			}
 			vmr.removeVirtualMachine(userID, vm.machineId);
 		}
@@ -110,15 +113,20 @@ public class TestVirtualMachineRessource {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
 				machineID = response.machineId;
 			} catch (ClientResponseFailure e) {
-				e.printStackTrace();
-				if (e.getResponse() != null) {
-					System.out.println(e.getResponse().getResponseStatus());
+				LOGGER.warning(e.getStackTrace().toString());
+				@SuppressWarnings("unchecked")
+				ClientResponse<String> errorResponse = e.getResponse();
+				if (errorResponse != null) {
+					LOGGER.info("Response Status Code = " + errorResponse.getResponseStatus());
+					String msg = errorResponse.getEntity();
+					if(msg != null)
+						LOGGER.info("Entity Returned:\n"+msg);
 				}
 				// something went wrong. TODO: find out what...
 			}
 
 			if (machineID == null) {
-				System.out.println("Creation of '" + createVMRequest.name + "' failed.");
+				LOGGER.warning("Creation of '" + createVMRequest.name + "' failed.");
 				// Perhaps vm already existed trying to delete:
 				deleteVM(createVMRequest.name);
 			}
