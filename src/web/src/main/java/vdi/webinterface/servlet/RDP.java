@@ -43,10 +43,10 @@ public class RDP extends HttpServlet {
 		String userId = "123456";
 
 		// Get request parameters
-		String machineId = request.getParameter("machine");
+		Long id = Long.parseLong(request.getParameter("machine"));
 
 		// Get infos from management server
-		ManagementVM vm = mangementVMService.getVM(userId, machineId);
+		ManagementVM vm = mangementVMService.getVM(userId, id);
 
 		if (vm.status != VirtualMachineStatus.STARTED) {
 			// VM not running, therefore no RDP

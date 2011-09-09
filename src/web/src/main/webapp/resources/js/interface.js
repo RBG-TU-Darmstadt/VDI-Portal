@@ -108,7 +108,7 @@ vdi = {
 					// Visualize VM status
 					var status = '',
 						active_buttons = [],
-						screenshot = "./screenshot/?machine=" + vm.machine_id + "&width=120&height=90&" + (new Date()).getTime(),
+						screenshot = "./screenshot/?machine=" + vm.id + "&width=120&height=90&" + (new Date()).getTime(),
 						show_paused = "", // false
 						rpd_url = "",
 						image = vm.image || "",
@@ -117,7 +117,7 @@ vdi = {
 					if (vm.status == 'STARTED') {
 						status = "Läuft";
 						rpd_url = vm.rdp_url;
-						var rdp = "<a href=\"./rdp/?machine=" + vm.machine_id + "\" target=\"_blank\">" + buttons.rdp + "</a>";
+						var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + buttons.rdp + "</a>";
 						active_buttons = [rdp, buttons.pause, disk, buttons.stop];
 					} else if (vm.status == 'STOPPED') {
 						status = "Ausgeschaltet";
@@ -155,7 +155,7 @@ vdi = {
 					+ "</div>");
 
 					// Add hidden data for VM
-					vmDom.data("machine_id", vm.machine_id);
+					vmDom.data("id", vm.id);
 					vmDom.data("status", vm.status);
 					vmDom.data("name", vm.name);
 
@@ -199,10 +199,10 @@ vdi = {
 	},
 	
 	startVM: function(event) {
-		var machineId = this.getMachineData(event).machine_id;
+		var id = this.getMachineData(event).id;
 
 		var self = this;
-		Manager.startVM(machineId, function(json) {
+		Manager.startVM(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -213,10 +213,10 @@ vdi = {
 	},
 	
 	pauseVM: function(event) {
-		var machineId = this.getMachineData(event).machine_id;
+		var id = this.getMachineData(event).id;
 
 		var self = this;
-		Manager.pauseVM(machineId, function(json) {
+		Manager.pauseVM(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -227,10 +227,10 @@ vdi = {
 	},
 	
 	stopVM: function(event) {
-		var machineId = this.getMachineData(event).machine_id;
+		var id = this.getMachineData(event).id;
 
 		var self = this;
-		Manager.stopVM(machineId, function(json) {
+		Manager.stopVM(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -246,10 +246,10 @@ vdi = {
 		if ( ! confirmation)
 			return;
 
-		var machineId = this.getMachineData(event).machine_id;
+		var id = this.getMachineData(event).id;
 
 		var self = this;
-		Manager.removeVM(machineId, function(json) {
+		Manager.removeVM(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -287,7 +287,7 @@ vdi = {
 	},
 
 	prepareMountImage: function(event) {
-		$('#vdi-mount-image-dialog #vdi-mount-image-machine-id').val(this.getMachineData(event).machine_id);
+		$('#vdi-mount-image-dialog #vdi-mount-image-machine-id').val(this.getMachineData(event).id);
 		$('#vdi-mount-image-dialog .vdi-mount-image-machine-name').text(this.getMachineData(event).name);
 
 		$('.vdi-mount-image').click();
@@ -308,11 +308,11 @@ vdi = {
 	},
 
 	mountImage: function(event) {
-		var machineId = $("#vdi-mount-image-machine-id").val();
+		var id = $("#vdi-mount-image-machine-id").val();
 		var image = $("#vdi-mount-image-identifier").val();
 
 		var self = this;
-		Manager.mountImage(machineId, image, function(json) {
+		Manager.mountImage(id, image, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -325,10 +325,10 @@ vdi = {
 	},
 
 	unmountImage: function(event) {
-		var machineId = this.getMachineData(event).machine_id;
+		var id = this.getMachineData(event).id;
 
 		var self = this;
-		Manager.unmountImage(machineId, function(json) {
+		Manager.unmountImage(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {

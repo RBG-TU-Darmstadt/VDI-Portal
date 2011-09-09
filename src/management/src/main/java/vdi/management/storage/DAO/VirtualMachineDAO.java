@@ -85,6 +85,26 @@ public final class VirtualMachineDAO {
 	}
 
 	/**
+	 * Gets a VM by its id.
+	 * 
+	 * @param id
+	 *            the unique id
+	 * @return the VM Object, or null
+	 */
+	public static VirtualMachine get(Long id) {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+
+		VirtualMachine vm = (VirtualMachine) session
+				.createQuery("from VirtualMachine where id=?")
+				.setLong(0, id).uniqueResult();
+
+		session.getTransaction().commit();
+
+		return vm;
+	}
+
+	/**
 	 * Get a list of all VMs in the database.
 	 *
 	 * @return a list with all VMs

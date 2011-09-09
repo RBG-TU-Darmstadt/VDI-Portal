@@ -30,28 +30,28 @@ public interface ManagementVMService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{machineId: [a-zA-Z0-9-_]+}")
-	public ManagementVM getVM(@HeaderParam("User") String userId, @PathParam("machineId") String machineId);
+	@Path("/{id: [a-zA-Z0-9-_]+}")
+	public ManagementVM getVM(@HeaderParam("User") String userId, @PathParam("id") Long id);
 
 	@DELETE
-	@Path("/{machineId: [a-zA-Z0-9-_]+}")
-	public void removeVirtualMachine(@HeaderParam("User") String userId, @PathParam("machineId") String machineId);
+	@Path("/{id: [a-zA-Z0-9-_]+}")
+	public void removeVirtualMachine(@HeaderParam("User") String userId, @PathParam("id") Long id);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<ManagementVM> getVMs(@HeaderParam("User") String userId, @QueryParam("tag") String tag);
 
 	@PUT
-	@Path("/{machineId: [a-zA-Z0-9-_]+}")
+	@Path("/{id: [a-zA-Z0-9-_]+}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public void updateVirtualMachine(@HeaderParam("User") String userId, @PathParam("machineId") String machineId,
+	public void updateVirtualMachine(@HeaderParam("User") String userId, @PathParam("id") Long id,
 			ManagementUpdateVMRequest request);
 
 	@GET
-	@Path("/{machineId: [a-zA-Z0-9-_]+}/screenshot")
+	@Path("/{id: [a-zA-Z0-9-_]+}/screenshot")
 	@Produces("image/png")
-	public byte[] getMachineScreenshot(@HeaderParam("User") String userId, @PathParam("machineId") String machineId,
+	public byte[] getMachineScreenshot(@HeaderParam("User") String userId, @PathParam("id") String id,
 			@QueryParam("width") int width, @QueryParam("height") int height);
 
 	@GET

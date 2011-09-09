@@ -46,11 +46,11 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public ManagementVM getVM(String userId, String machineId) {
-		VirtualMachine vm = VirtualMachineDAO.get(machineId);
+	public ManagementVM getVM(String userId, Long id) {
+		VirtualMachine vm = VirtualMachineDAO.get(id);
 
 		ManagementVM resultVM = new ManagementVM();
-		resultVM.machineId = vm.getMachineId();
+		resultVM.id = vm.getId();
 		resultVM.name = vm.getMachineName();
 		resultVM.description = vm.getDescription();
 		resultVM.osTypeId = vm.getOsType();
@@ -89,10 +89,10 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = nodeVMService
 				.createVirtualMachine(nodeRequest);
-
+		
+		VirtualMachine vm = new VirtualMachine();
 		// Safe successfully created VM to database
 		if (nodeResponse.machineId != null) {
-			VirtualMachine vm = new VirtualMachine();
 			vm.setMachineName(webRequest.name);
 			vm.setMachineId(nodeResponse.machineId);
 			vm.setCreationDate(new Date());
@@ -112,17 +112,19 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		// send response to WebInterface
 		ManagementCreateVMResponse webResponse = new ManagementCreateVMResponse();
-		webResponse.machineId = nodeResponse.machineId;
+		webResponse.id = vm.getId();
 
 		return webResponse;
 	}
 
 	@Override
-	public void removeVirtualMachine(String userId, String machineId) {
-		nodeVMService.removeVirtualMachine(machineId);
+	public void removeVirtualMachine(String userId, Long id) {
+		VirtualMachine vm = VirtualMachineDAO.get(id);
+
+		// Delete VM from NodeController
+		nodeVMService.removeVirtualMachine(vm.getMachineId());
 
 		// Delete VM from the database
-		VirtualMachine vm = VirtualMachineDAO.get(machineId);
 		Hibernate.deleteObject(vm);
 	}
 
@@ -146,7 +148,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		for (VirtualMachine vm : vms) {
 			ManagementVM resultVM = new ManagementVM();
-			resultVM.machineId = vm.getMachineId();
+			resultVM.id = vm.getId();
 			resultVM.name = vm.getMachineName();
 			resultVM.description = vm.getDescription();
 			resultVM.osTypeId = vm.getOsType();
@@ -173,25 +175,22 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public void updateVirtualMachine(String userId, String machineId,
+	public void updateVirtualMachine(String userId, Long id,
 			ManagementUpdateVMRequest webRequest) {
+		VirtualMachine vm = VirtualMachineDAO.get(id);
+
 		NodeUpdateVMRequest nodeRequest = new NodeUpdateVMRequest();
 		nodeRequest.status = webRequest.status;
 		nodeRequest.image = webRequest.image;
-		nodeRequest.name = webRequest.machineName;
-		nodeRequest.description = webRequest.description;
 		nodeRequest.memorySize = webRequest.memorySize;
 		nodeRequest.vramSize = webRequest.vramSize;
 		nodeRequest.accelerate2d = webRequest.accelerate2d;
 		nodeRequest.accelerate3d = webRequest.accelerate3d;
 
 		NodeUpdateVMResponse nodeResponse = nodeVMService.updateVirtualMachine(
-				machineId, nodeRequest);
+				vm.getMachineId(), nodeRequest);
 
 		// Update VirtualMachine in db
-		VirtualMachine vm = VirtualMachineDAO.get(machineId);
-
-		// Only save if part of the request / changed
 		if (webRequest.status != null) {
 			vm.setStatus(webRequest.status);
 		}
@@ -223,8 +222,10 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public byte[] getMachineScreenshot(String userId, String machineId,
+	public byte[] getMachineScreenshot(String userId, String id,
 			int width, int height) {
+		// TODO: find a better solution than this
+		String machineId = VirtualMachineDAO.get(Long.parseLong(id)).getMachineId();
 		return nodeVMService.getMachineScreenshot(machineId, width, height);
 	}
 

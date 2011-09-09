@@ -42,11 +42,11 @@ public class Screenshot extends HttpServlet {
 		String userId = "123456";
 
 		// Get request parameters
-		String machineId = request.getParameter("machine");
+		String id = request.getParameter("machine");
 		int width = Integer.valueOf(request.getParameter("width"));
 		int height = Integer.valueOf(request.getParameter("height"));
 
-		byte[] screenshot = mangementVMService.getMachineScreenshot(userId, machineId, width, height);
+		byte[] screenshot = mangementVMService.getMachineScreenshot(userId, id, width, height);
 
 		if(screenshot == null) {
 			// Image not found

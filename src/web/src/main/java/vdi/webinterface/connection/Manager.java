@@ -73,7 +73,7 @@ public class Manager {
 		JSONObject json = new JSONObject();
 
 		json.put("success", true);
-		json.put("machine_id", response.machineId);
+		json.put("id", response.id);
 
 		return json.toString();
 	}
@@ -90,7 +90,7 @@ public class Manager {
 		JSONArray vms = new JSONArray();
 		for(ManagementVM managementVM : response) {
 			JSONObject vm = new JSONObject();
-			vm.put("machine_id", managementVM.machineId);
+			vm.put("id", managementVM.id);
 			vm.put("name", managementVM.name);
 			vm.put("description", managementVM.description);
 			vm.put("memory", managementVM.memorySize);
@@ -125,11 +125,11 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String startVM(String machineId) {
+	public String startVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.status = VirtualMachineStatus.STARTED;
 
-		mangementVMService.updateVirtualMachine(userId, machineId, request);
+		mangementVMService.updateVirtualMachine(userId, id, request);
 
 		JSONObject json = new JSONObject();
 
@@ -139,11 +139,11 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String pauseVM(String machineId) {
+	public String pauseVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.status = VirtualMachineStatus.PAUSED;
 
-		mangementVMService.updateVirtualMachine(userId, machineId, request);
+		mangementVMService.updateVirtualMachine(userId, id, request);
 
 		JSONObject json = new JSONObject();
 
@@ -153,11 +153,11 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String stopVM(String machineId) {
+	public String stopVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.status = VirtualMachineStatus.STOPPED;
 
-		mangementVMService.updateVirtualMachine(userId, machineId, request);
+		mangementVMService.updateVirtualMachine(userId, id, request);
 
 		JSONObject json = new JSONObject();
 
@@ -167,8 +167,8 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String removeVM(String machineId) {
-		mangementVMService.removeVirtualMachine(userId, machineId);
+	public String removeVM(Long id) {
+		mangementVMService.removeVirtualMachine(userId, id);
 
 		JSONObject json = new JSONObject();
 
@@ -202,11 +202,11 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String mountImage(String machineId, String imageName) {
+	public String mountImage(Long id, String imageName) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.image = imageName;
 
-		mangementVMService.updateVirtualMachine(userId, machineId, request);
+		mangementVMService.updateVirtualMachine(userId, id, request);
 
 		JSONObject json = new JSONObject();
 
@@ -216,11 +216,11 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String unmountImage(String machineId) {
+	public String unmountImage(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.image = "";
 
-		mangementVMService.updateVirtualMachine(userId, machineId, request);
+		mangementVMService.updateVirtualMachine(userId, id, request);
 
 		JSONObject json = new JSONObject();
 

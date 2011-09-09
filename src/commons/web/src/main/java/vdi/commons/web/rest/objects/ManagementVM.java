@@ -7,7 +7,7 @@ import vdi.commons.common.objects.VirtualMachineStatus;
 
 public class ManagementVM {
 
-	public String machineId;
+	public Long id;
 
 	public String name;
 

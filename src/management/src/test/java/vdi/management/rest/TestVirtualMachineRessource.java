@@ -76,9 +76,9 @@ public class TestVirtualMachineRessource {
 			if (vm.status != VirtualMachineStatus.STOPPED) {
 				ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 				request.status = VirtualMachineStatus.STOPPED;
-				vmr.updateVirtualMachine(userID, vm.machineId, request);
+				vmr.updateVirtualMachine(userID, vm.id, request);
 			}
-			vmr.removeVirtualMachine(userID, vm.machineId);
+			vmr.removeVirtualMachine(userID, vm.id);
 		}
 	}
 
@@ -108,10 +108,10 @@ public class TestVirtualMachineRessource {
 
 		try {
 			ManagementCreateVMResponse response;
-			String machineID = null;
+			Long vmId = null;
 			try {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
-				machineID = response.machineId;
+				vmId = response.id;
 			} catch (ClientResponseFailure e) {
 				LOGGER.warning(e.getStackTrace().toString());
 				@SuppressWarnings("unchecked")
@@ -125,18 +125,18 @@ public class TestVirtualMachineRessource {
 				// something went wrong. TODO: find out what...
 			}
 
-			if (machineID == null) {
+			if (vmId == null) {
 				LOGGER.warning("Creation of '" + createVMRequest.name + "' failed.");
 				// Perhaps vm already existed trying to delete:
 				deleteVM(createVMRequest.name);
 			}
-			Assume.assumeNotNull(machineID);
+			Assume.assumeNotNull(vmId);
 
 			ManagementVM testMachine = null;
 
 			List<ManagementVM> machines = vmr.getVMs(userID, null);
 			for (ManagementVM iMachine : machines) {
-				if (iMachine.machineId.equals(machineID)) {
+				if (iMachine.id.equals(vmId)) {
 					testMachine = iMachine;
 					break;
 				}
@@ -147,20 +147,20 @@ public class TestVirtualMachineRessource {
 
 			try {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
-				Assert.assertNull("vm '" + createVMRequest.name + "' mustn't be created twice", response.machineId);
+				Assert.assertNull("vm '" + createVMRequest.name + "' mustn't be created twice", response.id);
 			} catch (ClientResponseFailure e) {
 				Status status = Status.fromStatusCode(e.getResponse().getStatus());
 				Assert.assertTrue("Expected Status BAD_REQUEST, but " + status, status == Status.BAD_REQUEST);
 			}
 
 			// Deleting test machine:
-			vmr.removeVirtualMachine(userID, testMachine.machineId);
+			vmr.removeVirtualMachine(userID, testMachine.id);
 
 			boolean machineDeleted = true;
 			machines = vmr.getVMs(userID, null);
 			Assert.assertTrue("vm count not decreased after removeVirtualMachine()", machines.size() == machineCount);
 			for (ManagementVM iMachine : machines) {
-				if (iMachine.machineId == machineID) {
+				if (iMachine.id == vmId) {
 					machineDeleted = false;
 					break;
 				}
@@ -187,14 +187,14 @@ public class TestVirtualMachineRessource {
 		}
 		Assert.assertNotNull("VM '" + name + "' not found", testMachine);
 
-		vmr.removeVirtualMachine(userID, testMachine.machineId);
+		vmr.removeVirtualMachine(userID, testMachine.id);
 
 		boolean machineDeleted = true;
 		machines = vmr.getVMs(userID, null);
 		Assert.assertTrue("getVMs().size dir not decrease after removeVirtualMachine()",
 				machines.size() == machineCount - 1);
 		for (ManagementVM iMachine : machines) {
-			if (iMachine.machineId == testMachine.machineId) {
+			if (iMachine.id == testMachine.id) {
 				machineDeleted = false;
 				break;
 			}
