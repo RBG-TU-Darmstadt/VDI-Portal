@@ -76,39 +76,40 @@ public class VirtualMachineRessource implements ManagementVMService {
 	@Override
 	public ManagementCreateVMResponse createVirtualMachine(String userId,
 			ManagementCreateVMRequest webRequest) {
-		NodeCreateVMRequest nodeRequest = new NodeCreateVMRequest();
-		nodeRequest.name = webRequest.name;
-		nodeRequest.osTypeId = webRequest.osTypeId;
-		nodeRequest.description = webRequest.description;
-		nodeRequest.memorySize = webRequest.memorySize;
-		nodeRequest.hddSize = webRequest.hddSize;
-		nodeRequest.vramSize = webRequest.vramSize;
-		nodeRequest.accelerate2d = webRequest.accelerate2d;
-		nodeRequest.accelerate3d = webRequest.accelerate3d;
-
+		// NodeCreateVMRequest nodeRequest = new NodeCreateVMRequest();
+		// nodeRequest.name = webRequest.name;
+		// nodeRequest.osTypeId = webRequest.osTypeId;
+		// nodeRequest.description = webRequest.description;
+		// nodeRequest.memorySize = webRequest.memorySize;
+		// nodeRequest.hddSize = webRequest.hddSize;
+		// nodeRequest.vramSize = webRequest.vramSize;
+		// nodeRequest.accelerate2d = webRequest.accelerate2d;
+		// nodeRequest.accelerate3d = webRequest.accelerate3d;
 		// Create machine on node controller
-		NodeCreateVMResponse nodeResponse = nodeVMService
-				.createVirtualMachine(nodeRequest);
-		
-		VirtualMachine vm = new VirtualMachine();
-		// Safe successfully created VM to database
-		if (nodeResponse.machineId != null) {
-			vm.setMachineName(webRequest.name);
-			vm.setMachineId(nodeResponse.machineId);
-			vm.setCreationDate(new Date());
-			vm.setOsType(webRequest.osTypeId);
-			vm.setDescription(webRequest.description);
-			vm.setHddSize(webRequest.hddSize);
-			vm.setMemorySize(webRequest.memorySize);
-			vm.setVram(webRequest.vramSize);
-			vm.setAccelerate2d(webRequest.accelerate2d);
-			vm.setAccelerate3d(webRequest.accelerate3d);
-			User vmUser = UserDAO.get(userId);
-			vm.setUser(vmUser);
-			vm.setStatus(VirtualMachineStatus.STOPPED);
+		// NodeCreateVMResponse nodeResponse = nodeVMService
+		// .createVirtualMachine(nodeRequest);
+		// if (nodeResponse.machineId != null) {
 
-			Hibernate.saveObject(vm);
-		}
+		
+		// Safe successfully created VM to database
+		VirtualMachine vm = new VirtualMachine();
+
+		vm.setMachineName(webRequest.name);
+		// vm.setMachineId(nodeResponse.machineId);
+		vm.setCreationDate(new Date());
+		vm.setOsType(webRequest.osTypeId);
+		vm.setDescription(webRequest.description);
+		vm.setHddSize(webRequest.hddSize);
+		vm.setMemorySize(webRequest.memorySize);
+		vm.setVram(webRequest.vramSize);
+		vm.setAccelerate2d(webRequest.accelerate2d);
+		vm.setAccelerate3d(webRequest.accelerate3d);
+		User vmUser = UserDAO.get(userId);
+		vm.setUser(vmUser);
+		vm.setStatus(VirtualMachineStatus.STOPPED);
+
+		Hibernate.saveObject(vm);
+		// }
 
 		// send response to WebInterface
 		ManagementCreateVMResponse webResponse = new ManagementCreateVMResponse();
@@ -177,27 +178,70 @@ public class VirtualMachineRessource implements ManagementVMService {
 	@Override
 	public void updateVirtualMachine(String userId, Long id,
 			ManagementUpdateVMRequest webRequest) {
+
+		// get VM from database
 		VirtualMachine vm = VirtualMachineDAO.get(id);
 
+		// create request for NodeController
 		NodeUpdateVMRequest nodeRequest = new NodeUpdateVMRequest();
-		nodeRequest.status = webRequest.status;
-		nodeRequest.image = webRequest.image;
-		nodeRequest.memorySize = webRequest.memorySize;
-		nodeRequest.vramSize = webRequest.vramSize;
-		nodeRequest.accelerate2d = webRequest.accelerate2d;
-		nodeRequest.accelerate3d = webRequest.accelerate3d;
 
-		NodeUpdateVMResponse nodeResponse = nodeVMService.updateVirtualMachine(
-				vm.getMachineId(), nodeRequest);
+		// Only save if part of the request / changed
+		if (webRequest.status != null && webRequest.status != vm.getStatus()) {
+			if (webRequest.status == VirtualMachineStatus.STARTED) {
+				if (vm.getStatus() == VirtualMachineStatus.STOPPED) {
+					NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
+					nodeCreateRequest.name = vm.getMachineName();
+					nodeCreateRequest.osTypeId = vm.getOsType();
+					nodeCreateRequest.description = vm.getDescription();
+					nodeCreateRequest.memorySize = vm.getMemorySize();
+					nodeCreateRequest.hddSize = vm.getHddSize();
+					nodeCreateRequest.vramSize = vm.getVram();
+					nodeCreateRequest.accelerate2d = vm.isAccelerate2d();
+					nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
 
-		// Update VirtualMachine in db
-		if (webRequest.status != null) {
+					// Create machine on node controller
+					NodeCreateVMResponse nodeResponse = nodeVMService
+							.createVirtualMachine(nodeCreateRequest);
+
+					// save the machine id
+					vm.setMachineId(nodeResponse.machineId);
+				}
+
+				// start VM
+				nodeRequest.status = webRequest.status;
+				NodeUpdateVMResponse updateResponse = nodeVMService
+						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+
+				// store RDP address
+				vm.setRdpUrl(updateResponse.rdpUrl);
+			} else if (webRequest.status == VirtualMachineStatus.STOPPED) {
+				// stop virtual machine
+				nodeRequest.status = webRequest.status;
+				NodeUpdateVMResponse updateResponse = nodeVMService
+						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+
+				// delete virtual machine on NC
+				removeVirtualMachine(userId, id);
+
+				vm.setRdpUrl(null);
+				vm.setMachineId(null);
+			} else {
+				// pause virtual machine
+				nodeRequest.status = webRequest.status;
+				NodeUpdateVMResponse updateResponse = nodeVMService
+						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+			}
+
 			vm.setStatus(webRequest.status);
+			vm.setLastActive(new Date());
+
 		}
 		if (webRequest.image != null) {
 			vm.setImage(webRequest.image);
+//			NodeUpdateVMResponse nodeResponse = nodeVMService
+//					.updateVirtualMachine(machineId, nodeRequest);
 		}
-		if (webRequest.machineName  != null) {
+		if (webRequest.machineName != null) {
 			vm.setMachineName(webRequest.machineName);
 		}
 		if (webRequest.description != null) {
@@ -216,8 +260,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 			vm.setAccelerate3d(webRequest.accelerate3d);
 		}
 
-		vm.setLastActive(new Date());
-		vm.setRdpUrl(nodeResponse.rdpUrl);
 		VirtualMachineDAO.update(vm);
 	}
 

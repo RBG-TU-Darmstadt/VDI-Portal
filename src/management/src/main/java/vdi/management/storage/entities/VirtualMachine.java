@@ -84,7 +84,7 @@ public class VirtualMachine {
 		this.id = id;
 	}
 
-	@Column(name = "MACHINE_ID", nullable = false)
+	@Column(name = "MACHINE_ID")
 	public String getMachineId() {
 		return machineId;
 	}

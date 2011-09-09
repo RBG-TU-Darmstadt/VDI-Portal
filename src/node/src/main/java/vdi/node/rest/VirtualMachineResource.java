@@ -145,17 +145,7 @@ public class VirtualMachineResource implements NodeVMService {
 				machine.mountIso(image);
 			}
 		}
-
-		// properties handling
-
-		if (request.name != null) {
-			machine.setName(request.name);
-		}
-
-		if (request.description != null) {
-			machine.setDescription(request.description);
-		}
-
+		
 		if (request.memorySize != null) {
 			machine.setMemorySize(request.memorySize);
 		}
