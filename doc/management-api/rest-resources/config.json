@@ -1,0 +1,180 @@
+{
+    "base_url": "",
+
+    "status_codes": {
+        "200": "\\texttt{200 OK} (Request was processed without errors)",
+        "201": "\\texttt{201 CREATED} (Resource was created successfully)",
+        "204": "\\texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content)",
+        "404": "\\texttt{404 NOT FOUND} (No resource with the requested id found)",
+        "422": "\\texttt{422 UNPROCESSABLE ENTITY} (JSON object was semantically not correct)",
+        "424": "\\texttt{424 FAILED DEPENDENCY} (A referenced resource could not be found)"
+    },
+
+    "resources": {
+
+        "images": {
+            "name": "Images",
+            "endpoints": [
+            {
+                "title": "Get all available ISO-images",
+                "request": {
+                    "http_method": "GET",
+                    "url": "/images",
+                    "consumes": "nothing"
+                },
+                "response": {
+                    "success_status_code": ["200"],
+                    "produces": "application/json",
+                    "failure_status_code": []
+                },
+				"response_listing": "json-examples/images-response.json"
+            }
+            ]
+        },
+
+		"nodes": {
+			"name": "Nodes",
+			"endpoints": [
+			{
+                "title": "Register a new node",
+                "request": {
+                    "http_method": "POST",
+                    "url": "/node",
+                    "consumes": "application/json"
+                },
+                "response": {
+                    "success_status_code": ["201"],
+                    "produces": "application/json",
+                    "failure_status_code": ["422"]
+                },
+        		"request_listing": "json-examples/node-post-request.json",
+        		"response_listing": "json-examples/node-post-response.json"
+            },
+			{
+                "title": "Delete a node",
+                "request": {
+                    "http_method": "DELETE",
+                    "url": "/node/\\{id\\}",
+                    "consumes": "nothing",
+                    "parameter": ["\\texttt{id: [a-zA-Z0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["204"],
+                    "produces": "nothing",
+                    "failure_status_code": ["404"]
+                }
+            }
+			]
+		},
+		
+		"virtualmachines": {
+			"name": "Virtual Machines",
+			"endpoints": [
+			{
+                "title": "Create a new VM",
+                "request": {
+                    "http_method": "POST",
+                    "url": "/vm",
+                    "consumes": "application/json",
+                    "parameter": ["Header: User: \\texttt{userId}"]
+                },
+                "response": {
+                    "success_status_code": ["201"],
+                    "produces": "application/json",
+                    "failure_status_code": ["422"]
+                },
+        		"request_listing": "json-examples/vm-post-request.json",
+        		"response_listing": "json-examples/vm-post-response.json"
+            },
+			{
+                "title": "Get a VM",
+                "request": {
+                    "http_method": "GET",
+                    "url": "/vm/\\{id\\}",
+                    "consumes": "nothing",
+                    "parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["200"],
+                    "produces": "application/json",
+                    "failure_status_code": ["404"]
+                },
+        		"response_listing": "json-examples/vm-get-response.json"
+            },
+			{
+                "title": "Delete a VM",
+                "request": {
+                    "http_method": "DELETE",
+                    "url": "/vm/\\{id\\}",
+                    "consumes": "nothing",
+                    "parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["204"],
+                    "produces": "nothing",
+                    "failure_status_code": ["404"]
+                }
+            },
+			{
+                "title": "Search for VMs by tag",
+                "request": {
+                    "http_method": "GET",
+                    "url": "/vm?tag=\\{tag\\}",
+                    "consumes": "nothing",
+                    "parameter": ["Header: User: \\texttt{userId}", "\\texttt{tag: [a-zA-Z0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["200"],
+                    "produces": "application/json",
+                    "failure_status_code": ["404"]
+                },
+        		"response_listing": "json-examples/vm-get-tag-response.json"
+            },
+			{
+                "title": "Update a VM",
+                "request": {
+                    "http_method": "PUT",
+                    "url": "/vm/\\{id\\}",
+                    "consumes": "application/json",
+					"parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["201"],
+                    "produces": "nothing",
+                    "failure_status_code": ["422"]
+                },
+        		"request_listing": "json-examples/node-put-request.json"
+            },
+			{
+                "title": "Search for VMs by tag",
+                "request": {
+                    "http_method": "GET",
+                    "url": "/vm/\\{id\\}?width=\\{width\\}\\&height=\\{height\\}",
+                    "consumes": "nothing",
+                    "parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}", "\\texttt{width: [0-9-]+}", "\\texttt{height: [0-9-]+}"]
+                },
+                "response": {
+                    "success_status_code": ["200"],
+                    "produces": "image/png",
+                    "failure_status_code": ["404"]
+                }
+            },
+			{
+                "title": "Get all VM types",
+                "request": {
+                    "http_method": "GET",
+                    "url": "/types",
+                    "consumes": "nothing"
+                },
+                "response": {
+                    "success_status_code": ["200"],
+                    "produces": "application/json",
+                    "failure_status_code": []
+                },
+        		"response_listing": "json-examples/types-get-response.json"
+            }
+			]
+		}
+    }
+
+}

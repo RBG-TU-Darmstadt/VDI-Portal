@@ -1,0 +1,10 @@
+{
+	"name": "My Linux VM",
+	"osTypeId": "Linux24",
+	"description": "Fedora 16 alpha",
+	"memorySize": 512,
+	"hddSize": 2,
+	"vramSize": 32,
+	"accelerate2d": true,
+	"accelerate3d": true
+}

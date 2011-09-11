@@ -1,0 +1,48 @@
+\section{Nodes} % (fold)
+
+\subsection{Register a new node} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{POST}			\tabularnewline
+		                        			&   URL                     &   \texttt{/node}           	\tabularnewline
+                                  &   Consumes                &   application/json					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{201 CREATED} (Resource was created successfully) 	\tabularnewline
+                                  &   Produces                &   application/json								\tabularnewline
+                                  &   Failure status code     &   \texttt{422 UNPROCESSABLE ENTITY} (JSON object was semantically not correct)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+		\textbf{Request Example:}
+		\lstinputlisting{json-examples/node-post-request.json}
+\pagebreak[3]
+		\textbf{Response Example:}
+		\lstinputlisting{json-examples/node-post-response.json}
+% subsection (end)
+
+
+\subsection{Delete a node} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{DELETE}			\tabularnewline
+		                        			&   URL                     &   \texttt{/node/\{id\}}           	\tabularnewline
+									& Parameter & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content) 	\tabularnewline
+                                  &   Produces                &   nothing								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+% subsection (end)
+
+
+
+
+% section resource (end)

@@ -1,0 +1,47 @@
+\documentclass[paper=a4,twoside=false,fontsize=11pt,titlepage,pointlessnumbers]{scrartcl}
+
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[bookmarksopen]{hyperref} 
+\usepackage{graphicx} % images
+\usepackage{lmodern} % pretty font
+\usepackage{tabularx} % useable tables
+\usepackage{booktabs} % pretty tables
+\usepackage{scrpage2} % pretty page head and foot
+
+\usepackage{listings} % source-code formatting
+% \lstloadlanguages{JavaScript}
+\lstset{extendedchars=true, basicstyle=\footnotesize\ttfamily, commentstyle=, breaklines, prebreak={\mbox{\ensuremath{\hookleftarrow}}}, emph=, emphstyle=\bfseries, literate={Ö}{{\"O}}1 {Ä}{{\"A}}1 {Ü}{{\"U}}1 {ß}{{\ss}}1 {ü}{{\"u}}1 {ä}{{\"a}}1 {ö}{{\"o}}1}
+
+\renewcommand{\familydefault}{\sfdefault} % text in sans-serif
+\setkomafont{pagehead}{\normalfont\sffamily} % page header in sans-serif
+\setkomafont{pagenumber}{\normalfont\sffamily} % page footer in sans-serif
+\renewcommand{\labelitemi}{\normalfont\rmfamily\textbullet} % remove warning for bullet-points in sans-serif
+
+\newcommand{\doctitle}{VDI-Portal Management-Server API-Documentation}
+\newcommand{\docauthor}{Lennart Diedrich -- Jan Dillmann -- Ingo Jakobs -- Samuel Vogel}
+\newcommand{\docdate}{\today}
+
+% Hyperlinks
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=black, pdftitle={\doctitle}, pdfauthor={\docauthor}}
+
+\setlength{\parindent}{0mm} % remove paragraph intending
+
+\title{\doctitle}
+\author{\docauthor}
+% \titlehead{\firma}
+\date{\docdate}
+
+% head and footer
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ihead{\doctitle}
+\setheadsepline{.5pt}
+\setfootsepline{.5pt}
+\ifoot{\docauthor{}}
+\ofoot{\pagemark}
+
+
+
+

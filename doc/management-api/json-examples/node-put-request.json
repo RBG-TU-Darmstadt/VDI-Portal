@@ -1,0 +1,10 @@
+{
+	"status": "STOPPED",
+	"image": "",
+	"machineName": "Linux2.4",
+	"description": "Fedora Alpha Test image",
+	"memorySize": 1024,
+	"vramSize": 32,
+	"accelerate2d": false,
+	"accelerate3d": true
+}

@@ -1,0 +1,18 @@
+{
+	"id": 4,
+	"name": "My Linux VM",
+	"osTypeId": "Linux24",
+	"description": "Fedora 16 alpha",
+	"memorySize": 512,
+	"hddSize": 2,
+	"tags": [
+		{
+			"identifier": "linux",
+			"name": "Linux"
+		}
+	],
+	"status": "STARTED",
+	"rdpUrl": "192.168.1.100:5000",
+	"lastActive": "2011-09-11 16:56:33",
+	"image": ""
+}

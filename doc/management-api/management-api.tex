@@ -1,0 +1,69 @@
+\input{header}
+
+\begin{document}
+
+    \begin{titlepage}
+
+        \vspace*{3em}
+        \begin{center}
+        	\Huge
+        	\doctitle \\
+        	\vspace{1em}
+        	\large
+        	\docdate
+        	\vfill
+        	\begin{tabular}{lr}
+        	\begin{minipage}{0.5\textwidth}
+        	    \vfill
+        	\end{minipage}
+        	\begin{minipage}{0.5\textwidth}
+        		\begin{flushright}
+        		    \vspace{3em}
+        			{\large \textbf{Bachelor-Praktikum}} \\
+        			{\large Sommersemester 2011} \\
+        			{\large TU Darmstadt}
+        		\end{flushright}
+        	\end{minipage} &
+        \end{tabular}
+        \end{center}
+
+    \end{titlepage}
+    
+    \tableofcontents
+    
+    \newpage
+
+    \section{Introduction} % (fold)
+    \label{sec:introduction}
+    
+    This document proposes an API based on the \href{http://en.wikipedia.org/wiki/Representational_State_Transfer}{Representational State Transfer (REST)} model for accessing the VDI-Portal's resources through a fixed set of operations. 
+    
+    % section introduction (end)
+    
+    \section{Common response status codes} % (fold)
+    \label{sec:common_response_status_codes}
+    
+    These status codes can be returned by any resource.
+    
+    \begin{center}
+		\begin{tabularx}{\textwidth}{llX} 
+		    \toprule
+		    \texttt{400}    &   BAD REQUEST                 &   Returned if the request was syntactically incorrect   \tabularnewline
+			\texttt{404}    &   NOT FOUND                   &   Returned if the requested resource could not be found    \tabularnewline
+			\texttt{405}    &   METHOD NOT ALLOWED          &   Returned if it is not allowed to request this resource    \tabularnewline
+			\texttt{406}    &   NOT ACCEPTABLE              &   Returned if none of the accept types is supported by this resource     \tabularnewline
+			\texttt{415}    &   UNSUPPORTED MEDIA TYPE      &   Returned if the request content type is not accepted by this resource \tabularnewline
+			\texttt{422}    &   UNPROCESSABLE ENTITY        &   Returned if the request body was valid, but cannot be mapped to the requested resource   \tabularnewline
+			\bottomrule
+		\end{tabularx}
+	\end{center}
+    
+    The response body can contain additional information regarding the error and how to resolve it.
+    
+    % section common_response_status_codes (end)
+    
+    \input{rest-resources/images}
+    \input{rest-resources/nodes}
+    \input{rest-resources/virtualmachines}
+            
+\end{document}

@@ -1,0 +1,45 @@
+\subsection{<%= title %>} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{<%= request['http_method']%>}			\tabularnewline
+		                        			&   URL                     &   \texttt{<%= request['url']%>}           	\tabularnewline
+							<% if request.has_key?('parameter') %>
+									<%= "& Parameter & #{request['parameter'][0]} \\tabularnewline" %>
+									<% if request['parameter'].length > 1 %>
+											<% (1..request['parameter'].length-1).each do |i| %>
+													<%=	"& & #{request['parameter'][i]} \\tabularnewline" %>
+											<% end %>
+									<% end %>
+							<% end %>
+                                  &   Consumes                &   <%= request['consumes']%>					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   <%= response['success_status_code'][0]%> 	\tabularnewline
+																																<% if response['success_status_code'].length > 1 %>
+																																	<% (1..response['success_status_code'].length-1).each do |i| %>
+																																		<%=	"& & #{response['success_status_code'][i]} \\tabularnewline" %>
+																																	<% end %>
+																																<% end %>
+                                  &   Produces                &   <%= response['produces']%>								\tabularnewline
+								<% if response['failure_status_code'].length > 0 %>
+                                  &   Failure status code     &   <%= response['failure_status_code'][0]%>	\tabularnewline
+																																<% if response['failure_status_code'].length > 1 %>
+																																	<% (1..response['failure_status_code'].length-1).each do |i| %>
+																																		<%=	"& & #{response['failure_status_code'][i]} \\tabularnewline" %>
+																																	<% end %>
+																																<% end %>
+								<% end %>
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+<% if defined? request_listing %>
+		\textbf{Request Example:}
+		\lstinputlisting{<%= request_listing %>}
+<% end%>
+\pagebreak[3]
+<% if defined? response_listing %>
+		\textbf{Response Example:}
+		\lstinputlisting{<%= response_listing %>}
+<% end%>
+% subsection (end)

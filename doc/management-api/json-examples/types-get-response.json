@@ -1,0 +1,11 @@
+{
+	"Linux": {
+		"linux24": "Linux 2.4",
+		"linux24_64": "Linux 2.4 (64 bit)"
+	},
+	
+	"BSD": {
+		"free_bsd": "Free BSD",
+		"open_bsd_64": "OpenBSD (64 bit)" 
+	}
+}

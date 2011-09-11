@@ -1,0 +1,162 @@
+\section{Virtual Machines} % (fold)
+
+\subsection{Create a new VM} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{POST}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+                                  &   Consumes                &   application/json					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{201 CREATED} (Resource was created successfully) 	\tabularnewline
+                                  &   Produces                &   application/json								\tabularnewline
+                                  &   Failure status code     &   \texttt{422 UNPROCESSABLE ENTITY} (JSON object was semantically not correct)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+		\textbf{Request Example:}
+		\lstinputlisting{json-examples/vm-post-request.json}
+\pagebreak[3]
+		\textbf{Response Example:}
+		\lstinputlisting{json-examples/vm-post-response.json}
+% subsection (end)
+
+
+\subsection{Get a VM} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{GET}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/\{id\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{200 OK} (Request was processed without errors) 	\tabularnewline
+                                  &   Produces                &   application/json								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+		\textbf{Response Example:}
+		\lstinputlisting{json-examples/vm-get-response.json}
+% subsection (end)
+
+
+\subsection{Delete a VM} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{DELETE}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/\{id\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content) 	\tabularnewline
+                                  &   Produces                &   nothing								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+% subsection (end)
+
+
+\subsection{Search for VMs by tag} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{GET}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm?tag=\{tag\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{tag: [a-zA-Z0-9-]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{200 OK} (Request was processed without errors) 	\tabularnewline
+                                  &   Produces                &   application/json								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+		\textbf{Response Example:}
+		\lstinputlisting{json-examples/vm-get-tag-response.json}
+% subsection (end)
+
+
+\subsection{Update a VM} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{PUT}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/\{id\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
+                                  &   Consumes                &   application/json					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{201 CREATED} (Resource was created successfully) 	\tabularnewline
+                                  &   Produces                &   nothing								\tabularnewline
+                                  &   Failure status code     &   \texttt{422 UNPROCESSABLE ENTITY} (JSON object was semantically not correct)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+		\textbf{Request Example:}
+		\lstinputlisting{json-examples/node-put-request.json}
+\pagebreak[3]
+% subsection (end)
+
+
+\subsection{Search for VMs by tag} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{GET}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/\{id\}?width=\{width\}\&height=\{height\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
+													& & \texttt{width: [0-9-]+} \tabularnewline
+													& & \texttt{height: [0-9-]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{200 OK} (Request was processed without errors) 	\tabularnewline
+                                  &   Produces                &   image/png								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+% subsection (end)
+
+
+\subsection{Get all VM types} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{GET}			\tabularnewline
+		                        			&   URL                     &   \texttt{/types}           	\tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{200 OK} (Request was processed without errors) 	\tabularnewline
+                                  &   Produces                &   application/json								\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+		\textbf{Response Example:}
+		\lstinputlisting{json-examples/types-get-response.json}
+% subsection (end)
+
+
+
+
+% section resource (end)

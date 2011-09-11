@@ -1,0 +1,8 @@
+{
+	"address": "192.168.1.4",
+	"resources": {
+		"ramSize": 4096,
+		"cpuLoad": 0.45,
+		"freeDiskSpace": 100395746742
+	}
+}
