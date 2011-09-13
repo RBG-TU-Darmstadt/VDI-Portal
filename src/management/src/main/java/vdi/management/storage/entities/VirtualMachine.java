@@ -30,6 +30,7 @@ public class VirtualMachine {
 	private Long id;
 	private String machineId;
 	private String machineName;
+	private Node node;
 	private Date creationDate;
 	private String description;
 	private User user;
@@ -230,6 +231,16 @@ public class VirtualMachine {
 
 	public void setAccelerate3d(boolean accelerate3d) {
 		this.accelerate3d = accelerate3d;
+	}
+
+	@ManyToOne
+    @JoinColumn(name = "node_id")
+	public Node getNode() {
+		return node;
+	}
+
+	public void setNode(Node node) {
+		this.node = node;
 	}
 
 }
