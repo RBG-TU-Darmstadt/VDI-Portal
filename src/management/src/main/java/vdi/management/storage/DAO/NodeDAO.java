@@ -1,5 +1,7 @@
 package vdi.management.storage.DAO;
 
+import java.util.List;
+
 import org.hibernate.Session;
 
 import vdi.management.storage.HibernateUtil;
@@ -49,6 +51,24 @@ public final class NodeDAO {
 		session.getTransaction().commit();
 
 		return n;
+	}
+
+	/**
+	 * Get a list of all Nodes in the database.
+	 *
+	 * @return a list with all {@link NodeVMService}
+	 */
+	public static List<Node> getNodes() {
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+		session.beginTransaction();
+
+		@SuppressWarnings("unchecked")
+		List<Node> list = session
+				.createCriteria(Node.class).list();
+
+		session.getTransaction().commit();
+
+		return list;
 	}
 
 }
