@@ -22,28 +22,21 @@ import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
 import vdi.management.storage.Hibernate;
+import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
 import vdi.management.storage.DAO.VirtualMachineDAO;
+import vdi.management.storage.entities.Node;
 import vdi.management.storage.entities.Tag;
 import vdi.management.storage.entities.User;
 import vdi.management.storage.entities.VirtualMachine;
+import vdi.management.util.ManagementUtil;
 
 /**
  * Exports the {@link ManagementVMSercive} Interface for the WebInterface.
  */
 @Path("/vm")
 public class VirtualMachineRessource implements ManagementVMService {
-
-	private NodeVMService nodeVMService;
-
-	/**
-	 * The constructor connects to the NodeController.
-	 */
-	public VirtualMachineRessource() {
-		nodeVMService = ProxyFactory.create(NodeVMService.class,
-				"http://localhost:8080/NodeController/vm/");
-	}
 
 	@Override
 	public ManagementVM getVM(String userId, Long id) {
@@ -76,26 +69,10 @@ public class VirtualMachineRessource implements ManagementVMService {
 	@Override
 	public ManagementCreateVMResponse createVirtualMachine(String userId,
 			ManagementCreateVMRequest webRequest) {
-		// NodeCreateVMRequest nodeRequest = new NodeCreateVMRequest();
-		// nodeRequest.name = webRequest.name;
-		// nodeRequest.osTypeId = webRequest.osTypeId;
-		// nodeRequest.description = webRequest.description;
-		// nodeRequest.memorySize = webRequest.memorySize;
-		// nodeRequest.hddSize = webRequest.hddSize;
-		// nodeRequest.vramSize = webRequest.vramSize;
-		// nodeRequest.accelerate2d = webRequest.accelerate2d;
-		// nodeRequest.accelerate3d = webRequest.accelerate3d;
-		// Create machine on node controller
-		// NodeCreateVMResponse nodeResponse = nodeVMService
-		// .createVirtualMachine(nodeRequest);
-		// if (nodeResponse.machineId != null) {
-
-		
-		// Safe successfully created VM to database
+		// Store VM to database
 		VirtualMachine vm = new VirtualMachine();
 
 		vm.setMachineName(webRequest.name);
-		// vm.setMachineId(nodeResponse.machineId);
 		vm.setCreationDate(new Date());
 		vm.setOsType(webRequest.osTypeId);
 		vm.setDescription(webRequest.description);
@@ -109,7 +86,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setStatus(VirtualMachineStatus.STOPPED);
 
 		Hibernate.saveObject(vm);
-		// }
 
 		// send response to WebInterface
 		ManagementCreateVMResponse webResponse = new ManagementCreateVMResponse();
@@ -119,11 +95,14 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public void removeVirtualMachine(String userId, Long id) {
-		VirtualMachine vm = VirtualMachineDAO.get(id);
+	public void removeVirtualMachine(String userId, Long vmId) {
+		VirtualMachine vm = VirtualMachineDAO.get(vmId);
 
 		// Delete VM from NodeController
-		nodeVMService.removeVirtualMachine(vm.getMachineId());
+		NodeVMService service = selectNodeService(vm.getNode());
+		if (service != null) {
+			service.removeVirtualMachine(vm.getMachineId());
+		}
 
 		// Delete VM from the database
 		Hibernate.deleteObject(vm);
@@ -131,7 +110,12 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 	@Override
 	public HashMap<String, HashMap<String, String>> getVMTypes() {
-		return nodeVMService.getVMTypes();
+		HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
+
+		for (Node n : NodeDAO.getNodes()) {
+			result.putAll(selectNodeService(n).getVMTypes());
+		}
+		return result;
 	}
 
 	@Override
@@ -188,48 +172,43 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// Only save if part of the request / changed
 		if (webRequest.status != null && webRequest.status != vm.getStatus()) {
 			if (webRequest.status == VirtualMachineStatus.STARTED) {
-				if (vm.getStatus() == VirtualMachineStatus.STOPPED) {
-					NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
-					nodeCreateRequest.name = vm.getMachineName();
-					nodeCreateRequest.osTypeId = vm.getOsType();
-					nodeCreateRequest.description = vm.getDescription();
-					nodeCreateRequest.memorySize = vm.getMemorySize();
-					nodeCreateRequest.hddSize = vm.getHddSize();
-					nodeCreateRequest.vramSize = vm.getVram();
-					nodeCreateRequest.accelerate2d = vm.isAccelerate2d();
-					nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
-
-					// Create machine on node controller
-					NodeCreateVMResponse nodeResponse = nodeVMService
-							.createVirtualMachine(nodeCreateRequest);
-
-					// save the machine id
-					vm.setMachineId(nodeResponse.machineId);
+				if (vm.getStatus() == VirtualMachineStatus.STOPPED && vm.getNode() == null) {
+					// create virtual machine on NodeController
+					createVMOnNode(vm);
 				}
 
 				// start VM
 				nodeRequest.status = webRequest.status;
-				NodeUpdateVMResponse updateResponse = nodeVMService
-						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+				nodeRequest.image = vm.getImage();
+				NodeUpdateVMResponse updateResponse = selectNodeService(
+						vm.getNode()).updateVirtualMachine(vm.getMachineId(),
+						nodeRequest);
 
 				// store RDP address
 				vm.setRdpUrl(updateResponse.rdpUrl);
 			} else if (webRequest.status == VirtualMachineStatus.STOPPED) {
 				// stop virtual machine
 				nodeRequest.status = webRequest.status;
-				NodeUpdateVMResponse updateResponse = nodeVMService
-						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+				nodeRequest.image = null;
+				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(),
+						nodeRequest);
 
-				// delete virtual machine on NC
-				removeVirtualMachine(userId, id);
+				// FIXME
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { }
+
+				// delete virtual machine from NodeController
+				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId());
 
 				vm.setRdpUrl(null);
 				vm.setMachineId(null);
+				vm.setMachineId(null);
+				vm.setNode(null);
 			} else {
 				// pause virtual machine
 				nodeRequest.status = webRequest.status;
-				NodeUpdateVMResponse updateResponse = nodeVMService
-						.updateVirtualMachine(vm.getMachineId(), nodeRequest);
+				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(), nodeRequest);
 			}
 
 			vm.setStatus(webRequest.status);
@@ -238,8 +217,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 		}
 		if (webRequest.image != null) {
 			vm.setImage(webRequest.image);
-//			NodeUpdateVMResponse nodeResponse = nodeVMService
-//					.updateVirtualMachine(machineId, nodeRequest);
 		}
 		if (webRequest.machineName != null) {
 			vm.setMachineName(webRequest.machineName);
@@ -267,8 +244,64 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public byte[] getMachineScreenshot(String userId, String id,
 			int width, int height) {
 		// TODO: find a better solution than this
-		String machineId = VirtualMachineDAO.get(Long.parseLong(id)).getMachineId();
-		return nodeVMService.getMachineScreenshot(machineId, width, height);
+		VirtualMachine vm = VirtualMachineDAO.get(Long.parseLong(id)); 
+		String machineId = vm.getMachineId();
+		return selectNodeService(vm.getNode()).getMachineScreenshot(machineId, width, height);
 	}
 
+	/**
+	 * Chooses a NodeController.
+	 * 
+	 * @return the chosen {@link Node}
+	 */
+	public Node chooseNode() {
+		List<Node> nodes = NodeDAO.getNodes();
+
+		if (nodes.size() == 0) {
+			return null;
+		}
+
+		// chose random node
+		int random = (int) ManagementUtil.randomNumber(1, nodes.size());
+		return nodes.get(random - 1);
+	}
+
+	/**
+	 * Helper method to get the {@link NodeVMService} for a given {@link Node}.
+	 * 
+	 * @param node
+	 *            the {@link Node}
+	 * @return the {@link NodeVMService} for the given Node
+	 */
+	private NodeVMService selectNodeService(Node node) {
+		return ProxyFactory.create(NodeVMService.class, node.getUri());
+	}
+
+	/**
+	 * Creates a virtual machine on a NodeController.
+	 * 
+	 * @param vm
+	 *            the virtual machine to create
+	 */
+	private void createVMOnNode(VirtualMachine vm) {
+		NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
+		nodeCreateRequest.name = vm.getMachineName();
+		nodeCreateRequest.osTypeId = vm.getOsType();
+		nodeCreateRequest.description = vm.getDescription();
+		nodeCreateRequest.memorySize = vm.getMemorySize();
+		nodeCreateRequest.hddSize = vm.getHddSize();
+		nodeCreateRequest.vramSize = vm.getVram();
+		nodeCreateRequest.accelerate2d = vm.isAccelerate2d();
+		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
+
+		// choose NodeController
+		vm.setNode(chooseNode());
+
+		// Create machine on node controller
+		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode())
+				.createVirtualMachine(nodeCreateRequest);
+
+		// save the machine id
+		vm.setMachineId(nodeResponse.machineId);
+	}
 }
