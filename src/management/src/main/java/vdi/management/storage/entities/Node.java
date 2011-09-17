@@ -73,7 +73,7 @@ public class Node {
 	}
 
 	/**
-	 * @param freeRam the freeRam to set
+	 * @param ramSize the freeRam to set
 	 */
 	public void setRamSize(long ramSize) {
 		this.ramSize = ramSize;
