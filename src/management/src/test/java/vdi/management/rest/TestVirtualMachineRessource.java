@@ -21,6 +21,7 @@ import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
+import vdi.management.storage.DAO.NodeDAO;
 
 /**
  * Tests for {@link vdi.management.rest.VirtualMachineRessource}.
@@ -52,12 +53,28 @@ public class TestVirtualMachineRessource {
 	 */
 	@Before
 	public void setUp() {
+		// Wait until node registered (or timeout):
+		int i;
+		for (i = 0; i < 10 && NodeDAO.getNodes().isEmpty(); ++i) {
+			try {
+				wait(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(i==10)
+		{
+			System.err.println("No NodeController registered in 10 s window.");
+			Assume.assumeTrue(false);
+		}
+
 		vmr = new VirtualMachineRessource();
 
 		HashMap<String, HashMap<String, String>> vmTypes = vmr.getVMTypes();
-		Assert.assertNotNull(vmTypes);
-		Assert.assertFalse(vmTypes.isEmpty());
-		Assert.assertFalse(vmTypes.values().iterator().next().keySet().isEmpty());
+		Assert.assertNotNull("vmTypes must not be null.", vmTypes);
+		Assert.assertFalse("vmTypes must not be empty.", vmTypes.isEmpty());
+		Assert.assertFalse("vmTypes values must be keySets.", vmTypes.values().iterator().next().keySet().isEmpty());
 		String osTypeID = vmTypes.values().iterator().next().keySet().iterator().next();
 
 		createVMRequest = new ManagementCreateVMRequest();
@@ -119,8 +136,8 @@ public class TestVirtualMachineRessource {
 				if (errorResponse != null) {
 					LOGGER.info("Response Status Code = " + errorResponse.getResponseStatus());
 					String msg = errorResponse.getEntity();
-					if(msg != null)
-						LOGGER.info("Entity Returned:\n"+msg);
+					if (msg != null)
+						LOGGER.info("Entity Returned:\n" + msg);
 				}
 				// something went wrong. TODO: find out what...
 			}
