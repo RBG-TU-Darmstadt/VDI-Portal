@@ -71,7 +71,7 @@ public class TestVirtualMachineRessource {
 		// TODO: get nodes from RestInterface
 		
 		try {
-			Thread.sleep(10*1000);
+			Thread.sleep(60*1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

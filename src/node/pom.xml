@@ -21,7 +21,7 @@
 		<node.imagefolder></node.imagefolder>
 		<node.rdp_endpoint>localhost</node.rdp_endpoint>
 		<node.internal_address>http://127.0.0.1:8080/NodeController</node.internal_address>
-		<node.registration_delay>10</node.registration_delay>
+		<node.registration_delay>60</node.registration_delay>
 	</properties>
 
 	<profiles>

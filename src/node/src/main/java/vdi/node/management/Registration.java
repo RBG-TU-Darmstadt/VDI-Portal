@@ -24,31 +24,28 @@ public class Registration extends TimerTask {
 
 	static {
 		nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				Configuration.getProperty("managementserver.uri")+"/node/");
+				Configuration.getProperty("managementserver.uri") + "/node/");
 	}
 
 	@Override
 	public void run() {
 		// create request
 		NodeRegisterRequest registerRequest = new NodeRegisterRequest();
-		registerRequest.address = Configuration
-				.getProperty("node.internal_address");
+		registerRequest.address = Configuration.getProperty("node.internal_address");
 
 		registerRequest.resources = Resources.getResourcesObject();
 
 		NodeRegisterResponse response = null;
 		try {
-			LOGGER.fine("Trying to register NodeController with address: "
-					+ registerRequest.address);
+			LOGGER.fine("Trying to register NodeController with address: " + registerRequest.address);
 			response = nodeRegistration.register(registerRequest);
 		} catch (WebApplicationException e) {
-			LOGGER.warning("Registering at ManagementServer failed: "
-					+ e.getMessage());
+			LOGGER.warning("Registering at ManagementServer failed: " + e.getMessage());
 		}
 
 		if (response == null) {
-			throw new RuntimeException(
-					"Couldn't register at ManagementServer, response is null!");
+			LOGGER.severe("Couldn't register at ManagementServer, response is null!");
+			throw new Error("Couldn't register at ManagementServer, response is null!");
 		}
 
 		Registration.nodeId = response.nodeId;
@@ -56,11 +53,11 @@ public class Registration extends TimerTask {
 	}
 
 	/**
-	 * Call this method to unregister this NodeController from the ManagementServer.
+	 * Call this method to unregister this NodeController from the
+	 * ManagementServer.
 	 */
 	public static void unregister() {
-		LOGGER.fine("Sending unregistration request with NodeID (" + nodeId
-				+ ") to ManagemetServer!");
+		LOGGER.fine("Sending unregistration request with NodeID (" + nodeId + ") to ManagemetServer!");
 		// unregister
 		nodeRegistration.unregister(nodeId);
 	}
