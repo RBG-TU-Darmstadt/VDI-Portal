@@ -31,7 +31,8 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle exception
-			LOGGER.warning(e.getStackTrace().toString());
+			LOGGER.warning(e.getMessage());
+			LOGGER.info(e.getStackTrace().toString());
 		}
 	}
 
@@ -49,7 +50,8 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle Exception
-			LOGGER.warning(e.getStackTrace().toString());
+			LOGGER.warning(e.getMessage());
+			LOGGER.info(e.getStackTrace().toString());
 
 		}
 	}
@@ -68,7 +70,8 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (Exception e) {
 			// TODO: handle Exception
-			LOGGER.warning(e.getStackTrace().toString());
+			LOGGER.warning(e.getMessage());
+			LOGGER.info(e.getStackTrace().toString());
 		}
 	}
 }
