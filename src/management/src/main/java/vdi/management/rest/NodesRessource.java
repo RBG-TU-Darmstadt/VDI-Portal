@@ -2,6 +2,7 @@ package vdi.management.rest;
 
 import java.net.URISyntaxException;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -16,14 +17,16 @@ import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.entities.Node;
 
 /**
- * This class implements the {@link NodeRegistraion} Interface to enable NodeController
- * to register with the ManagementServer.
+ * This class implements the {@link NodeRegistraion} Interface to enable
+ * NodeController to register with the ManagementServer.
  */
 @Path("/node")
 public class NodesRessource implements NodeRegistrationService {
+	private static final Logger LOGGER = Logger.getLogger(NodesRessource.class.getName());
 
 	@Override
 	public NodeRegisterResponse register(NodeRegisterRequest request) {
+		LOGGER.info("recived register request from '" + request.address + "'");
 
 		// create and store database object
 		Node node = new Node();
@@ -31,8 +34,8 @@ public class NodesRessource implements NodeRegistrationService {
 		try {
 			node.setUri(request.address);
 		} catch (URISyntaxException e) {
-			throw new WebApplicationException(Response
-					.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+			LOGGER.warning(e.getMessage());
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
 		}
 
 		// store Nodes resources

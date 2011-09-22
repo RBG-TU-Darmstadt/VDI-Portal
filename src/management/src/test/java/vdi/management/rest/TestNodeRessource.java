@@ -23,8 +23,8 @@ public class TestNodeRessource {
 	public void registerNode()
 	{
 		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				"http://localhost:8080/ManagementServer"+"/node/");
-				//"http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/ManagementServer/node/");
+				//"http://localhost:8080/ManagementServer"+"/node/");
+				"http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/ManagementServer/node/");
 		
 		// REGISTER:
 
@@ -39,7 +39,7 @@ public class TestNodeRessource {
 		ressources.ramSize = 16;
 		ressources.freeDiskSpace = 32;
 		registerRequest.resources = ressources;
-		registerRequest.address = "localhost";
+		registerRequest.address = "http://localhost:8080/NodeController";
 
 		NodeRegisterResponse response = null;
 		try {
@@ -76,6 +76,6 @@ public class TestNodeRessource {
 		LOGGER.info("Sending unregistration request with NodeID (" + nodeId
 				+ ") to ManagemetServer!");
 		// unregister
-		nodeRegistration.unregister(nodeId);
+		//nodeRegistration.unregister(nodeId);
 	}
 }
