@@ -22,6 +22,7 @@
 		<node.internal_address>http://127.0.0.1:8080/NodeController/vm/</node.internal_address>
 		<node.registration_delay>10</node.registration_delay>
 	</properties>
+	
 	<profiles>
 		<profile>
 			<id>continuous-integration</id>

@@ -18,8 +18,26 @@
 	</modules>
 
 	<properties>
+		<maven.compiler.debug>true</maven.compiler.debug>
+		<maven.compiler.optimize>false</maven.compiler.optimize>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<property>
+					<name>debug</name>
+					<value>false</value>
+				</property>
+			</activation>
+			<properties>
+				<maven.compiler.debug>false</maven.compiler.debug>
+				<maven.compiler.optimize>true</maven.compiler.optimize>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
