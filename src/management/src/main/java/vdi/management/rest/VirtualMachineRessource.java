@@ -67,8 +67,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public ManagementCreateVMResponse createVirtualMachine(String userId,
-			ManagementCreateVMRequest webRequest) {
+	public ManagementCreateVMResponse createVirtualMachine(String userId, ManagementCreateVMRequest webRequest) {
 		// Store VM to database
 		VirtualMachine vm = new VirtualMachine();
 
@@ -125,8 +124,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		// check if queryParam for tag is not omitted
 		if (tagSlug != null) {
-			vms = VirtualMachineDAO.getByTag(UserDAO.get(userId),
-					TagsDAO.getBySlug(tagSlug));
+			vms = VirtualMachineDAO.getByTag(UserDAO.get(userId), TagsDAO.getBySlug(tagSlug));
 		} else {
 			vms = UserDAO.get(userId).getVirtualMachines();
 		}
@@ -160,8 +158,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public void updateVirtualMachine(String userId, Long id,
-			ManagementUpdateVMRequest webRequest) {
+	public void updateVirtualMachine(String userId, Long id, ManagementUpdateVMRequest webRequest) {
 
 		// get VM from database
 		VirtualMachine vm = VirtualMachineDAO.get(id);
@@ -180,9 +177,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 				// start VM
 				nodeRequest.status = webRequest.status;
 				nodeRequest.image = vm.getImage();
-				NodeUpdateVMResponse updateResponse = selectNodeService(
-						vm.getNode()).updateVirtualMachine(vm.getMachineId(),
-						nodeRequest);
+				NodeUpdateVMResponse updateResponse = selectNodeService(vm.getNode()).updateVirtualMachine(
+						vm.getMachineId(), nodeRequest);
 
 				// store RDP address
 				vm.setRdpUrl(updateResponse.rdpUrl);
@@ -190,13 +186,15 @@ public class VirtualMachineRessource implements ManagementVMService {
 				// stop virtual machine
 				nodeRequest.status = webRequest.status;
 				nodeRequest.image = null;
-				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(),
-						nodeRequest);
+				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(), nodeRequest);
 
 				// FIXME
 				try {
 					Thread.sleep(1000);
-				} catch (InterruptedException e) { }
+				} catch (InterruptedException e) {
+					// if this empty block will remain after fixing above, there
+					// needs to be an useful comment
+				}
 
 				// delete virtual machine from NodeController
 				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId());
@@ -241,10 +239,9 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	@Override
-	public byte[] getMachineScreenshot(String userId, String id,
-			int width, int height) {
+	public byte[] getMachineScreenshot(String userId, String id, int width, int height) {
 		// TODO: find a better solution than this
-		VirtualMachine vm = VirtualMachineDAO.get(Long.parseLong(id)); 
+		VirtualMachine vm = VirtualMachineDAO.get(Long.parseLong(id));
 		String machineId = vm.getMachineId();
 		return selectNodeService(vm.getNode()).getMachineScreenshot(machineId, width, height);
 	}
@@ -274,7 +271,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	 * @return the {@link NodeVMService} for the given Node
 	 */
 	private NodeVMService selectNodeService(Node node) {
-		return ProxyFactory.create(NodeVMService.class, node.getUri());
+		return ProxyFactory.create(NodeVMService.class, node.getUri() + "/vm/");
 	}
 
 	/**
@@ -298,8 +295,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setNode(chooseNode());
 
 		// Create machine on node controller
-		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode())
-				.createVirtualMachine(nodeCreateRequest);
+		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
 
 		// save the machine id
 		vm.setMachineId(nodeResponse.machineId);

@@ -13,6 +13,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
@@ -36,8 +37,10 @@ public class Manager {
 	ManagementImageService mangementImageService;
 
 	public Manager() {
-		mangementVMService = ProxyFactory.create(ManagementVMService.class, "http://localhost:8080/ManagementServer/vm/");
-		mangementImageService = ProxyFactory.create(ManagementImageService.class, "http://localhost:8080/ManagementServer/images/");
+		mangementVMService = ProxyFactory.create(ManagementVMService.class,
+				Configuration.getProperty("managementserver.uri") + "/vm/");
+		mangementImageService = ProxyFactory.create(ManagementImageService.class,
+				Configuration.getProperty("managementserver.uri") + "/images/");
 	}
 
 	@RemoteMethod
@@ -55,9 +58,8 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String createVM(String name, String type, String description,
-			Long memory, Long harddisk, Long vram, boolean acceleration2d,
-			boolean acceleration3d) {
+	public String createVM(String name, String type, String description, Long memory, Long harddisk, Long vram,
+			boolean acceleration2d, boolean acceleration3d) {
 		ManagementCreateVMRequest request = new ManagementCreateVMRequest();
 		request.name = name;
 		request.osTypeId = type;
@@ -88,7 +90,7 @@ public class Manager {
 		json.put("success", true);
 
 		JSONArray vms = new JSONArray();
-		for(ManagementVM managementVM : response) {
+		for (ManagementVM managementVM : response) {
 			JSONObject vm = new JSONObject();
 			vm.put("id", managementVM.id);
 			vm.put("name", managementVM.name);
@@ -97,7 +99,7 @@ public class Manager {
 			vm.put("harddisk", managementVM.hddSize);
 
 			JSONArray tags = new JSONArray();
-			for(ManagementTag managementTag : managementVM.tags) {
+			for (ManagementTag managementTag : managementVM.tags) {
 				JSONObject tag = new JSONObject();
 				tag.put("identifier", managementTag.identifier);
 				tag.put("name", managementTag.name);
@@ -107,7 +109,7 @@ public class Manager {
 			vm.put("tags", tags);
 
 			long lastActive = 0;
-			if(managementVM.lastActive != null) {
+			if (managementVM.lastActive != null) {
 				lastActive = managementVM.lastActive.getTime();
 			}
 			vm.put("last_active", lastActive);

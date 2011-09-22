@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.Configuration;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
 
 /**
@@ -27,15 +28,16 @@ public class Screenshot extends HttpServlet {
 	public Screenshot() {
 		super();
 
-		mangementVMService = ProxyFactory.create(ManagementVMService.class, "http://localhost:8080/ManagementServer/vm/");
+		mangementVMService = ProxyFactory.create(ManagementVMService.class,
+				Configuration.getProperty("managementserver.uri") + "/vm/");
 	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
 		/*
 		 * TODO: Use tudUserUniqueID from SSO
 		 */
@@ -48,7 +50,7 @@ public class Screenshot extends HttpServlet {
 
 		byte[] screenshot = mangementVMService.getMachineScreenshot(userId, id, width, height);
 
-		if(screenshot == null) {
+		if (screenshot == null) {
 			// Image not found
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
@@ -60,8 +62,8 @@ public class Screenshot extends HttpServlet {
 
 		OutputStream output = response.getOutputStream();
 
-	    // Copy the image to the output stream
-	    output.write(screenshot);
+		// Copy the image to the output stream
+		output.write(screenshot);
 
 		output.close();
 	}

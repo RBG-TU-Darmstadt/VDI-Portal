@@ -17,12 +17,13 @@
 
 	<properties>
 		<vbox.home></vbox.home>
+		<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
 		<node.imagefolder></node.imagefolder>
 		<node.rdp_endpoint>localhost</node.rdp_endpoint>
-		<node.internal_address>http://127.0.0.1:8080/NodeController/vm/</node.internal_address>
+		<node.internal_address>http://127.0.0.1:8080/NodeController/</node.internal_address>
 		<node.registration_delay>10</node.registration_delay>
 	</properties>
-	
+
 	<profiles>
 		<profile>
 			<id>continuous-integration</id>
@@ -34,9 +35,10 @@
 			</activation>
 			<properties>
 				<node.imagefolder>/opt/images</node.imagefolder>
+				<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
 				<vbox.home>/usr/lib/virtualbox</vbox.home>
 				<node.rdp_endpoint>xf06-vm4.rbg.informatik.tu-darmstadt.de</node.rdp_endpoint>
-				<node.internal_address>http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController/vm/</node.internal_address>
+				<node.internal_address>http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController/</node.internal_address>
 				<node.registration_delay>10</node.registration_delay>
 			</properties>
 		</profile>
@@ -99,20 +101,20 @@
 	<build>
 		<finalName>NodeController</finalName>
 		<plugins>
-		<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
-        <configuration>
-          <!-- http://maven.apache.org/plugins/maven-war-plugin/ -->
-          <webResources>
-            <resource>
-              <directory>src/main/webapp</directory>
-              <filtering>true</filtering>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<!-- http://maven.apache.org/plugins/maven-war-plugin/ -->
+					<webResources>
+						<resource>
+							<directory>src/main/webapp</directory>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

@@ -15,6 +15,25 @@
 
 	<name>VDI Web Interface</name>
 
+	<properties>
+		<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>continuous-integration</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>integration</value>
+				</property>
+			</activation>
+			<properties>
+				<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
+			</properties>
+		</profile>
+	</profiles>
+	
 	<dependencies>
 		<!-- project dependencies: -->
 		<dependency>

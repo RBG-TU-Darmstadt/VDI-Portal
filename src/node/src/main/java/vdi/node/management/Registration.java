@@ -24,7 +24,7 @@ public class Registration extends TimerTask {
 
 	static {
 		nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				"http://localhost:8080/ManagementServer/node/");
+				Configuration.getProperty("managementserver.uri")+"/node/");
 		LOGGER = Logger.getLogger(Registration.class.getName());
 	}
 
