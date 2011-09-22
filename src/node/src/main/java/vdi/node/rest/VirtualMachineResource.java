@@ -33,10 +33,17 @@ public class VirtualMachineResource implements NodeVMService {
 	public NodeCreateVMResponse createVirtualMachine(NodeCreateVMRequest request) {
 		VirtualMachine machine;
 		try {
-			machine = new VirtualMachine(request.name, request.osTypeId,
-					request.description, request.memorySize, request.hddSize,
-					request.accelerate2d, request.accelerate3d,
-					request.vramSize);
+			if (request.hddSize == 0) {
+				machine = new VirtualMachine(request.name, request.osTypeId,
+						request.description, request.memorySize,
+						request.accelerate2d, request.accelerate3d,
+						request.vramSize, request.hddPathAndFilename);
+			} else {
+				machine = new VirtualMachine(request.name, request.osTypeId,
+						request.description, request.memorySize, request.hddSize,
+						request.accelerate2d, request.accelerate3d,
+						request.vramSize);					
+			}
 		} catch (InvalidParameterException e) {
 			throw new WebApplicationException(Response
 					.status(Status.BAD_REQUEST).entity(e.getMessage()).build());

@@ -38,7 +38,7 @@ public class VirtualMachine {
 
 	private static final Logger LOGGER = Logger.getLogger(VirtualMachine.class.getName());
 
-	private IMachine machine = null;
+	private static IMachine machine = null;
 
 	/**
 	 * Establishes a connection to the VirtualBox instance
@@ -105,12 +105,12 @@ public class VirtualMachine {
 			LOGGER.finest(e.getStackTrace().toString());
 		}
 
-		if (this.machine == null) {
+		if (machine == null) {
 			LOGGER.warning("Could not find virtual machine with ID " + machineId);
 			throw new MachineNotFoundException(machineId);
 		}
 	}
-
+	
 	/**
 	 * Creates a new virtual machine.
 	 * 
@@ -135,6 +135,62 @@ public class VirtualMachine {
 	 *             Indicates, that a machine with the given name already exists.
 	 */
 	public VirtualMachine(String name, String osTypeId, String description, Long memorySize, Long hddSize,
+			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
+		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
+
+		createHdd(hddSize, getPath() + "hdd0.vdi");
+	}
+
+	/**
+	 * Creates a new virtual machine.
+	 * 
+	 * @param name
+	 *            the name of the machine
+	 * @param osTypeId
+	 *            the OS-Type identifier (not the family id!), @see
+	 *            VMController#getGuestOsTypes()
+	 * @param description
+	 *            a description for the machine
+	 * @param memorySize
+	 *            the RAM size in MB
+	 * @param accelerate2d
+	 *            2D-acceleration
+	 * @param accelerate3d
+	 *            3D-acceleration
+	 * @param vramSize
+	 *            Video-RAM size in MB
+	 * @throws DuplicateMachineNameException
+	 *             Indicates, that a machine with the given name already exists.
+	 */
+	public VirtualMachine(String name, String osTypeId, String description, Long memorySize,
+			boolean accelerate2d, boolean accelerate3d, long vramSize, String hddPathAndFilename) throws DuplicateMachineNameException {
+		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
+		
+		attachHdd(hddPathAndFilename);
+	}
+	
+	/**
+	 * Creates a new virtual machine.
+	 * 
+	 * @param name
+	 *            the name of the machine
+	 * @param osTypeId
+	 *            the OS-Type identifier (not the family id!), @see
+	 *            VMController#getGuestOsTypes()
+	 * @param description
+	 *            a description for the machine
+	 * @param memorySize
+	 *            the RAM size in MB
+	 * @param accelerate2d
+	 *            2D-acceleration
+	 * @param accelerate3d
+	 *            3D-acceleration
+	 * @param vramSize
+	 *            Video-RAM size in MB
+	 * @throws DuplicateMachineNameException
+	 *             Indicates, that a machine with the given name already exists.
+	 */
+	private void createVirtualMachine(String name, String osTypeId, String description, Long memorySize,
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		IMachine newMachine = null;
 		try {
@@ -165,17 +221,11 @@ public class VirtualMachine {
 		newMachine.saveSettings();
 		virtualBox.registerMachine(newMachine);
 
-		this.machine = newMachine;
+		machine = newMachine;
 
 		ISession session = manager.getSessionObject();
 		newMachine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
-
-		// Attach HDD
-		IMedium hdd = virtualBox.createHardDisk("vdi", getPath() + "hdd0.vdi");
-		IProgress createHdd = hdd.createBaseStorage(hddSize * 1024 * 1024, MediumVariant.Standard);
-		createHdd.waitForCompletion(10000);
-		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 		// Attach CD/DVD drive
 		mutable.attachDevice("ide", 1, 0, DeviceType.DVD, null);
@@ -195,6 +245,43 @@ public class VirtualMachine {
 		LOGGER.info("Created virtual machine with ID " + newMachine.getId());
 	}
 
+	private static void attachHdd(String pathAndFilename) {
+		ISession session = manager.getSessionObject();
+		machine.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
+
+		// Attach HDD
+		IMedium hdd = virtualBox.openMedium(pathAndFilename, DeviceType.HardDisk, AccessMode.ReadWrite, true);
+		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
+
+		mutable.saveSettings();
+		session.unlockMachine();	
+	}
+	
+	/**
+	 * Creates and attachs a virtual harddisk
+	 * 
+	 * @param size
+	 *            the size in MB
+	 * @param pathAndFilename
+	 *            the path for the vdi-file + it's filename (e.g. "hdd0.vdi") 
+	 */
+	private static void createHdd(long size, String pathAndFilename) {
+		ISession session = manager.getSessionObject();
+		machine.lockMachine(session, LockType.Write);
+		IMachine mutable = session.getMachine();
+
+		// Attach HDD
+		IMedium hdd = virtualBox.createHardDisk("vdi", pathAndFilename);
+		IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
+		createHdd.waitForCompletion(10000);
+		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
+	
+		
+		mutable.saveSettings();
+		session.unlockMachine();
+	}
+	
 	/**
 	 * Clean up the connection to VirtualBox.
 	 */
