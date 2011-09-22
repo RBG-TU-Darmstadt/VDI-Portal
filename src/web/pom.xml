@@ -16,7 +16,7 @@
 	<name>VDI Web Interface</name>
 
 	<properties>
-		<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
+		<managementserver.uri>http://localhost:8080/ManagementServer</managementserver.uri>
 	</properties>
 
 	<profiles>
@@ -29,7 +29,7 @@
 				</property>
 			</activation>
 			<properties>
-				<managementserver.uri>http://localhost:8080/ManagementServer/</managementserver.uri>
+				<managementserver.uri>http://localhost:8080/ManagementServer</managementserver.uri>
 			</properties>
 		</profile>
 	</profiles>

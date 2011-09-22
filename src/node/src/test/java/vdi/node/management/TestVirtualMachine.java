@@ -96,7 +96,7 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					System.out.println("Stoping test vm.");
 					vm.stop();
-					Thread.sleep(1000);
+					Thread.sleep(10 * 1000);
 				}
 				vm.delete();
 				vm = null;
@@ -276,7 +276,7 @@ public class TestVirtualMachine {
 		// TODO: move waiting to delete() method?
 		int i;
 		int maxcount = 20;
-		int millisecs = 500;
+		int millisecs = 1000;
 		for (i = 0; i < maxcount && !deleteVM(vm); i++) {
 			try {
 				Thread.sleep(millisecs);
@@ -284,6 +284,7 @@ public class TestVirtualMachine {
 				i--;
 			}
 		}
+		System.out.println("Delete failed " + i + " times. Had to wait " + i * millisecs + " secs.");
 		Assert.assertTrue("Could not delete VM after waiting " + maxcount * millisecs / 1000 + " seconds.",
 				i < maxcount);
 
