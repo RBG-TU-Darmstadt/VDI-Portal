@@ -65,7 +65,7 @@ public class TestVirtualMachineRessource {
 		}
 
 		if (i == 10) {
-			System.err.println("No NodeController registered in 10 s window.");
+			LOGGER.warning("No NodeController registered in 10 s window.");
 			Assume.assumeTrue(false);
 		}
 
