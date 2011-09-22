@@ -57,14 +57,14 @@ public class TestVirtualMachineRessource {
 		int i;
 		for (i = 0; i < 10 && NodeDAO.getNodes().isEmpty(); ++i) {
 			try {
-				wait(1000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		if(i==10)
-		{
+
+		if (i == 10) {
 			System.err.println("No NodeController registered in 10 s window.");
 			Assume.assumeTrue(false);
 		}

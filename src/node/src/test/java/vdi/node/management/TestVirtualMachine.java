@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VBoxException;
 
 import vdi.node.exception.DuplicateMachineNameException;
 import vdi.node.exception.MachineNotFoundException;
@@ -92,8 +93,11 @@ public class TestVirtualMachine {
 		// trying to delete machine if something went wrong
 		try {
 			if (vm != null) {
-				if (vm.getState() != VirtualMachineStatus.STOPPED)
+				if (vm.getState() != VirtualMachineStatus.STOPPED) {
+					System.out.println("Stoping test vm.");
 					vm.stop();
+					Thread.sleep(1000);
+				}
 				vm.delete();
 				vm = null;
 			}
@@ -223,6 +227,18 @@ public class TestVirtualMachine {
 		Assume.assumeNotNull(vm);
 	}
 
+	private boolean deleteVM(VirtualMachine vm) {
+		try {
+			vm.delete();
+		} catch (VBoxException e) {
+			// catching
+			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
+			// (0x80bb0007)
+			return false;
+		}
+		return true;
+	}
+
 	@Test
 	public void vmStartPauseResumeTest() {
 		getTestVM("vm status test");
@@ -256,9 +272,21 @@ public class TestVirtualMachine {
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 
-		
 		// delete machine:
-		vm.delete();
+		// TODO: move waiting to delete() method?
+		int i;
+		int maxcount = 20;
+		int millisecs = 500;
+		for (i = 0; i < maxcount && !deleteVM(vm); i++) {
+			try {
+				Thread.sleep(millisecs);
+			} catch (InterruptedException e) {
+				i--;
+			}
+		}
+		Assert.assertTrue("Could not delete VM after waiting " + maxcount * millisecs / 1000 + " seconds.",
+				i < maxcount);
+
 		vm = null;
 	}
 }
