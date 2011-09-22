@@ -63,8 +63,8 @@ public class TestVirtualMachineRessource {
 				e.printStackTrace();
 			}
 		}
-		if(i==10)
-		{
+
+		if (i == 10) {
 			System.err.println("No NodeController registered in 10 s window.");
 			Assume.assumeTrue(false);
 		}
