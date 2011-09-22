@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
@@ -21,7 +22,6 @@ import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
-import vdi.management.storage.DAO.NodeDAO;
 
 /**
  * Tests for {@link vdi.management.rest.VirtualMachineRessource}.
@@ -46,29 +46,44 @@ public class TestVirtualMachineRessource {
 		}
 		return null;
 	}
+	
+	@BeforeClass
+	public static void setUpClass()
+	{
+
+		// Wait until node registered (or timeout):
+		// I suspect this will not work because of DB implementation
+/*
+		int i;
+		for (i = 0; i < 30 && NodeDAO.getNodes().isEmpty(); ++i) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				--i;
+			}
+		}
+		
+		if (i == 30) {
+			LOGGER.warning("No NodeController registered in 30 s window.");
+			Assume.assumeTrue(false);
+		}
+*/
+		// TODO: get nodes from RestInterface
+		
+		try {
+			Thread.sleep(10*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Initializing {@link VirtualMachineRessource} and
 	 * {@link ManagementCreateVMRequest} used by tests.
 	 */
 	@Before
-	public void setUp() {
-		// Wait until node registered (or timeout):
-		int i;
-		for (i = 0; i < 10 && NodeDAO.getNodes().isEmpty(); ++i) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (i == 10) {
-			LOGGER.warning("No NodeController registered in 10 s window.");
-			Assume.assumeTrue(false);
-		}
-
+	public void setUp() {		
 		vmr = new VirtualMachineRessource();
 
 		HashMap<String, HashMap<String, String>> vmTypes = vmr.getVMTypes();

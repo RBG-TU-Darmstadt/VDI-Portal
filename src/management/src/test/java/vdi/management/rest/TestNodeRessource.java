@@ -64,6 +64,12 @@ public class TestNodeRessource {
 		String nodeId = response.nodeId;
 		LOGGER.info("Registrations was successful, nodeID is: " + nodeId);
 		
+		// TODO: get nodes from rest interface.
+		/*
+		List<Node> nodes = NodeDAO.getNodes();
+		Assert.assertNotNull("getNodes() returned NULL after successfull node registration.",nodes);
+		Assert.assertFalse("getNodes() returned empty list after successfull node registration.", nodes.isEmpty());
+		*/
 		
 		// UNREGISTER:
 		
