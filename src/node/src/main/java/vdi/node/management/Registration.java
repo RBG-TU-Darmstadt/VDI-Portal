@@ -18,14 +18,13 @@ import vdi.node.rest.Resources;
  */
 public class Registration extends TimerTask {
 
-	private static String nodeId;
+	private static String nodeId = null;
 	private static NodeRegistrationService nodeRegistration;
-	private static final Logger LOGGER;
+	private static final Logger LOGGER = Logger.getLogger(Registration.class.getName());
 
 	static {
 		nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
 				Configuration.getProperty("managementserver.uri")+"/node/");
-		LOGGER = Logger.getLogger(Registration.class.getName());
 	}
 
 	@Override
