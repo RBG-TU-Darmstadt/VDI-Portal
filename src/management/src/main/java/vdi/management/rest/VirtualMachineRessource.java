@@ -100,7 +100,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// Delete VM from NodeController
 		NodeVMService service = selectNodeService(vm.getNode());
 		if (service != null) {
-			service.removeVirtualMachine(vm.getMachineId());
+			service.removeVirtualMachine(vm.getMachineId(), true);
 		}
 
 		// Delete VM from the database
@@ -197,7 +197,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 				}
 
 				// delete virtual machine from NodeController
-				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId());
+				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId(), true);
 
 				vm.setRdpUrl(null);
 				vm.setMachineId(null);

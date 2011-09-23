@@ -16,7 +16,7 @@ or:
 	"osTypeId": "Linux24",
 	"description": "Fedora 16 alpha",
 	"memorySize": 512,
-	"hddPathAndFilename": "/path/to/hdd.vdi",
+	"hddFile": "/path/to/hdd.vdi",
 	"vramSize": 32,
 	"accelerate2d": true,
 	"accelerate3d": true

@@ -27,6 +27,6 @@ public class NodeCreateVMRequest {
 	public boolean accelerate3d;
 
 	// path to an existing virtual harddisk image
-	public String hddPathAndFilename;
+	public String hddFile;
 
 }

@@ -105,7 +105,7 @@
                 "title": "Delete a VM",
                 "request": {
                     "http_method": "DELETE",
-                    "url": "/vm/\\{id\\}",
+                    "url": "/vm/\\{id\\}?deleteHdd=[true|false]",
                     "consumes": "nothing",
                     "parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}"]
                 },

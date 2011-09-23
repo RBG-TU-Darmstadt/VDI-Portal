@@ -79,7 +79,7 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					vm.stop();
 				}
-				vm.delete();
+				vm.delete(true);
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
 			}
@@ -98,7 +98,7 @@ public class TestVirtualMachine {
 					vm.stop();
 					Thread.sleep(10 * 1000);
 				}
-				vm.delete();
+				vm.delete(true);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -109,7 +109,7 @@ public class TestVirtualMachine {
 			if (vm != null) {
 				if (vm.getState() != VirtualMachineStatus.STOPPED)
 					vm.stop();
-				vm.delete();
+				vm.delete(true);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -178,7 +178,7 @@ public class TestVirtualMachine {
 			try {
 				VirtualMachine vm2 = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L,
 						false, false, 32L);
-				vm2.delete();
+				vm2.delete(true);
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
 			}
@@ -193,7 +193,7 @@ public class TestVirtualMachine {
 
 		Assert.assertNotNull("Machine '" + name + "' not found", vm);
 
-		vm.delete();
+		vm.delete(true);
 
 		vm = getVMByName(name);
 		Assert.assertNull("Machine '" + name + "' found after delete()", vm);
@@ -229,7 +229,7 @@ public class TestVirtualMachine {
 
 	private boolean deleteVM(VirtualMachine vm) {
 		try {
-			vm.delete();
+			vm.delete(true);
 		} catch (VBoxException e) {
 			// catching
 			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"

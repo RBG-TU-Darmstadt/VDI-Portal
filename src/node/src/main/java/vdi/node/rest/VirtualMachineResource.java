@@ -37,7 +37,7 @@ public class VirtualMachineResource implements NodeVMService {
 				machine = new VirtualMachine(request.name, request.osTypeId,
 						request.description, request.memorySize,
 						request.accelerate2d, request.accelerate3d,
-						request.vramSize, request.hddPathAndFilename);
+						request.vramSize, request.hddFile);
 			} else {
 				machine = new VirtualMachine(request.name, request.osTypeId,
 						request.description, request.memorySize, request.hddSize,
@@ -173,7 +173,7 @@ public class VirtualMachineResource implements NodeVMService {
 	}
 
 	@Override
-	public void removeVirtualMachine(String machineId) {
+	public void removeVirtualMachine(String machineId, boolean deleteHdd) {
 		VirtualMachine machine;
 		try {
 			machine = new VirtualMachine(machineId);
@@ -181,7 +181,7 @@ public class VirtualMachineResource implements NodeVMService {
 			throw new WebApplicationException(Status.NOT_FOUND);
 		}
 
-		machine.delete();
+		machine.delete(deleteHdd);
 	}
 
 	@Override

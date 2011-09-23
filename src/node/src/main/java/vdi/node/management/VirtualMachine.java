@@ -159,14 +159,16 @@ public class VirtualMachine {
 	 *            3D-acceleration
 	 * @param vramSize
 	 *            Video-RAM size in MB
+	 * @param hddFile
+	 *            Path and Filename for the VDI-Image
 	 * @throws DuplicateMachineNameException
 	 *             Indicates, that a machine with the given name already exists.
 	 */
 	public VirtualMachine(String name, String osTypeId, String description, Long memorySize,
-			boolean accelerate2d, boolean accelerate3d, long vramSize, String hddPathAndFilename) throws DuplicateMachineNameException {
+			boolean accelerate2d, boolean accelerate3d, long vramSize, String hddFile) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 		
-		attachHdd(hddPathAndFilename);
+		attachHdd(hddFile);
 	}
 	
 	/**
@@ -294,9 +296,13 @@ public class VirtualMachine {
 	/**
 	 * Deletes the virtual machine.
 	 */
-	public synchronized void delete() {
+	public synchronized void delete(boolean deleteHdd) {
 		LOGGER.info("Delete virtual machine with ID " + this.getId());
-		machine.delete(machine.unregister(CleanupMode.DetachAllReturnHardDisksOnly));
+		if (deleteHdd) {
+			machine.delete(machine.unregister(CleanupMode.DetachAllReturnHardDisksOnly));
+		} else {
+			machine.delete(machine.unregister(CleanupMode.DetachAllReturnNone));
+		}
 	}
 
 	/**

@@ -46,7 +46,7 @@ public interface NodeVMService {
 	 */
 	@DELETE
 	@Path("/{machineId: [a-zA-Z0-9-_]+}")
-	void removeVirtualMachine(@PathParam("machineId") String machineId);
+	void removeVirtualMachine(@PathParam("machineId") String machineId, @QueryParam("deleteHdd") boolean deleteHdd);
 
 	/**
 	 * Get information of a VirtualMachine.
