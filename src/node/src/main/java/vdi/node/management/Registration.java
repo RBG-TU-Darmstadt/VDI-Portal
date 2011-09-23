@@ -19,16 +19,13 @@ import vdi.node.rest.Resources;
 public class Registration extends TimerTask {
 
 	private static String nodeId = null;
-	private static NodeRegistrationService nodeRegistration;
 	private static final Logger LOGGER = Logger.getLogger(Registration.class.getName());
-
-	static {
-		nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				Configuration.getProperty("managementserver.uri") + "/node/");
-	}
 
 	@Override
 	public void run() {
+		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
+				Configuration.getProperty("managementserver.uri") + "/node/");
+
 		// create request
 		NodeRegisterRequest registerRequest = new NodeRegisterRequest();
 		registerRequest.address = Configuration.getProperty("node.internal_address");
@@ -57,6 +54,9 @@ public class Registration extends TimerTask {
 	 * ManagementServer.
 	 */
 	public static void unregister() {
+		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
+				Configuration.getProperty("managementserver.uri") + "/node/");
+		
 		LOGGER.fine("Sending unregistration request with NodeID (" + nodeId + ") to ManagemetServer!");
 		// unregister
 		nodeRegistration.unregister(nodeId);
