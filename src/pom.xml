@@ -12,9 +12,10 @@
 
 	<modules>
 		<module>commons</module>
-		<module>node</module>
 		<module>management</module>
+		<module>node</module>
 		<module>web</module>
+		<module>test</module>
 	</modules>
 
 	<properties>

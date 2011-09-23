@@ -10,14 +10,15 @@ import junit.framework.AssertionFailedError;
 
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
+import org.jboss.resteasy.client.ProxyFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
+import vdi.commons.web.rest.interfaces.ManagementVMService;
 import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
@@ -29,7 +30,7 @@ import vdi.commons.web.rest.objects.ManagementVM;
 public class TestVirtualMachineRessource {
 	private static Logger LOGGER = Logger.getLogger(TestVirtualMachineRessource.class.getName());
 
-	private VirtualMachineRessource vmr;
+	private ManagementVMService vmr;
 	private ManagementCreateVMRequest createVMRequest;
 	private String userID = "0x7EEEEEEE";
 
@@ -46,45 +47,14 @@ public class TestVirtualMachineRessource {
 		}
 		return null;
 	}
-	
-	@BeforeClass
-	public static void setUpClass()
-	{
-
-		// Wait until node registered (or timeout):
-		// I suspect this will not work because of DB implementation
-/*
-		int i;
-		for (i = 0; i < 30 && NodeDAO.getNodes().isEmpty(); ++i) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				--i;
-			}
-		}
-		
-		if (i == 30) {
-			LOGGER.warning("No NodeController registered in 30 s window.");
-			Assume.assumeTrue(false);
-		}
-*/
-		// TODO: get nodes from RestInterface
-		
-		try {
-			Thread.sleep(60*1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Initializing {@link VirtualMachineRessource} and
 	 * {@link ManagementCreateVMRequest} used by tests.
 	 */
 	@Before
-	public void setUp() {		
-		vmr = new VirtualMachineRessource();
+	public void setUp() {
+		vmr = ProxyFactory.create(ManagementVMService.class, "http://localhost:8080/ManagementServer" + "/vm/");
 
 		HashMap<String, HashMap<String, String>> vmTypes = vmr.getVMTypes();
 		Assert.assertNotNull("vmTypes must not be null.", vmTypes);

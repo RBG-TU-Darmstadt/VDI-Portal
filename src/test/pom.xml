@@ -10,77 +10,38 @@
 	</parent>
 
 	<groupId>de.tud.cs.rbg.vdi</groupId>
-	<artifactId>management</artifactId>
-	<packaging>war</packaging>
+	<artifactId>test</artifactId>
+	<packaging>pom</packaging>
 
-	<name>VDI Management Server</name>
+	<name>VDI Tests</name>
 
 	<dependencies>
-		<!-- project dependencies: -->
 		<dependency>
 			<groupId>de.tud.cs.rbg.vdi.commons</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>de.tud.cs.rbg.vdi.commons</groupId>
 			<artifactId>node</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>de.tud.cs.rbg.vdi.commons</groupId>
 			<artifactId>web</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 
-
-		<!-- source dependencies (compile time): -->
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>2.2.1.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jackson-provider</artifactId>
-			<version>2.2.1.GA</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.6.6.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.0-801.jdbc4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.6.2</version>
-		</dependency>
-
-
-		<!-- runtime dependencies (needed at run time, but not compile time): -->
-
-
-		<!-- provided dependencies: -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 
-
-		<!-- test dependencies: -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -90,6 +51,15 @@
 	</dependencies>
 
 	<build>
-		<finalName>ManagementServer</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>
