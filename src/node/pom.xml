@@ -39,7 +39,7 @@
 				<vbox.home>/usr/lib/virtualbox</vbox.home>
 				<node.rdp_endpoint>xf06-vm4.rbg.informatik.tu-darmstadt.de</node.rdp_endpoint>
 				<node.internal_address>http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController</node.internal_address>
-				<node.registration_delay>10</node.registration_delay>
+				<node.registration_delay>60</node.registration_delay>
 			</properties>
 		</profile>
 	</profiles>

@@ -36,7 +36,7 @@ public class TestNodeRessource {
 		ressources.ramSize = 16;
 		ressources.freeDiskSpace = 32;
 		registerRequest.resources = ressources;
-		registerRequest.address = "http://localhost:8080/NodeController";
+		registerRequest.address = "http://localhost:8080/Test/NodeController";
 
 		NodeRegisterResponse response = null;
 		try {
