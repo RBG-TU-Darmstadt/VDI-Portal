@@ -54,6 +54,7 @@ public class VirtualMachineResource implements NodeVMService {
 
 		NodeCreateVMResponse response = new NodeCreateVMResponse();
 		response.machineId = machine.getId();
+		response.hddFile = machine.getHarddiskMedium().getLocation();
 
 		return response;
 	}

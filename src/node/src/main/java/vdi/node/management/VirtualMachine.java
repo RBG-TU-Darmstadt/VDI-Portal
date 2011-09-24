@@ -349,6 +349,15 @@ public class VirtualMachine {
 	public synchronized IMedium getMountedMedium() {
 		return machine.getMedium("ide", 1, 0);
 	}
+	
+	/**
+	 * Retrieve the virtual hard disk medium
+	 * 
+	 * @return
+	 */
+	public synchronized IMedium getHarddiskMedium() {
+		return machine.getMedium("ide", 0, 0);
+	}
 
 	/**
 	 * Returns the virtual machine's OS type.
