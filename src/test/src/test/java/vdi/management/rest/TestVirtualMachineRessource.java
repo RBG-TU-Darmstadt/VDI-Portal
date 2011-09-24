@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.WebApplicationException;
 
 import junit.framework.AssertionFailedError;
 
@@ -114,6 +114,10 @@ public class TestVirtualMachineRessource {
 			try {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
 				vmId = response.id;
+			} catch (WebApplicationException e) {
+				LOGGER.warning(e.getMessage());
+				LOGGER.info(e.getStackTrace().toString());
+				Assert.assertTrue("VM creation failed.",false);
 			} catch (ClientResponseFailure e) {
 				LOGGER.warning(e.getStackTrace().toString());
 				@SuppressWarnings("unchecked")
@@ -147,14 +151,6 @@ public class TestVirtualMachineRessource {
 			Assert.assertTrue("machine count not increased after createVirtualMachine()",
 					machines.size() == machineCount + 1);
 
-			try {
-				response = vmr.createVirtualMachine(userID, createVMRequest);
-				Assert.assertNull("vm '" + createVMRequest.name + "' mustn't be created twice", response.id);
-			} catch (ClientResponseFailure e) {
-				Status status = Status.fromStatusCode(e.getResponse().getStatus());
-				Assert.assertTrue("Expected Status BAD_REQUEST, but " + status, status == Status.BAD_REQUEST);
-			}
-
 			// Deleting test machine:
 			vmr.removeVirtualMachine(userID, testMachine.id);
 
@@ -167,7 +163,7 @@ public class TestVirtualMachineRessource {
 					break;
 				}
 			}
-			Assert.assertTrue(machineDeleted);
+			Assert.assertTrue("VM was not deleted", machineDeleted);
 
 		} catch (Exception e) {
 			e.printStackTrace();
