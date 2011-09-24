@@ -17,7 +17,7 @@ import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.entities.Node;
 
 /**
- * This class implements the {@link NodeRegistraion} Interface to enable
+ * This class implements the {@link NodeRegistrationService} Interface to enable
  * NodeController to register with the ManagementServer.
  */
 @Path("/node")
@@ -44,7 +44,10 @@ public class NodesRessource implements NodeRegistrationService {
 		node.setRamSize(request.resources.ramSize);
 
 		// save
-		Hibernate.saveOrUpdateObject(node);
+		if (!Hibernate.saveOrUpdateObject(node)) {
+			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
+					.entity("DB: node update failed").build());
+		}
 
 		// send corresponding response
 		NodeRegisterResponse response = new NodeRegisterResponse();

@@ -43,6 +43,9 @@ public interface NodeVMService {
 	 * 
 	 * @param machineId
 	 *            the machineId of the VM to delete.
+	 * @param deleteHdd
+	 *            true, if the attached vhd should be removed (removing the
+	 *            whole vm).
 	 */
 	@DELETE
 	@Path("/{machineId: [a-zA-Z0-9-_]+}")
@@ -83,9 +86,7 @@ public interface NodeVMService {
 	@Path("/{machineId: [a-zA-Z0-9-_]+}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	NodeUpdateVMResponse updateVirtualMachine(
-			@PathParam("machineId") String machineId,
-			NodeUpdateVMRequest request);
+	NodeUpdateVMResponse updateVirtualMachine(@PathParam("machineId") String machineId, NodeUpdateVMRequest request);
 
 	/**
 	 * Get a screenshot a VM.
@@ -101,8 +102,8 @@ public interface NodeVMService {
 	@GET
 	@Path("/{machineId: [a-zA-Z0-9-_]+}/screenshot")
 	@Produces("image/png")
-	byte[] getMachineScreenshot(@PathParam("machineId") String machineId,
-			@QueryParam("width") int width, @QueryParam("height") int height);
+	byte[] getMachineScreenshot(@PathParam("machineId") String machineId, @QueryParam("width") int width,
+			@QueryParam("height") int height);
 
 	/**
 	 * Get all possible VMTypes supported by the NodeController.

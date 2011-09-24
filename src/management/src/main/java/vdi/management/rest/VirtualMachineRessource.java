@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
@@ -33,7 +36,8 @@ import vdi.management.storage.entities.VirtualMachine;
 import vdi.management.util.ManagementUtil;
 
 /**
- * Exports the {@link ManagementVMSercive} Interface for the WebInterface.
+ * Exports the {@link vdi.commons.web.rest.interfaces.ManagementVMService
+ * ManagementVMService} Interface for the WebInterface.
  */
 @Path("/vm")
 public class VirtualMachineRessource implements ManagementVMService {
@@ -81,10 +85,19 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setAccelerate2d(webRequest.accelerate2d);
 		vm.setAccelerate3d(webRequest.accelerate3d);
 		User vmUser = UserDAO.get(userId);
+
+		if (vmUser == null) {
+			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
+					.entity("DB: user request failed.").build());
+		}
+
 		vm.setUser(vmUser);
 		vm.setStatus(VirtualMachineStatus.STOPPED);
 
-		Hibernate.saveObject(vm);
+		if (!Hibernate.saveObject(vm)) {
+			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
+					.entity("DB: vm insert failed.").build());
+		}
 
 		// send response to WebInterface
 		ManagementCreateVMResponse webResponse = new ManagementCreateVMResponse();

@@ -1,32 +1,53 @@
 package vdi.commons.node.objects;
 
+/**
+ * Contains informations for creating a VM.
+ */
 public class NodeCreateVMRequest {
 
-	// The machines name
+	/**
+	 * The machines name.
+	 */
 	public String name;
 
-	// The machines OS-Type-ID
+	/**
+	 * The machines OS-Type-ID.
+	 */
 	public String osTypeId;
 
-	// The machines description
+	/**
+	 * The machines description.
+	 */
 	public String description;
 
-	// RAM size in MB
+	/**
+	 * RAM size in MB.
+	 */
 	public long memorySize;
 
-	// HDD size in GB
+	/**
+	 * HDD size in GB.
+	 */
 	public long hddSize;
-	
-	// VRAM size in MB
+
+	/**
+	 * VRAM size in MB.
+	 */
 	public long vramSize;
-	
-	// 2D hardware-acceleration
+
+	/**
+	 * 2D hardware-acceleration.
+	 */
 	public boolean accelerate2d;
-	
-	// 3D hardware-acceleration
+
+	/**
+	 * 3D hardware-acceleration.
+	 */
 	public boolean accelerate3d;
 
-	// path to an existing virtual harddisk image
+	/**
+	 * path to an existing virtual hard disk image.
+	 */
 	public String hddFile;
 
 }

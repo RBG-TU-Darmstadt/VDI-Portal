@@ -50,8 +50,7 @@ public class User {
 	 * @param email
 	 *            the users email address
 	 */
-	public User(String loginName, String firstName, String lastName,
-			String tuid, String email) {
+	public User(String loginName, String firstName, String lastName, String tuid, String email) {
 		this.loginName = loginName;
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
@@ -120,9 +119,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "login: " + loginName + "\t surname: " + getFirstName()
-				+ "\t lastname: " + getLastName() + "\t tuid: " + tuid
-				+ "\t email: " + email;
+		return "login: " + loginName + "\t surname: " + getFirstName() + "\t lastname: " + getLastName()
+				+ "\t tuid: " + tuid + "\t email: " + email;
 	}
 
 	public void setEmail(String email) {

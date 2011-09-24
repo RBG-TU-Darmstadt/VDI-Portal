@@ -2,6 +2,7 @@ package vdi.management.util;
 
 import java.util.List;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
@@ -16,6 +17,7 @@ import vdi.management.storage.entities.VirtualMachine;
  * current status of running VMs.
  */
 public class PollMachineStatus extends TimerTask {
+	private static final Logger LOGGER = Logger.getLogger(PollMachineStatus.class.getName());
 
 	private NodeVMService nodeVMService;
 
@@ -23,16 +25,14 @@ public class PollMachineStatus extends TimerTask {
 	 * The constructor connects to the NodeController.
 	 */
 	public PollMachineStatus() {
-		nodeVMService = ProxyFactory.create(NodeVMService.class,
-				"http://localhost:8080/NodeController/vm/");
+		nodeVMService = ProxyFactory.create(NodeVMService.class, "http://localhost:8080/NodeController/vm/");
 	}
 
 	@Override
 	public void run() {
 		boolean changed = false;
 		// get all running machines from the database
-		List<VirtualMachine> runningVMs = VirtualMachineDAO
-				.getMachinesByStatus(VirtualMachineStatus.STARTED);
+		List<VirtualMachine> runningVMs = VirtualMachineDAO.getMachinesByStatus(VirtualMachineStatus.STARTED);
 
 		for (VirtualMachine vm : runningVMs) {
 			NodeVM nodeVM = nodeVMService.getVirtualMachine(vm.getMachineId());
@@ -41,7 +41,9 @@ public class PollMachineStatus extends TimerTask {
 				changed = true;
 				vm.setStatus(VirtualMachineStatus.STOPPED);
 				vm.setRdpUrl(null);
-				VirtualMachineDAO.update(vm);
+				if (!VirtualMachineDAO.update(vm)) {
+					LOGGER.warning("DB: update vm status failed.");
+				}
 			}
 		}
 

@@ -19,7 +19,7 @@ public final class UserDAO {
 
 	/**
 	 * Checks if the user with a specified tuid exists.
-	 *
+	 * 
 	 * @param tuid
 	 *            the tuid of the user
 	 * @return true, if the user exists, otherwise false
@@ -28,9 +28,8 @@ public final class UserDAO {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 
-		Long occ = (Long) session
-				.createQuery("select count(*) from User as u where u.tuid = ?")
-				.setString(0, tuid).uniqueResult();
+		Long occ = (Long) session.createQuery("select count(*) from User as u where u.tuid = ?").setString(0, tuid)
+				.uniqueResult();
 
 		session.getTransaction().commit();
 
@@ -39,28 +38,30 @@ public final class UserDAO {
 
 	/**
 	 * Stores the user in the database.
-	 *
+	 * 
 	 * @param u
 	 *            the User to store
+	 * @return true at success
 	 */
-	public static void create(User u) {
-		Hibernate.saveObject(u);
+	public static boolean create(User u) {
+		return Hibernate.saveObject(u);
 	}
 
 	/**
 	 * Upates a User entity.
-	 *
+	 * 
 	 * @param u
 	 *            the user to update
+	 * @return true at success
 	 */
-	public static void update(User u) {
-		Hibernate.saveOrUpdateObject(u);
+	public static boolean update(User u) {
+		return Hibernate.saveOrUpdateObject(u);
 	}
 
 	/**
 	 * Retrieves the user with given TUID. If user does not exist in the
 	 * database, a new user with this tuid is created.
-	 *
+	 * 
 	 * @param tuid
 	 *            the users tuid
 	 * @return the user with specified tuid
@@ -68,18 +69,18 @@ public final class UserDAO {
 	public static User get(String tuid) {
 		User user;
 		if (UserDAO.exists(tuid)) {
-			Session session = HibernateUtil.getSessionFactory()
-					.getCurrentSession();
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
 
-			user = (User) session.createQuery("from User where tuid=?")
-					.setString(0, tuid).uniqueResult();
+			user = (User) session.createQuery("from User where tuid=?").setString(0, tuid).uniqueResult();
 
 			session.getTransaction().commit();
 		} else {
 			user = new User();
 			user.setTuid(tuid);
-			UserDAO.create(user);
+			if (!UserDAO.create(user)) {
+				user = null;
+			}
 		}
 		return user;
 	}

@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * Node Entity.
+ * Node Entity stores all informations about registered NodeControllers. 
  */
 @Entity
 public class Node {
@@ -18,9 +18,9 @@ public class Node {
 	private Long id;
 	private String nodeId;
 	private URI uri;
-	private long ramSize;
-	private double cpuLoad;
-	private long freeDiskSpace;
+	private Long ramSize;
+	private Double cpuLoad;
+	private Long freeDiskSpace;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,7 +83,7 @@ public class Node {
 	 * @return the cpuLoad
 	 */
 	@Column(name = "CPU_LOAD")
-	public double getCpuLoad() {
+	public Double getCpuLoad() {
 		return cpuLoad;
 	}
 
@@ -98,7 +98,7 @@ public class Node {
 	 * @return the freeDiskSpace
 	 */
 	@Column(name = "DISKSPACE_FREE")
-	public long getFreeDiskSpace() {
+	public Long getFreeDiskSpace() {
 		return freeDiskSpace;
 	}
 

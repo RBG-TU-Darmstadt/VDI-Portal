@@ -2,6 +2,7 @@ package vdi.management.storage;
 
 import java.util.logging.Logger;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
@@ -22,18 +23,21 @@ public final class Hibernate {
 	 * 
 	 * @param o
 	 *            the object to save
+	 * @return true, if successful.
 	 */
-	public static void saveObject(Object o) {
+	public static boolean saveObject(Object o) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
 			session.save(o);
 			session.getTransaction().commit();
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.info(e.getStackTrace().toString());
+			LOGGER.fine(e.getStackTrace().toString());
+			return false;
 		}
+
+		return true;
 	}
 
 	/**
@@ -41,19 +45,20 @@ public final class Hibernate {
 	 * 
 	 * @param o
 	 *            the object
+	 * @return true, if successful.
 	 */
-	public static void saveOrUpdateObject(Object o) {
+	public static boolean saveOrUpdateObject(Object o) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
 			session.merge(o);
 			session.getTransaction().commit();
-		} catch (Exception e) {
-			// TODO: handle Exception
+		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.info(e.getStackTrace().toString());
-
+			LOGGER.fine(e.getStackTrace().toString());
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -61,17 +66,19 @@ public final class Hibernate {
 	 * 
 	 * @param o
 	 *            the object to delete
+	 * @return true, if successful.
 	 */
-	public static void deleteObject(Object o) {
+	public static boolean deleteObject(Object o) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 			session.beginTransaction();
 			session.delete(o);
 			session.getTransaction().commit();
-		} catch (Exception e) {
-			// TODO: handle Exception
+		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.info(e.getStackTrace().toString());
+			LOGGER.fine(e.getStackTrace().toString());
+			return false;
 		}
+		return true;
 	}
 }

@@ -8,6 +8,7 @@ import javax.servlet.ServletContextListener;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
+import vdi.management.storage.HibernateUtil;
 import vdi.management.util.PollMachineStatus;
 
 /**
@@ -17,10 +18,12 @@ import vdi.management.util.PollMachineStatus;
 public class InitializeContext implements ServletContextListener {
 
 	/**
-	 * How often should the ManagementServer poll the NodeController for status
-	 * changes.
+	 * Interval in ms for ManagementServer polling the NodeControllers for
+	 * status changes.
+	 * 
+	 * TODO: move to configuration property.
 	 */
-	static final int SECONDS = 5;
+	static final int POLL_INTERVAL = 5000;
 	private Timer polling;
 
 	@Override
@@ -30,13 +33,16 @@ public class InitializeContext implements ServletContextListener {
 
 		// start polling for MachineStatus changes
 		polling = new Timer();
-		polling.scheduleAtFixedRate(new PollMachineStatus(), 0, SECONDS * 1000);
+		polling.scheduleAtFixedRate(new PollMachineStatus(), 0, POLL_INTERVAL);
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent contextEvent) {
 		// stop polling TimerTask
 		polling.cancel();
+
+		// closing Hibernate SessionFactory:
+		HibernateUtil.getSessionFactory().close();
 	}
 
 }

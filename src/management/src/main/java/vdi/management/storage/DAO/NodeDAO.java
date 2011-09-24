@@ -8,7 +8,7 @@ import vdi.management.storage.HibernateUtil;
 import vdi.management.storage.entities.Node;
 
 /**
- * The DAO class for Node Entity.
+ * The DAO class for {@link Node} Entity.
  */
 public final class NodeDAO {
 
@@ -56,7 +56,7 @@ public final class NodeDAO {
 	/**
 	 * Get a list of all Nodes in the database.
 	 *
-	 * @return a list with all {@link NodeVMService}
+	 * @return a list with all {@link vdi.commons.node.interfaces.NodeVMService}
 	 */
 	public static List<Node> getNodes() {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();

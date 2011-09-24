@@ -22,7 +22,7 @@ import org.hibernate.annotations.ForeignKey;
 import vdi.commons.common.objects.VirtualMachineStatus;
 
 /**
- * VirtualMachine Entity.
+ * VirtualMachine Entity represents a VM in the database.
  */
 @Entity
 public class VirtualMachine {
@@ -42,14 +42,15 @@ public class VirtualMachine {
 	private String rdpUrl;
 	private List<Tag> tags;
 	private String image;
-	private long vram;
-	private boolean accelerate2d;
-	private boolean accelerate3d;
+	private Long vram;
+	private Boolean accelerate2d;
+	private Boolean accelerate3d;
 
 	/**
 	 * Default Constructor.
 	 */
-	public VirtualMachine() { }
+	public VirtualMachine() {
+	}
 
 	/**
 	 * Overloaded constructor.
@@ -65,8 +66,7 @@ public class VirtualMachine {
 	 * @param user
 	 *            the owning user
 	 */
-	public VirtualMachine(String machineId, String machineName,
-			Date creationDate, String description, User user) {
+	public VirtualMachine(String machineId, String machineName, Date creationDate, String description, User user) {
 		this.machineId = machineId;
 		this.setMachineName(machineName);
 		this.creationDate = creationDate;
@@ -207,7 +207,7 @@ public class VirtualMachine {
 	}
 
 	@Column(name = "VRAM")
-	public long getVram() {
+	public Long getVram() {
 		return vram;
 	}
 
@@ -216,7 +216,7 @@ public class VirtualMachine {
 	}
 
 	@Column(name = "ACC2D")
-	public boolean isAccelerate2d() {
+	public Boolean isAccelerate2d() {
 		return accelerate2d;
 	}
 
@@ -225,7 +225,7 @@ public class VirtualMachine {
 	}
 
 	@Column(name = "ACC3D")
-	public boolean isAccelerate3d() {
+	public Boolean isAccelerate3d() {
 		return accelerate3d;
 	}
 
@@ -234,7 +234,7 @@ public class VirtualMachine {
 	}
 
 	@ManyToOne
-    @JoinColumn(name = "node_id")
+	@JoinColumn(name = "node_id")
 	public Node getNode() {
 		return node;
 	}

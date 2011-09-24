@@ -18,7 +18,7 @@ import org.hibernate.annotations.ForeignKey;
 import vdi.commons.common.Util;
 
 /**
- * Tag Entity.
+ * Tag Entity used to slug.
  */
 @Entity
 public class Tag {
@@ -36,7 +36,7 @@ public class Tag {
 
 	/**
 	 * @param name
-	 *            the name if the Tag
+	 *            the name of the Tag
 	 */
 	public Tag(String name) {
 		this.name = name;

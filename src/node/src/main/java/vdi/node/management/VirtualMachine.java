@@ -295,6 +295,8 @@ public class VirtualMachine {
 
 	/**
 	 * Deletes the virtual machine.
+	 * 
+	 * @param deleteHdd true to delete vm's attached vhd.
 	 */
 	public synchronized void delete(boolean deleteHdd) {
 		LOGGER.info("Delete virtual machine with ID " + this.getId());

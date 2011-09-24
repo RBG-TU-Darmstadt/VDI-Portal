@@ -30,6 +30,9 @@ public final class HibernateUtil {
 			// Make sure you log the exception, as it might be swallowed
 			LOGGER.warning("Exception in HibernateUtil caught: "
 					+ ex.toString());
+			
+			// TODO: better crash application?
+			sessionFactory = null;
 		}
 	}
 
