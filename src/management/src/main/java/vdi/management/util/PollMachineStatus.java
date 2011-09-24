@@ -19,15 +19,6 @@ import vdi.management.storage.entities.VirtualMachine;
 public class PollMachineStatus extends TimerTask {
 	private static final Logger LOGGER = Logger.getLogger(PollMachineStatus.class.getName());
 
-	private NodeVMService nodeVMService;
-
-	/**
-	 * The constructor connects to the NodeController.
-	 */
-	public PollMachineStatus() {
-		nodeVMService = ProxyFactory.create(NodeVMService.class, "http://localhost:8080/NodeController/vm/");
-	}
-
 	@Override
 	public void run() {
 		boolean changed = false;
@@ -35,6 +26,7 @@ public class PollMachineStatus extends TimerTask {
 		List<VirtualMachine> runningVMs = VirtualMachineDAO.getMachinesByStatus(VirtualMachineStatus.STARTED);
 
 		for (VirtualMachine vm : runningVMs) {
+			NodeVMService nodeVMService = ProxyFactory.create(NodeVMService.class, vm.getNode().getUri() + "/vm/");
 			NodeVM nodeVM = nodeVMService.getVirtualMachine(vm.getMachineId());
 			// if VM is stopped on NodeController, update Database entry
 			if (nodeVM.status == VirtualMachineStatus.STOPPED) {
