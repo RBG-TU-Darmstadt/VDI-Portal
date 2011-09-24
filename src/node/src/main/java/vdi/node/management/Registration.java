@@ -3,8 +3,6 @@ package vdi.node.management;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import javax.ws.rs.WebApplicationException;
-
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 
