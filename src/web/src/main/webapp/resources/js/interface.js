@@ -82,8 +82,6 @@ vdi = {
 		Manager.getVMs(function(json) {
 			var response = $.parseJSON(json);
 
-			console.log(response);
-
 			if (response.success) {
 				var vmDrawer = $('.vdi-machine-drawer-machines');
 
