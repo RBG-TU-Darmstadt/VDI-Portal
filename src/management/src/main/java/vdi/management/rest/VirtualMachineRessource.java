@@ -111,10 +111,11 @@ public class VirtualMachineRessource implements ManagementVMService {
 		VirtualMachine vm = VirtualMachineDAO.get(vmId);
 
 		// Delete VM from NodeController
-		NodeVMService service = selectNodeService(vm.getNode());
-		if (service != null) {
-			service.removeVirtualMachine(vm.getMachineId(), true);
+		if (vm.getNode() == null) {
+			createVMOnNode(vm);
 		}
+		NodeVMService service = selectNodeService(vm.getNode());
+		service.removeVirtualMachine(vm.getMachineId(), true);
 
 		// Delete VM from the database
 		Hibernate.deleteObject(vm);
@@ -181,6 +182,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		// Only save if part of the request / changed
 		if (webRequest.status != null && webRequest.status != vm.getStatus()) {
+			nodeRequest.status = webRequest.status;
 			if (webRequest.status == VirtualMachineStatus.STARTED) {
 				if (vm.getStatus() == VirtualMachineStatus.STOPPED && vm.getNode() == null) {
 					// create virtual machine on NodeController
@@ -188,7 +190,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 				}
 
 				// start VM
-				nodeRequest.status = webRequest.status;
 				nodeRequest.image = vm.getImage();
 				NodeUpdateVMResponse updateResponse = selectNodeService(vm.getNode()).updateVirtualMachine(
 						vm.getMachineId(), nodeRequest);
@@ -197,7 +198,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 				vm.setRdpUrl(updateResponse.rdpUrl);
 			} else if (webRequest.status == VirtualMachineStatus.STOPPED) {
 				// stop virtual machine
-				nodeRequest.status = webRequest.status;
 				nodeRequest.image = null;
 				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(), nodeRequest);
 
@@ -210,7 +210,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 				}
 
 				// delete virtual machine from NodeController
-				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId(), true);
+				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId(), false);
 
 				vm.setRdpUrl(null);
 				vm.setMachineId(null);
@@ -218,7 +218,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 				vm.setNode(null);
 			} else {
 				// pause virtual machine
-				nodeRequest.status = webRequest.status;
 				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(), nodeRequest);
 			}
 
@@ -299,7 +298,13 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.osTypeId = vm.getOsType();
 		nodeCreateRequest.description = vm.getDescription();
 		nodeCreateRequest.memorySize = vm.getMemorySize();
-		nodeCreateRequest.hddSize = vm.getHddSize();
+		if (vm.getHddPath() == null) {
+			nodeCreateRequest.hddSize = vm.getHddSize();
+		} else {
+			// hdd is already created
+			nodeCreateRequest.hddSize = 0;
+			nodeCreateRequest.hddFile = vm.getHddPath();
+		}
 		nodeCreateRequest.vramSize = vm.getVram();
 		nodeCreateRequest.accelerate2d = vm.isAccelerate2d();
 		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
@@ -310,7 +315,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
 
-		// save the machine id
+		// save the machine id and hdd path
 		vm.setMachineId(nodeResponse.machineId);
+		vm.setHddPath(nodeResponse.hddFile);
 	}
 }
