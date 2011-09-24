@@ -30,6 +30,7 @@ public class VirtualMachine {
 	private Long id;
 	private String machineId;
 	private String machineName;
+	private String hddPath;
 	private Node node;
 	private Date creationDate;
 	private String description;
@@ -101,6 +102,15 @@ public class VirtualMachine {
 
 	public void setMachineName(String machineName) {
 		this.machineName = machineName;
+	}
+
+	@Column(name = "HDD_PATH")
+	public String getHddPath() {
+		return hddPath;
+	}
+
+	public void setHddPath(String hddPath) {
+		this.hddPath = hddPath;
 	}
 
 	@Column(name = "CREATION_DATE")
