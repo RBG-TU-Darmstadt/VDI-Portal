@@ -211,7 +211,7 @@ public class VirtualMachine {
 		return vram;
 	}
 
-	public void setVram(long vram) {
+	public void setVram(Long vram) {
 		this.vram = vram;
 	}
 
@@ -220,7 +220,7 @@ public class VirtualMachine {
 		return accelerate2d;
 	}
 
-	public void setAccelerate2d(boolean accelerate2d) {
+	public void setAccelerate2d(Boolean accelerate2d) {
 		this.accelerate2d = accelerate2d;
 	}
 
@@ -229,7 +229,7 @@ public class VirtualMachine {
 		return accelerate3d;
 	}
 
-	public void setAccelerate3d(boolean accelerate3d) {
+	public void setAccelerate3d(Boolean accelerate3d) {
 		this.accelerate3d = accelerate3d;
 	}
 

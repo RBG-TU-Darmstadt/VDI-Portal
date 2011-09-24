@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
@@ -36,8 +37,10 @@ public class Registration extends TimerTask {
 		try {
 			LOGGER.fine("Trying to register NodeController with address: " + registerRequest.address);
 			response = nodeRegistration.register(registerRequest);
-		} catch (WebApplicationException e) {
+		} catch (ClientResponseFailure e) {
 			LOGGER.warning("Registering at ManagementServer failed: " + e.getMessage());
+			// TODO: Retry at SERVICE UNAVAILABLE response code.
+			throw new Error("Couldn't register at ManagementServer.");
 		}
 
 		if (response == null) {
@@ -54,12 +57,14 @@ public class Registration extends TimerTask {
 	 * ManagementServer.
 	 */
 	public static void unregister() {
-		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				Configuration.getProperty("managementserver.uri") + "/node/");
-		
-		LOGGER.fine("Sending unregistration request with NodeID (" + nodeId + ") to ManagemetServer!");
-		// unregister
-		nodeRegistration.unregister(nodeId);
+		if (nodeId != null) {
+			NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
+					Configuration.getProperty("managementserver.uri") + "/node/");
+
+			LOGGER.fine("Sending unregistration request with NodeID (" + nodeId + ") to ManagemetServer!");
+			// unregister
+			nodeRegistration.unregister(nodeId);
+		}
 	}
 
 }

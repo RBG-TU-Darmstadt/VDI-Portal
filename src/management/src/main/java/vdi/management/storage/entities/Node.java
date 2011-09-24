@@ -68,14 +68,14 @@ public class Node {
 	 * @return the ram size
 	 */
 	@Column(name = "RAM_SIZE")
-	public long getRamSize() {
+	public Long getRamSize() {
 		return ramSize;
 	}
 
 	/**
 	 * @param ramSize the freeRam to set
 	 */
-	public void setRamSize(long ramSize) {
+	public void setRamSize(Long ramSize) {
 		this.ramSize = ramSize;
 	}
 
@@ -90,7 +90,7 @@ public class Node {
 	/**
 	 * @param cpuLoad the cpuLoad to set
 	 */
-	public void setCpuLoad(double cpuLoad) {
+	public void setCpuLoad(Double cpuLoad) {
 		this.cpuLoad = cpuLoad;
 	}
 
@@ -105,7 +105,7 @@ public class Node {
 	/**
 	 * @param freeDiskSpace the freeDiskSpace to set
 	 */
-	public void setFreeDiskSpace(long freeDiskSpace) {
+	public void setFreeDiskSpace(Long freeDiskSpace) {
 		this.freeDiskSpace = freeDiskSpace;
 	}
 
