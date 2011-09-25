@@ -128,6 +128,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		for (Node n : NodeDAO.getNodes()) {
 			result.putAll(selectNodeService(n).getVMTypes());
 		}
+
 		return result;
 	}
 
