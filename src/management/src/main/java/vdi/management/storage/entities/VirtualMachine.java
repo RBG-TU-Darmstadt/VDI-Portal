@@ -1,5 +1,6 @@
 package vdi.management.storage.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class VirtualMachine {
 	private VirtualMachineStatus status;
 	private Date lastActive;
 	private String rdpUrl;
-	private List<Tag> tags;
+	private List<Tag> tags = new ArrayList<Tag>();
 	private String image;
 	private Long vram;
 	private Boolean accelerate2d;
@@ -131,7 +132,7 @@ public class VirtualMachine {
 		this.description = description;
 	}
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "USER_ID")
 	public User getUser() {
 		return user;
@@ -243,7 +244,7 @@ public class VirtualMachine {
 		this.accelerate3d = accelerate3d;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "node_id")
 	public Node getNode() {
 		return node;
