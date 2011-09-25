@@ -37,15 +37,6 @@
 		<div class="vdi-nav">
 			<h2>Tags</h2>
 			<ul>
-				<li>
-					<a href="#">Windows</a>
-				</li>
-				<li>
-					<a href="#">Android</a>
-				</li>
-				<li>
-					<a href="#">x86</a>
-				</li>
 			</ul>
 		</div>
 

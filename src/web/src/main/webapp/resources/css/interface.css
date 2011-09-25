@@ -2,6 +2,10 @@ a img {
 	border:none;
 }
 
+a:visited {
+	color:blue;
+}
+
 /*
  * Layout
  */
@@ -66,6 +70,10 @@ body {
 
 .vdi-view .vdi-nav ul li a {
 	text-decoration:none;
+}
+
+.vdi-view .vdi-nav ul li a.vdi-tag-active {
+	color:black;
 }
 
 .vdi-view .vdi-content {
