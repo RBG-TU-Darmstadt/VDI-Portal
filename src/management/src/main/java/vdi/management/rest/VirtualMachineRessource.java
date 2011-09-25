@@ -34,6 +34,7 @@ import vdi.management.storage.entities.Tag;
 import vdi.management.storage.entities.User;
 import vdi.management.storage.entities.VirtualMachine;
 import vdi.management.util.ManagementUtil;
+import vdi.management.util.Scheduling;
 
 /**
  * Exports the {@link vdi.commons.web.rest.interfaces.ManagementVMService
@@ -125,9 +126,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public HashMap<String, HashMap<String, String>> getVMTypes() {
 		HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
 
-		for (Node n : NodeDAO.getNodes()) {
-			result.putAll(selectNodeService(n).getVMTypes());
-		}
+		result = selectNodeService(Scheduling.selectNode()).getVMTypes();
 
 		return result;
 	}
