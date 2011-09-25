@@ -113,7 +113,7 @@ public final class TagsDAO {
 			session.beginTransaction();
 
 			@SuppressWarnings("unchecked")
-			List<Tag> list = session.createCriteria(Tag.class).list();
+			List<Tag> list = session.createQuery("from Tag").list();
 
 			session.getTransaction().commit();
 
