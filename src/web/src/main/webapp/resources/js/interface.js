@@ -31,6 +31,9 @@ vdi = {
 			onClosed: $.proxy(this, 'resetImageDialog')
 		}, this.fancyboxOptions));
 
+		// Tag navigation
+		$('div.vdi-nav ul li a, div.vdi-machine span.vdi-machine-tags a').live('click', $.proxy(this, 'showVMsWithTag'));
+
 		// Load VMs
 		this.getVMs();
 
@@ -76,90 +79,149 @@ vdi = {
 			typeSelect.append("<option value='" + typeName + "'>" + typeDescription + "</option>");
 		});
 	},
-	
+
+	tags: undefined,
+
 	getVMs: function() {
+		// Unmark all anchors in tag navigation
+		$("div.vdi-nav ul li a").removeClass('vdi-tag-active');
+
+		this.tags = {
+			all: {
+				name: 'all',
+				vms: []
+			}
+		};
+
 		var self = this;
 		Manager.getVMs(function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
-				var vmDrawer = $('.vdi-machine-drawer-machines');
-
-				// Clear machines
-				vmDrawer.empty();
-
-				var buttons = {
-						start:	"<span class='vdi-machine-start'><img src=\"../resources/images/play.png\"></span>",
-						pause:	"<span class='vdi-machine-pause'><img src=\"../resources/images/pause.png\"></span>",
-						stop:	"<span class='vdi-machine-stop'><img src=\"../resources/images/stop.png\"></span>",
-						disk:	"<span class='vdi-machine-mount'><img src=\"../resources/images/disk.png\"></span>",
-						eject:	"<span class='vdi-machine-eject'><img src=\"../resources/images/eject.png\"></span>",
-						rdp:	"<img src=\"../resources/images/eye.png\">"
-				};
-
+				// Register tags
 				$.each(response.vms, function(i, vm) {
-					var tags = [];
 					$.each(vm.tags, function(i, tag) {
-						tags.push("<a href='#tag/" + tag.identifier + "'>" + tag.name + "</a>");
+						if ( ! (tag.identifier in self.tags)) {
+							self.tags[tag.identifier] = {
+								name: tag.name,
+								vms: [vm]
+							};
+						} else {
+							self.tags[tag.identifier].vms.push(vm);
+						}
 					});
 
-					// Visualize VM status
-					var status = '',
-						active_buttons = [],
-						screenshot = "./screenshot/?machine=" + vm.id + "&width=120&height=90&" + (new Date()).getTime(),
-						show_paused = "", // false
-						rpd_url = "",
-						image = vm.image || "",
-						disk = vm.image ? buttons.eject : buttons.disk;
-
-					if (vm.status == 'STARTED') {
-						status = "Läuft";
-						rpd_url = vm.rdp_url;
-						var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + buttons.rdp + "</a>";
-						active_buttons = [rdp, buttons.pause, disk, buttons.stop];
-					} else if (vm.status == 'STOPPED') {
-						status = "Ausgeschaltet";
-
-						if (vm.last_active) {
-							status += ", zuletzt gestartet " + self.formatDate(vm.last_active);
-						}
-
-						active_buttons = [buttons.start, disk];
-						screenshot = "../resources/images/machine-off.png";
-					} else if (vm.status == 'PAUSED') {
-						status = "Angehalten";
-						active_buttons = [buttons.start];
-						show_paused = true;
-					}
-
-					var vmDom = $("<div class='vdi-machine'>"
-					+ "	<div class='vdi-machine-remove'><img src=\"../resources/images/delete.png\"></div>"
-					+ "	<div class='vdi-machine-screenshot'>"
-					+ "		<img src='" + screenshot + "'>"
-					+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
-					+ "	</div>"
-					+ "	<div class='vdi-machine-infos'>"
-					+ "		<div class='vdi-machine-actions'>"
-					+ active_buttons.join("\n")
-					+ "		</div>"
-					+ "		<span class='vdi-machine-info-title'>Name:</span> " + vm.name + "<br />"
-					+ "		<span class='vdi-machine-info-title'>Beschreibung:</span> " + vm.description + "<br />"
-					+ "		<span class='vdi-machine-info-title'>Tags:</span> " + tags.join(", ") + "<br />"
-					+ "		<span class='vdi-machine-info-title'>Status:</span> " + status + "<br />"
-					+ 		(rpd_url && "<span class='vdi-machine-info-title'>RDP:</span> " + rpd_url + "<br />")
-					+ 		(image && "<span class='vdi-machine-info-title'>Image:</span> " + image + "<br />")
-					+ "	</div>"
-					+ "<div class='clear-layout'></div>"
-					+ "</div>");
-
-					// Add hidden data for VM
-					vmDom.data("id", vm.id);
-					vmDom.data("status", vm.status);
-					vmDom.data("name", vm.name);
-
-					vmDrawer.append(vmDom);
+					self.tags['all'].vms.push(vm);
 				});
+
+				self.renderVMs(response.vms);
+
+				// Initialize tag navigation
+				var tags_dom = '';
+				$.each(self.tags, function(identifier, tag) {
+					tags_dom += "<li><a href='#tag/" + identifier + "' "
+						+ (identifier == 'all' ? "class='vdi-tag-active'" : "") + ">"
+						+ tag.name + " (" + tag.vms.length + ")</a></li>";
+				});
+				$('div.vdi-nav ul').html(tags_dom);
 			}
+		});
+	},
+
+	showVMsWithTag: function(event) {
+		event.preventDefault();
+
+		var href = $(event.target).attr('href');
+		var tagIdentifier = href.match(/#tag\/(.+)/)[1];
+
+		// Unmark all anchors in tag navigation
+		$("div.vdi-nav ul li a").removeClass('vdi-tag-active');
+
+		// Mark active tag
+		$("div.vdi-nav ul li a[href='" + href + "']").addClass('vdi-tag-active');
+
+		// Render VMs matching the tag
+		this.renderVMs(this.tags[tagIdentifier].vms);
+	},
+
+	buttons: {
+			start:	"<span class='vdi-machine-start'><img src=\"../resources/images/play.png\"></span>",
+			pause:	"<span class='vdi-machine-pause'><img src=\"../resources/images/pause.png\"></span>",
+			stop:	"<span class='vdi-machine-stop'><img src=\"../resources/images/stop.png\"></span>",
+			disk:	"<span class='vdi-machine-mount'><img src=\"../resources/images/disk.png\"></span>",
+			eject:	"<span class='vdi-machine-eject'><img src=\"../resources/images/eject.png\"></span>",
+			rdp:	"<img src=\"../resources/images/eye.png\">"
+	},
+
+	renderVMs: function(vms) {
+		var vmDrawer = $('.vdi-machine-drawer-machines');
+
+		// Clear machines
+		vmDrawer.empty();
+
+		var self = this;
+		$.each(vms, function(i, vm) {
+			var vm_tags = [];
+			$.each(vm.tags, function(i, tag) {
+				vm_tags.push("<a href='#tag/" + tag.identifier + "'>" + tag.name + "</a>");
+			});
+
+			// Visualize VM status
+			var status = '',
+				active_buttons = [],
+				screenshot = "./screenshot/?machine=" + vm.id + "&width=120&height=90&" + (new Date()).getTime(),
+				show_paused = "", // false
+				rpd_url = "",
+				image = vm.image || "",
+				disk = vm.image ? self.buttons.eject : self.buttons.disk;
+
+			if (vm.status == 'STARTED') {
+				status = "Läuft";
+				rpd_url = vm.rdp_url;
+				var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + buttons.rdp + "</a>";
+				active_buttons = [rdp, self.buttons.pause, disk, self.buttons.stop];
+			} else if (vm.status == 'STOPPED') {
+				status = "Ausgeschaltet";
+
+				if (vm.last_active) {
+					status += ", zuletzt gestartet " + self.formatDate(vm.last_active);
+				}
+
+				active_buttons = [self.buttons.start, disk];
+				screenshot = "../resources/images/machine-off.png";
+			} else if (vm.status == 'PAUSED') {
+				status = "Angehalten";
+				active_buttons = [self.buttons.start];
+				show_paused = true;
+			}
+
+			var vmDom = $("<div class='vdi-machine'>"
+			+ "	<div class='vdi-machine-remove'><img src=\"../resources/images/delete.png\"></div>"
+			+ "	<div class='vdi-machine-screenshot'>"
+			+ "		<img src='" + screenshot + "'>"
+			+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
+			+ "	</div>"
+			+ "	<div class='vdi-machine-infos'>"
+			+ "		<div class='vdi-machine-actions'>"
+			+ active_buttons.join("\n")
+			+ "		</div>"
+			+ "		<span class='vdi-machine-info-title'>Name:</span> " + vm.name + "<br />"
+			+ "		<span class='vdi-machine-info-title'>Beschreibung:</span> " + vm.description + "<br />"
+			+ "		<span class='vdi-machine-info-title'>Tags:</span> "
+			+ "			<span class='vdi-machine-tags'>" + vm_tags.join(", ") + "</span><br />"
+			+ "		<span class='vdi-machine-info-title'>Status:</span> " + status + "<br />"
+			+ 		(rpd_url && "<span class='vdi-machine-info-title'>RDP:</span> " + rpd_url + "<br />")
+			+ 		(image && "<span class='vdi-machine-info-title'>Image:</span> " + image + "<br />")
+			+ "	</div>"
+			+ "<div class='clear-layout'></div>"
+			+ "</div>");
+
+			// Add hidden data for VM
+			vmDom.data("id", vm.id);
+			vmDom.data("status", vm.status);
+			vmDom.data("name", vm.name);
+
+			vmDrawer.append(vmDom);
 		});
 	},
 	
