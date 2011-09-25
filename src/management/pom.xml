@@ -32,7 +32,7 @@
 			<artifactId>web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
+		
 
 		<!-- source dependencies (compile time): -->
 		<dependency>
@@ -44,6 +44,12 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson-provider</artifactId>
 			<version>2.2.1.GA</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 
 		<dependency>

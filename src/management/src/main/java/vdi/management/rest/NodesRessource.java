@@ -34,7 +34,6 @@ public class NodesRessource implements NodeRegistrationService {
 		try {
 			node.setUri(request.address);
 		} catch (URISyntaxException e) {
-			LOGGER.warning(e.getMessage());
 			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
 		}
 
@@ -53,13 +52,25 @@ public class NodesRessource implements NodeRegistrationService {
 		NodeRegisterResponse response = new NodeRegisterResponse();
 		response.nodeId = node.getNodeId();
 
+		LOGGER.info("registered node '" + request.address + "' as '" + node.getNodeId() + "'");
+
 		return response;
 	}
 
 	@Override
 	public void unregister(String nodeId) {
-		// delete node entry from database
-		Hibernate.deleteObject(NodeDAO.get(nodeId));
+		LOGGER.fine("recived unregister request for '" + nodeId + "'");
+		Node n = NodeDAO.get(nodeId);
+		if (n != null) {
+			// delete node entry from database
+			if (Hibernate.deleteObject(n)) {
+				LOGGER.info("node '" + n.getNodeId() + "' unregistered.");
+			} else {
+				LOGGER.warning("unregistering node '" + n.getNodeId() + "' failed.");
+			}
+		} else {
+			LOGGER.info("unregister ignored. Node '" + nodeId + "' not registered.");
+		}
 	}
 
 }

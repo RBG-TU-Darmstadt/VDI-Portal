@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.ws.rs.WebApplicationException;
-
 import junit.framework.AssertionFailedError;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
@@ -114,21 +113,12 @@ public class TestVirtualMachineRessource {
 			try {
 				response = vmr.createVirtualMachine(userID, createVMRequest);
 				vmId = response.id;
-			} catch (WebApplicationException e) {
-				LOGGER.warning(e.getMessage());
-				LOGGER.info(e.getStackTrace().toString());
-				Assert.assertTrue("VM creation failed.",false);
 			} catch (ClientResponseFailure e) {
-				LOGGER.warning(e.getStackTrace().toString());
-				@SuppressWarnings("unchecked")
-				ClientResponse<String> errorResponse = e.getResponse();
-				if (errorResponse != null) {
-					LOGGER.info("Response Status Code = " + errorResponse.getResponseStatus());
-					String msg = errorResponse.getEntity();
-					if (msg != null)
-						LOGGER.info("Entity Returned:\n" + msg);
-				}
-				// something went wrong. TODO: find out what...
+				LOGGER.info(ExceptionUtils.getFullStackTrace(e));
+				
+				LOGGER.info("Response Status Code = " + e.getResponse().getResponseStatus() + "\n" + ((ClientResponse<?>)e.getResponse()).getEntity(String.class));
+
+				throw new AssertionFailedError("VM creation failed.");
 			}
 
 			if (vmId == null) {

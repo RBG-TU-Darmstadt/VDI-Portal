@@ -2,6 +2,7 @@ package vdi.management.storage;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
@@ -33,7 +34,7 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.fine(e.getStackTrace().toString());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
 			return false;
 		}
 
@@ -55,7 +56,7 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.fine(e.getStackTrace().toString());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
 			return false;
 		}
 		return true;
@@ -76,7 +77,7 @@ public final class Hibernate {
 			session.getTransaction().commit();
 		} catch (HibernateException e) {
 			LOGGER.warning(e.getMessage());
-			LOGGER.fine(e.getStackTrace().toString());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
 			return false;
 		}
 		return true;

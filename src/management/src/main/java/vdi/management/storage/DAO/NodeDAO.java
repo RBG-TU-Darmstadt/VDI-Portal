@@ -1,7 +1,10 @@
 package vdi.management.storage.DAO;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import vdi.management.storage.HibernateUtil;
@@ -11,11 +14,13 @@ import vdi.management.storage.entities.Node;
  * The DAO class for {@link Node} Entity.
  */
 public final class NodeDAO {
+	private static final Logger LOGGER = Logger.getLogger(NodeDAO.class.getName());
 
 	/**
 	 * Private constructor for static class.
 	 */
-	private NodeDAO() { }
+	private NodeDAO() {
+	}
 
 	/**
 	 * @param nodeId
@@ -26,9 +31,7 @@ public final class NodeDAO {
 		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 
-		Long occ = (Long) session
-				.createQuery(
-						"select count(*) from Node as n where n.nodeId = ?")
+		Long occ = (Long) session.createQuery("select count(*) from Node as n where n.nodeId = ?")
 				.setString(0, nodeId).uniqueResult();
 
 		session.getTransaction().commit();
@@ -42,33 +45,44 @@ public final class NodeDAO {
 	 * @return Node with specified nodeId, otherwise null
 	 */
 	public static Node get(String nodeId) {
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
+		try {
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
 
-		Node n = (Node) session.createQuery("from Node where nodeId=?")
-				.setString(0, nodeId).uniqueResult();
+			Node n = (Node) session.createQuery("from Node where nodeId=?").setString(0, nodeId).uniqueResult();
 
-		session.getTransaction().commit();
+			session.getTransaction().commit();
 
-		return n;
+			return n;
+		} catch (HibernateException e) {
+			LOGGER.warning(e.getMessage());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
+		}
+		return null;
 	}
 
 	/**
 	 * Get a list of all Nodes in the database.
-	 *
+	 * 
 	 * @return a list with all {@link vdi.commons.node.interfaces.NodeVMService}
+	 *         or null, if an hibernate exception occured
 	 */
 	public static List<Node> getNodes() {
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
+		try {
+			Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
 
-		@SuppressWarnings("unchecked")
-		List<Node> list = session
-				.createCriteria(Node.class).list();
+			@SuppressWarnings("unchecked")
+			List<Node> list = session.createCriteria(Node.class).list();
 
-		session.getTransaction().commit();
+			session.getTransaction().commit();
 
-		return list;
+			return list;
+		} catch (HibernateException e) {
+			LOGGER.warning(e.getMessage());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
+		}
+		return null;
 	}
 
 }

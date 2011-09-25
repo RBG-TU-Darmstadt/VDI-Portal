@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.mozilla.interfaces.MediumVariant;
 import org.virtualbox_4_1.AccessMode;
 import org.virtualbox_4_1.AuthType;
@@ -38,7 +39,7 @@ public class VirtualMachine {
 
 	private static final Logger LOGGER = Logger.getLogger(VirtualMachine.class.getName());
 
-	private static IMachine machine = null;
+	private IMachine machine = null;
 
 	/**
 	 * Establishes a connection to the VirtualBox instance
@@ -102,7 +103,7 @@ public class VirtualMachine {
 			machine = virtualBox.findMachine(machineId);
 		} catch (VBoxException e) {
 			LOGGER.fine(e.getMessage());
-			LOGGER.finest(e.getStackTrace().toString());
+			LOGGER.finest(ExceptionUtils.getFullStackTrace(e));
 		}
 
 		if (machine == null) {
@@ -110,7 +111,7 @@ public class VirtualMachine {
 			throw new MachineNotFoundException(machineId);
 		}
 	}
-	
+
 	/**
 	 * Creates a new virtual machine.
 	 * 
@@ -164,13 +165,13 @@ public class VirtualMachine {
 	 * @throws DuplicateMachineNameException
 	 *             Indicates, that a machine with the given name already exists.
 	 */
-	public VirtualMachine(String name, String osTypeId, String description, Long memorySize,
-			boolean accelerate2d, boolean accelerate3d, long vramSize, String hddFile) throws DuplicateMachineNameException {
+	public VirtualMachine(String name, String osTypeId, String description, Long memorySize, boolean accelerate2d,
+			boolean accelerate3d, long vramSize, String hddFile) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
-		
+
 		attachHdd(hddFile);
 	}
-	
+
 	/**
 	 * Creates a new virtual machine.
 	 * 
@@ -247,7 +248,7 @@ public class VirtualMachine {
 		LOGGER.info("Created virtual machine with ID " + newMachine.getId());
 	}
 
-	private static void attachHdd(String pathAndFilename) {
+	private void attachHdd(String pathAndFilename) {
 		ISession session = manager.getSessionObject();
 		machine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
@@ -257,18 +258,18 @@ public class VirtualMachine {
 		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 		mutable.saveSettings();
-		session.unlockMachine();	
+		session.unlockMachine();
 	}
-	
+
 	/**
-	 * Creates and attachs a virtual harddisk
+	 * Creates and attachs a virtual harddisk.
 	 * 
 	 * @param size
 	 *            the size in MB
 	 * @param pathAndFilename
-	 *            the path for the vdi-file + it's filename (e.g. "hdd0.vdi") 
+	 *            the path for the vdi-file + it's filename (e.g. "hdd0.vdi")
 	 */
-	private static void createHdd(long size, String pathAndFilename) {
+	private void createHdd(long size, String pathAndFilename) {
 		ISession session = manager.getSessionObject();
 		machine.lockMachine(session, LockType.Write);
 		IMachine mutable = session.getMachine();
@@ -278,12 +279,11 @@ public class VirtualMachine {
 		IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
 		createHdd.waitForCompletion(10000);
 		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
-	
-		
+
 		mutable.saveSettings();
 		session.unlockMachine();
 	}
-	
+
 	/**
 	 * Clean up the connection to VirtualBox.
 	 */
@@ -296,7 +296,8 @@ public class VirtualMachine {
 	/**
 	 * Deletes the virtual machine.
 	 * 
-	 * @param deleteHdd true to delete vm's attached vhd.
+	 * @param deleteHdd
+	 *            true to delete vm's attached vhd.
 	 */
 	public synchronized void delete(boolean deleteHdd) {
 		LOGGER.info("Delete virtual machine with ID " + this.getId());
@@ -349,11 +350,11 @@ public class VirtualMachine {
 	public synchronized IMedium getMountedMedium() {
 		return machine.getMedium("ide", 1, 0);
 	}
-	
+
 	/**
-	 * Retrieve the virtual hard disk medium
+	 * Retrieve the virtual hard disk medium.
 	 * 
-	 * @return
+	 * @return the vhd medium. No error handling.
 	 */
 	public synchronized IMedium getHarddiskMedium() {
 		return machine.getMedium("ide", 0, 0);
