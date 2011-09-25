@@ -1,15 +1,24 @@
 package vdi.management.storage.DAO;
 
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.management.storage.Hibernate;
 import vdi.management.storage.HibernateUtil;
+import vdi.management.storage.entities.Node;
 import vdi.management.storage.entities.Tag;
 
 /**
  * The DAO for Tags Entity.
  */
 public final class TagsDAO {
+	
+	private static final Logger LOGGER = Logger.getLogger(NodeDAO.class.getName());
 
 	/**
 	 * Private constructor for static class.
@@ -92,6 +101,31 @@ public final class TagsDAO {
 		session.getTransaction().commit();
 
 		return t;
+	}
+
+	/**
+	 * Receives all tags from the database. 
+	 * 
+	 * @return a list with all existing tags
+	 */
+	public static List<Tag> getAllTags() {
+		try {
+			Session session = HibernateUtil.getSessionFactory()
+					.getCurrentSession();
+			session.beginTransaction();
+
+			@SuppressWarnings("unchecked")
+			List<Tag> list = session.createCriteria(Tag.class).list();
+
+			session.getTransaction().commit();
+			return list;
+
+		} catch (HibernateException e) {
+			LOGGER.warning(e.getMessage());
+			LOGGER.fine(ExceptionUtils.getFullStackTrace(e));
+		}
+
+		return null;
 	}
 
 }
