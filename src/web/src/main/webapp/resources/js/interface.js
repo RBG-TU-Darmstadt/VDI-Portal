@@ -197,6 +197,7 @@ vdi = {
 
 			var vmDom = $("<div class='vdi-machine'>"
 			+ "	<div class='vdi-machine-remove'><img src=\"../resources/images/delete.png\"></div>"
+			+ "	<div class='vdi-machine-edit'><img src=\"../resources/images/edit.png\"></div>"
 			+ "	<div class='vdi-machine-screenshot'>"
 			+ "		<img src='" + screenshot + "'>"
 			+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
