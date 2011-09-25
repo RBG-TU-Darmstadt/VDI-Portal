@@ -112,6 +112,11 @@ body {
 	border-bottom:none;
 }
 
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
+	float:right;
+	margin-right:4px;
+}
+
 .vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-remove {
 	float:right;
 }
