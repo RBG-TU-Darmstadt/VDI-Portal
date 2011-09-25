@@ -54,7 +54,7 @@ public class Tag {
 		this.id = id;
 	}
 
-	@Column(name = "TAG")
+	@Column(name = "TAG", unique = true, nullable = false)
 	public String getName() {
 		return name;
 	}
