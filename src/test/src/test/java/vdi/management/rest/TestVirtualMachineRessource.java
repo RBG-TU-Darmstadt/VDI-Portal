@@ -115,8 +115,9 @@ public class TestVirtualMachineRessource {
 				vmId = response.id;
 			} catch (ClientResponseFailure e) {
 				LOGGER.info(ExceptionUtils.getFullStackTrace(e));
-				
-				LOGGER.info("Response Status Code = " + e.getResponse().getResponseStatus() + "\n" + ((ClientResponse<?>)e.getResponse()).getEntity(String.class));
+
+				LOGGER.info("Response Status Code = " + e.getResponse().getResponseStatus() + "\n"
+						+ ((ClientResponse<?>) e.getResponse()).getEntity(String.class));
 
 				throw new AssertionFailedError("VM creation failed.");
 			}

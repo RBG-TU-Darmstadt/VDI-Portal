@@ -24,7 +24,7 @@ public class ExampleWebTestCase extends WebTestCase {
 		beginAt("/WebInterface");
 		assertTitleEquals("VDI Portal - TUD FB20");
 		// clickLink("login");
-		//clickLinkWithExactText("Weiter zum Login");
-		//assertLinkPresentWithExactText("Neue VM");
+		// clickLinkWithExactText("Weiter zum Login");
+		// assertLinkPresentWithExactText("Neue VM");
 	}
 }

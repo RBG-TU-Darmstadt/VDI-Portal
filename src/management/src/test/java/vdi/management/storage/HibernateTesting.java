@@ -10,15 +10,14 @@ import vdi.management.storage.entities.VirtualMachine;
 
 public class HibernateTesting {
 	private static User testUser;
-	
+
 	public static void main(String[] args) {
 		testUser();
 		testVirtualMachines();
 	}
 
 	private static void testUser() {
-		testUser = new User("loginName", "surname", "lastname", "tuid",
-				"emailadresse@dfdf.de");
+		testUser = new User("loginName", "surname", "lastname", "tuid", "emailadresse@dfdf.de");
 
 		if (!UserDAO.exists("tuid")) {
 			UserDAO.create(testUser);
@@ -30,7 +29,7 @@ public class HibernateTesting {
 			System.out.println(dbUser.toString());
 		}
 	}
-	
+
 	private static void testVirtualMachines() {
 		VirtualMachine vm = new VirtualMachine("machine1", "Ubuntu", new Date(), "TestMachine", testUser);
 
@@ -42,11 +41,11 @@ public class HibernateTesting {
 			VirtualMachine dbVm = VirtualMachineDAO.get("machine1");
 			System.out.println(dbVm.getMachineId() + " - " + dbVm.getMachineName());
 		}
-		
+
 		// get a list of all virtualMachines
 		List<VirtualMachine> list = VirtualMachineDAO.getAllMachines();
 		System.out.println("Getting all " + list.size() + " VirtualMachines:");
-		for(VirtualMachine entry : list) {
+		for (VirtualMachine entry : list) {
 			System.out.println(entry.toString());
 		}
 	}

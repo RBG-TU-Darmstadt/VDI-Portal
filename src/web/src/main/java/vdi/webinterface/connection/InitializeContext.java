@@ -16,8 +16,7 @@ public class InitializeContext implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent contextEvent) {
 		// Load configuration
-		InputStream is = contextEvent.getServletContext().getResourceAsStream(
-				"/WEB-INF/configuration.properties");
+		InputStream is = contextEvent.getServletContext().getResourceAsStream("/WEB-INF/configuration.properties");
 
 		if (is != null) {
 			Configuration.loadProperties(is);
@@ -27,8 +26,7 @@ public class InitializeContext implements ServletContextListener {
 				e.printStackTrace();
 			}
 		} else {
-			throw new Error(
-					"Missing configuration file '/WEB-INF/configuration.properties'");
+			throw new Error("Missing configuration file '/WEB-INF/configuration.properties'");
 		}
 
 		// Register RESTEasy client provider factory
@@ -36,6 +34,7 @@ public class InitializeContext implements ServletContextListener {
 	}
 
 	@Override
-	public void contextDestroyed(ServletContextEvent contextEvent) {}
+	public void contextDestroyed(ServletContextEvent contextEvent) {
+	}
 
 }

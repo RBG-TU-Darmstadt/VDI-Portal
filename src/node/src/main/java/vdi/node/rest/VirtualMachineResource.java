@@ -34,22 +34,16 @@ public class VirtualMachineResource implements NodeVMService {
 		VirtualMachine machine;
 		try {
 			if (request.hddSize == 0) {
-				machine = new VirtualMachine(request.name, request.osTypeId,
-						request.description, request.memorySize,
-						request.accelerate2d, request.accelerate3d,
-						request.vramSize, request.hddFile);
+				machine = new VirtualMachine(request.name, request.osTypeId, request.description, request.memorySize,
+						request.accelerate2d, request.accelerate3d, request.vramSize, request.hddFile);
 			} else {
-				machine = new VirtualMachine(request.name, request.osTypeId,
-						request.description, request.memorySize, request.hddSize,
-						request.accelerate2d, request.accelerate3d,
-						request.vramSize);					
+				machine = new VirtualMachine(request.name, request.osTypeId, request.description, request.memorySize,
+						request.hddSize, request.accelerate2d, request.accelerate3d, request.vramSize);
 			}
 		} catch (InvalidParameterException e) {
-			throw new WebApplicationException(Response
-					.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
 		} catch (DuplicateMachineNameException e) {
-			throw new WebApplicationException(Response
-					.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
 		}
 
 		NodeCreateVMResponse response = new NodeCreateVMResponse();
@@ -134,7 +128,6 @@ public class VirtualMachineResource implements NodeVMService {
 			}
 		}
 
-
 		// image handling
 		if (request.image != null) {
 			String currentImage = machine.getMountedMediumLocation();
@@ -153,7 +146,7 @@ public class VirtualMachineResource implements NodeVMService {
 				machine.mountIso(image);
 			}
 		}
-		
+
 		if (request.memorySize != null) {
 			machine.setMemorySize(request.memorySize);
 		}

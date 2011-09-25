@@ -12,8 +12,9 @@ import vdi.commons.web.rest.interfaces.ManagementImageService;
 import vdi.management.util.Scheduling;
 
 /**
- * This class exports the {@link ManagementImageService} Interface for the WebInterface,
- * in order to receive images for the VirtualMachines on the NodeController.
+ * This class exports the {@link ManagementImageService} Interface for the
+ * WebInterface, in order to receive images for the VirtualMachines on the
+ * NodeController.
  */
 @Path("/images")
 public class ImageRessource implements ManagementImageService {

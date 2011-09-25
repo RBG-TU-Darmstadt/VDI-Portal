@@ -12,7 +12,8 @@ public class DuplicateMachineNameException extends Exception {
 	/**
 	 * Constructor.
 	 * 
-	 * @param machineName the machines names
+	 * @param machineName
+	 *            the machines names
 	 */
 	public DuplicateMachineNameException(String machineName) {
 		super("Machine with name '" + machineName + "' already exists.");

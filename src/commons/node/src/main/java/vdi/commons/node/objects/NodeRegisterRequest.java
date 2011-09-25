@@ -12,5 +12,5 @@ public class NodeRegisterRequest {
 	public String toString() {
 		return "{address=" + address + ", resources=" + resources + "}";
 	}
-	
+
 }

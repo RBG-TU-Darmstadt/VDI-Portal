@@ -24,20 +24,23 @@ public class RDP extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	ManagementVMService mangementVMService;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public RDP() {
-        super();
-
-		mangementVMService = ProxyFactory.create(ManagementVMService.class, Configuration.getProperty("managementserver.uri") + "/vm/");
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public RDP() {
+		super();
+
+		mangementVMService = ProxyFactory.create(ManagementVMService.class,
+				Configuration.getProperty("managementserver.uri") + "/vm/");
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
 		/*
 		 * TODO: Use tudUserUniqueID from SSO
 		 */
@@ -61,7 +64,7 @@ public class RDP extends HttpServlet {
 		response.setHeader("Content-type", "application/x-rdp");
 		// TODO: set proper Filename
 		response.setHeader("Content-disposition", "attachment; filename=\"" + filename + "\"");
-		
+
 		PrintWriter out = response.getWriter();
 		// TODO: set proper RDP URL and Port
 		out.println("full address:s:" + vm.rdpUrl);
@@ -70,9 +73,11 @@ public class RDP extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
+			IOException {
 		doGet(request, response);
 	}
 

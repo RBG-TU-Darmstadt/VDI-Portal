@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
- * Node Entity stores all informations about registered NodeControllers. 
+ * Node Entity stores all informations about registered NodeControllers.
  */
 @Entity
 public class Node {
@@ -75,7 +75,8 @@ public class Node {
 	}
 
 	/**
-	 * @param memorySize the memory size to set
+	 * @param memorySize
+	 *            the memory size to set
 	 */
 	public void setMemorySize(Long memorySize) {
 		this.memorySize = memorySize;
@@ -105,7 +106,8 @@ public class Node {
 	}
 
 	/**
-	 * @param cpuLoad the cpuLoad to set
+	 * @param cpuLoad
+	 *            the cpuLoad to set
 	 */
 	public void setCpuLoad(Double cpuLoad) {
 		this.cpuLoad = cpuLoad;
@@ -135,7 +137,8 @@ public class Node {
 	}
 
 	/**
-	 * @param freeDiskSpace the freeDiskSpace to set
+	 * @param freeDiskSpace
+	 *            the freeDiskSpace to set
 	 */
 	public void setFreeDiskSpace(Long freeDiskSpace) {
 		this.freeDiskSpace = freeDiskSpace;

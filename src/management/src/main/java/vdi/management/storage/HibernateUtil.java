@@ -13,24 +13,22 @@ public final class HibernateUtil {
 	/**
 	 * Private constructor.
 	 */
-	private HibernateUtil() { }
+	private HibernateUtil() {
+	}
 
-	private static final Logger LOGGER = Logger.getLogger(HibernateUtil.class
-			.getName());
+	private static final Logger LOGGER = Logger.getLogger(HibernateUtil.class.getName());
 
 	private static SessionFactory sessionFactory;
 
 	static {
 		try {
 			// Create the SessionFactory from hibernate.cfg.xml
-			sessionFactory = new Configuration().configure()
-					.buildSessionFactory();
+			sessionFactory = new Configuration().configure().buildSessionFactory();
 
 		} catch (Throwable ex) {
 			// Make sure you log the exception, as it might be swallowed
-			LOGGER.warning("Exception in HibernateUtil caught: "
-					+ ex.toString());
-			
+			LOGGER.warning("Exception in HibernateUtil caught: " + ex.toString());
+
 			// TODO: better crash application?
 			sessionFactory = null;
 		}
