@@ -66,21 +66,27 @@ public final class TagsDAO {
 	}
 
 	/**
-	 * Get a tag by its name.
+	 * Get a tag by its name. If this tag does not exist, it will be created.
 	 * 
 	 * @param tag
 	 *            the name of the tag as String
 	 * @return the Tag corresponding Tag
 	 */
 	public static Tag get(String tag) {
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-		session.beginTransaction();
+		if (!TagsDAO.exists(tag)) {
+			return new Tag(tag);
+		} else {
+			Session session = HibernateUtil.getSessionFactory()
+					.getCurrentSession();
+			session.beginTransaction();
 
-		Tag t = (Tag) session.createQuery("from Tag where name=?").setString(0, tag).uniqueResult();
+			Tag t = (Tag) session.createQuery("from Tag where name=?")
+					.setString(0, tag).uniqueResult();
 
-		session.getTransaction().commit();
+			session.getTransaction().commit();
 
-		return t;
+			return t;
+		}
 	}
 
 	/**

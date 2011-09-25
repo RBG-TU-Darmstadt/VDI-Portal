@@ -83,6 +83,13 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setVram(webRequest.vramSize);
 		vm.setAccelerate2d(webRequest.accelerate2d);
 		vm.setAccelerate3d(webRequest.accelerate3d);
+		if (webRequest.tags != null) {
+			for (String t : webRequest.tags) {
+				Tag tag = TagsDAO.get(t);
+				vm.getTags().add(tag);
+			}
+		}
+
 		User vmUser = UserDAO.get(userId);
 
 		if (vmUser == null) {
