@@ -41,6 +41,13 @@ public class SystemInformation {
 	}
 
 	/**
+	 * @return the free ram size in MB
+	 */
+	public static Long getFreeRamSize() {
+		return VirtualMachine.getHostInformation().getMemoryAvailable();
+	}
+
+	/**
 	 * Returns the system load average for the last minute.
 	 * 
 	 * @return the CPU load average; negative value if not available
@@ -61,11 +68,19 @@ public class SystemInformation {
 	}
 
 	/**
-	 * @return the free disk space in bytes
+	 * @return the free disk space in MB
+	 */
+	public static long getDiskSpace() {
+		File file = new File("/");
+		return file.getTotalSpace() / 1024;
+	}
+
+	/**
+	 * @return the free disk space in MB
 	 */
 	public static long getFreeDiskSpace() {
 		File file = new File("/");
-		return file.getFreeSpace();
+		return file.getFreeSpace() / 1024;
 	}
 
 	public static String getNodeEndpoint() {

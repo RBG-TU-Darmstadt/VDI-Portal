@@ -38,9 +38,11 @@ public class NodesRessource implements NodeRegistrationService {
 		}
 
 		// store Nodes resources
+		node.setMemorySize(request.resources.memorySize);
+		node.setFreeMemorySize(request.resources.freeMemorySize);
 		node.setCpuLoad(request.resources.cpuLoad);
+		node.setDiskSpace(request.resources.diskSpace);
 		node.setFreeDiskSpace(request.resources.freeDiskSpace);
-		node.setRamSize(request.resources.ramSize);
 
 		// save
 		if (!Hibernate.saveOrUpdateObject(node)) {

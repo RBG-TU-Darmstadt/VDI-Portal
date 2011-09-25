@@ -18,8 +18,10 @@ public class Node {
 	private Long id;
 	private String nodeId;
 	private URI uri;
-	private Long ramSize;
+	private Long memorySize;
+	private Long freeMemorySize;
 	private Double cpuLoad;
+	private Long diskSpace;
 	private Long freeDiskSpace;
 
 	@Id
@@ -65,18 +67,33 @@ public class Node {
 	}
 
 	/**
-	 * @return the ram size
+	 * @return the memory size
 	 */
-	@Column(name = "RAM_SIZE")
-	public Long getRamSize() {
-		return ramSize;
+	@Column(name = "MEMORY_SIZE")
+	public Long getMemorySize() {
+		return memorySize;
 	}
 
 	/**
-	 * @param ramSize the freeRam to set
+	 * @param memorySize the memory size to set
 	 */
-	public void setRamSize(Long ramSize) {
-		this.ramSize = ramSize;
+	public void setMemorySize(Long memorySize) {
+		this.memorySize = memorySize;
+	}
+
+	/**
+	 * @return the free memory size
+	 */
+	@Column(name = "FREE_MEMORY_SIZE")
+	public Long getFreeMemorySize() {
+		return freeMemorySize;
+	}
+
+	/**
+	 * @param memorySize the free memory size to set
+	 */
+	public void setFreeMemorySize(Long freeMemorySize) {
+		this.freeMemorySize = freeMemorySize;
 	}
 
 	/**
@@ -92,6 +109,21 @@ public class Node {
 	 */
 	public void setCpuLoad(Double cpuLoad) {
 		this.cpuLoad = cpuLoad;
+	}
+
+	/**
+	 * @return the diskSpace
+	 */
+	@Column(name = "DISKSPACE")
+	public Long getDiskSpace() {
+		return diskSpace;
+	}
+
+	/**
+	 * @param diskSpace the diskSpace to set
+	 */
+	public void setDiskSpace(Long diskSpace) {
+		this.diskSpace = diskSpace;
 	}
 
 	/**

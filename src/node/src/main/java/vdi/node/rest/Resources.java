@@ -24,7 +24,9 @@ public class Resources implements NodeResourceService {
 		NodeGetResourcesResponse response = new NodeGetResourcesResponse();
 
 		response.cpuLoad = SystemInformation.getCpuLoad();
-		response.ramSize = SystemInformation.getRamSize();
+		response.memorySize = SystemInformation.getRamSize();
+		response.freeMemorySize = SystemInformation.getFreeRamSize();
+		response.diskSpace = SystemInformation.getDiskSpace();
 		response.freeDiskSpace = SystemInformation.getFreeDiskSpace();
 
 		return response;
