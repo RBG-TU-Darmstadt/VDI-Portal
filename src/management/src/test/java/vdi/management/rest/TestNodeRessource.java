@@ -34,8 +34,10 @@ public class TestNodeRessource {
 
 		NodeGetResourcesResponse ressources = new NodeGetResourcesResponse();
 		ressources.cpuLoad = 0;
-		ressources.ramSize = 16;
-		ressources.freeDiskSpace = 32;
+		ressources.memorySize = 1024;
+		ressources.freeMemorySize = 512;
+		ressources.diskSpace = 4096;
+		ressources.freeDiskSpace = 1024;
 
 		registerRequest.resources = ressources;
 		registerRequest.address = "http://localhost:8080/Test/NodeController";
@@ -79,8 +81,10 @@ public class TestNodeRessource {
 
 		NodeGetResourcesResponse ressources = new NodeGetResourcesResponse();
 		ressources.cpuLoad = 0;
-		ressources.ramSize = 16;
-		ressources.freeDiskSpace = 32;
+		ressources.memorySize = 1024;
+		ressources.freeMemorySize = 512;
+		ressources.diskSpace = 4096;
+		ressources.freeDiskSpace = 1024;
 
 		registerRequest.resources = ressources;
 		registerRequest.address = "THIS_IS_OBVIOSLY_WRONG! :-{}";
