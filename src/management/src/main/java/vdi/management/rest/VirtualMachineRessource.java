@@ -25,7 +25,6 @@ import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
 import vdi.management.storage.Hibernate;
-import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
 import vdi.management.storage.DAO.VirtualMachineDAO;
@@ -33,7 +32,7 @@ import vdi.management.storage.entities.Node;
 import vdi.management.storage.entities.Tag;
 import vdi.management.storage.entities.User;
 import vdi.management.storage.entities.VirtualMachine;
-import vdi.management.util.ManagementUtil;
+import vdi.management.util.Scheduling;
 
 /**
  * Exports the {@link vdi.commons.web.rest.interfaces.ManagementVMService
@@ -125,9 +124,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public HashMap<String, HashMap<String, String>> getVMTypes() {
 		HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
 
-		for (Node n : NodeDAO.getNodes()) {
-			result.putAll(selectNodeService(n).getVMTypes());
-		}
+		result = selectNodeService(Scheduling.selectNode()).getVMTypes();
+
 		return result;
 	}
 
@@ -259,23 +257,6 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	/**
-	 * Chooses a NodeController.
-	 * 
-	 * @return the chosen {@link Node}
-	 */
-	public Node chooseNode() {
-		List<Node> nodes = NodeDAO.getNodes();
-
-		if (nodes.size() == 0) {
-			return null;
-		}
-
-		// chose random node
-		int random = (int) ManagementUtil.randomNumber(1, nodes.size());
-		return nodes.get(random - 1);
-	}
-
-	/**
 	 * Helper method to get the {@link NodeVMService} for a given {@link Node}.
 	 * 
 	 * @param node
@@ -310,7 +291,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
 
 		// choose NodeController
-		vm.setNode(chooseNode());
+		vm.setNode(Scheduling.selectNode());
 
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
