@@ -8,7 +8,8 @@ public final class ManagementUtil {
 	/**
 	 * 
 	 */
-	private ManagementUtil() { }
+	private ManagementUtil() {
+	}
 
 	/**
 	 * Calculates a random number within a given interval.

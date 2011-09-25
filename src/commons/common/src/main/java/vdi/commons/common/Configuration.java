@@ -14,7 +14,8 @@ public final class Configuration {
 	/**
 	 * private constructor.
 	 */
-	private Configuration() { }
+	private Configuration() {
+	}
 
 	/**
 	 * Loads properties from InputStream and stores them in local properties

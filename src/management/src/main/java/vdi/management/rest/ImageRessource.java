@@ -15,8 +15,9 @@ import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.entities.Node;
 
 /**
- * This class exports the {@link ManagementImageService} Interface for the WebInterface,
- * in order to receive images for the VirtualMachines on the NodeController.
+ * This class exports the {@link ManagementImageService} Interface for the
+ * WebInterface, in order to receive images for the VirtualMachines on the
+ * NodeController.
  */
 @Path("/images")
 public class ImageRessource implements ManagementImageService {
@@ -26,8 +27,7 @@ public class ImageRessource implements ManagementImageService {
 		Set<String> images = new HashSet<String>();
 		List<Node> nodes = NodeDAO.getNodes();
 		for (Node n : nodes) {
-			NodeImageService nodeImageService = ProxyFactory.create(NodeImageService.class,
-					n.getUri() + "/images/");
+			NodeImageService nodeImageService = ProxyFactory.create(NodeImageService.class, n.getUri() + "/images/");
 			images.addAll(nodeImageService.getImages());
 		}
 
