@@ -91,7 +91,7 @@ public class Node {
 	}
 
 	/**
-	 * @param memorySize the free memory size to set
+	 * @param freeMemorySize the free memory size to set
 	 */
 	public void setFreeMemorySize(Long freeMemorySize) {
 		this.freeMemorySize = freeMemorySize;
