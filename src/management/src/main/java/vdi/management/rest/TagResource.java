@@ -8,6 +8,10 @@ import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.entities.Tag;
 
+/**
+ * This class exports the {@link ManagementTagService} Interface for the
+ * WebInterface, in order to receive all tags from the database.
+ */
 public class TagResource implements ManagementTagService {
 
 	@Override
