@@ -20,13 +20,6 @@ import vdi.management.util.PollNodeController;
  */
 public class InitializeContext implements ServletContextListener {
 
-	/**
-	 * Interval in ms for ManagementServer polling the NodeControllers for
-	 * status changes.
-	 * 
-	 * TODO: move to configuration property.
-	 */
-	static final int POLL_INTERVAL = 5000;
 	private Timer polling;
 
 	@Override
@@ -50,7 +43,8 @@ public class InitializeContext implements ServletContextListener {
 
 		// start polling for MachineStatus changes
 		polling = new Timer();
-		polling.scheduleAtFixedRate(new PollNodeController(), 0, POLL_INTERVAL);
+		polling.scheduleAtFixedRate(new PollNodeController(), 0,
+				Integer.parseInt(Configuration.getProperty("polling.interval")));
 	}
 
 	@Override
