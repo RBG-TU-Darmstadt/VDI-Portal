@@ -56,6 +56,40 @@ vdi = {
 	initCreateDialog: function() {
 		var self = this;
 
+		// Memory slider
+		$('#vdi-create-vm-memory-slider').slider({
+			value: 100,
+			min: 0,
+			max: 500,
+			step: 50,
+			slide: function(event, ui) {
+				$("#vdi-create-vm-memory").val(ui.value + " MB");
+			}
+		});
+		$("#vdi-create-vm-memory").val(100 + " MB");
+		// HDD slider
+		$('#vdi-create-vm-harddrive-slider').slider({
+			value: 5,
+			min: 0,
+			max: 25,
+			step: 1,
+			slide: function(event, ui) {
+				$("#vdi-create-vm-harddrive").val(ui.value + " GB");
+			}
+		});
+		$("#vdi-create-vm-harddrive").val(5 + " GB");
+		// VRam slider
+		$('#vdi-create-vm-vram-slider').slider({
+			value: 10,
+			min: 0,
+			max: 100,
+			step: 10,
+			slide: function(event, ui) {
+				$("#vdi-create-vm-vram").val(ui.value  + " MB");
+			}
+		});
+		$("#vdi-create-vm-vram").val(10 + " MB");
+
 		// Start autosuggest plugin on tag input field
 		Manager.getTags(function(json) {
 			var response = $.parseJSON(json);

@@ -90,24 +90,27 @@
 				<div class="vdi-dialog-option-label">
 					<label for="vdi-create-vm-memory">RAM (MB):</label>
 				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-memory" />
+				<div class="vdi-dialog-option-input vdi-dialog-slider">
+					<div id="vdi-create-vm-memory-slider"></div>
+					<input type="text" id="vdi-create-vm-memory" disabled/>
 				</div>
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
 					<label for="vdi-create-vm-harddrive">HDD (GB):</label>
 				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-harddrive" />
+				<div class="vdi-dialog-option-input vdi-dialog-slider">
+					<div id="vdi-create-vm-harddrive-slider"></div>
+					<input type="text" id="vdi-create-vm-harddrive" disabled/>
 				</div>
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
 					<label for="vdi-create-vm-vram">VRAM (MB):</label>
 				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-vram" />
+				<div class="vdi-dialog-option-input vdi-dialog-slider">
+					<div id="vdi-create-vm-vram-slider"></div>
+					<input type="text" id="vdi-create-vm-vram" disabled/>
 				</div>
 			</div>
 			<div class="vdi-dialog-option">
