@@ -244,7 +244,7 @@ public class VirtualMachine {
 		this.accelerate3d = accelerate3d;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "node_id")
 	public Node getNode() {
 		return node;
