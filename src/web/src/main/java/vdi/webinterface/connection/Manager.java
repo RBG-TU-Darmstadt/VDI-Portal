@@ -23,6 +23,7 @@ import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
+import vdi.commons.web.rest.objects.ResourceRestrictions;
 
 @RemoteProxy
 public class Manager {
@@ -192,6 +193,25 @@ public class Manager {
 
 		json.put("success", true);
 		json.put("types", response);
+
+		return json.toString();
+	}
+
+	@RemoteMethod
+	public String getRestrictions() {
+		ResourceRestrictions response = mangementVMService.getResourceRestrictions();
+
+		JSONObject json = new JSONObject();
+		json.put("success", true);
+
+		JSONObject restrictions = new JSONObject();
+		restrictions.put("minMemory", response.minMemory);
+		restrictions.put("maxMemory", response.maxMemory);
+		restrictions.put("minHdd", response.minHdd);
+		restrictions.put("maxHdd", response.maxHdd);
+		restrictions.put("minVRam", response.minVRam);
+		restrictions.put("maxVRam", response.maxVRam);
+		json.put("restrictions", restrictions);
 
 		return json.toString();
 	}

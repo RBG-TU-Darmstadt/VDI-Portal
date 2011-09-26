@@ -56,40 +56,6 @@ vdi = {
 	initCreateDialog: function() {
 		var self = this;
 
-		// Memory slider
-		$('#vdi-create-vm-memory-slider').slider({
-			value: 100,
-			min: 0,
-			max: 500,
-			step: 50,
-			slide: function(event, ui) {
-				$("#vdi-create-vm-memory").val(ui.value + " MB");
-			}
-		});
-		$("#vdi-create-vm-memory").val(100 + " MB");
-		// HDD slider
-		$('#vdi-create-vm-harddrive-slider').slider({
-			value: 5,
-			min: 0,
-			max: 25,
-			step: 1,
-			slide: function(event, ui) {
-				$("#vdi-create-vm-harddrive").val(ui.value + " GB");
-			}
-		});
-		$("#vdi-create-vm-harddrive").val(5 + " GB");
-		// VRam slider
-		$('#vdi-create-vm-vram-slider').slider({
-			value: 10,
-			min: 0,
-			max: 100,
-			step: 10,
-			slide: function(event, ui) {
-				$("#vdi-create-vm-vram").val(ui.value  + " MB");
-			}
-		});
-		$("#vdi-create-vm-vram").val(10 + " MB");
-
 		// Start autosuggest plugin on tag input field
 		Manager.getTags(function(json) {
 			var response = $.parseJSON(json);
@@ -157,6 +123,57 @@ vdi = {
 				$.each(response.types, function(familyName, familyTypes) {
 					familySelect.append("<option value='" + familyName + "'>" + familyName + "</option>");
 				});
+			}
+		});
+
+		// Retrieve resource restrictions
+		Manager.getRestrictions(function(json) {
+			var response = $.parseJSON(json);
+
+			if (response.success) {
+				// Memory slider
+				var memoryValues = [4, 8, 16, 32, 64, 128, 384, 256, 512, 786, 1024, 1536, 2048, 3072, 4096, 6144, 8192],
+					minMemory = memoryValues.indexOf(response.restrictions.minMemory),
+					maxMemory = memoryValues.indexOf(response.restrictions.maxMemory);
+				memoryValues = memoryValues.splice(minMemory, maxMemory - minMemory + 1);
+				$('#vdi-create-vm-memory-slider').slider({
+					value: 5,
+					min: 0,
+					max: memoryValues.length-1,
+					step: 1,
+					slide: function(event, ui) {
+						$("#vdi-create-vm-memory").val(memoryValues[ui.value] + " MB");
+					}
+				});
+				$("#vdi-create-vm-memory").val(memoryValues[5] + " MB");
+
+				// HDD slider
+				$('#vdi-create-vm-harddrive-slider').slider({
+					value: 5,
+					min: response.restrictions.minHdd / 1024,
+					max: response.restrictions.maxHdd / 1024,
+					step: 1,
+					slide: function(event, ui) {
+						$("#vdi-create-vm-harddrive").val(ui.value + " GB");
+					}
+				});
+				$("#vdi-create-vm-harddrive").val(5 + " GB");
+
+				// VRam slider
+				var vramValues = [4, 8, 16, 32, 64, 128, 384, 256, 512],
+					minVRam = vramValues.indexOf(response.restrictions.minVRam),
+					maxVRam = vramValues.indexOf(response.restrictions.maxVRam);
+				vramValues = vramValues.splice(minVRam, maxVRam - minVRam + 1);
+				$('#vdi-create-vm-vram-slider').slider({
+					value: 2,
+					min: 0,
+					max: vramValues.length-1,
+					step: 1,
+					slide: function(event, ui) {
+						$("#vdi-create-vm-vram").val(vramValues[ui.value] + " MB");
+					}
+				});
+				$("#vdi-create-vm-vram").val(vramValues[2] + " MB");
 			}
 		});
 	},
