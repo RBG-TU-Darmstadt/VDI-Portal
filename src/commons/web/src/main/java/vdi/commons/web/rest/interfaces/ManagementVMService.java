@@ -19,6 +19,7 @@ import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
+import vdi.commons.web.rest.objects.ResourceRestrictions;
 
 public interface ManagementVMService {
 
@@ -58,5 +59,10 @@ public interface ManagementVMService {
 	@Path("/types")
 	@Produces(MediaType.APPLICATION_JSON)
 	public HashMap<String, HashMap<String, String>> getVMTypes();
+
+	@GET
+	@Path("/resources")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ResourceRestrictions getResourceRestrictions();
 
 }

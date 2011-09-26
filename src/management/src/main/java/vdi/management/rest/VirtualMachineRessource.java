@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeVMService;
 import vdi.commons.node.objects.NodeCreateVMRequest;
@@ -24,6 +25,7 @@ import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
+import vdi.commons.web.rest.objects.ResourceRestrictions;
 import vdi.management.storage.Hibernate;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
@@ -313,5 +315,19 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// save the machine id and hdd path
 		vm.setMachineId(nodeResponse.machineId);
 		vm.setHddPath(nodeResponse.hddFile);
+	}
+
+	@Override
+	public ResourceRestrictions getResourceRestrictions() {
+		ResourceRestrictions restrictions = new ResourceRestrictions();
+
+		restrictions.minMemory = Integer.parseInt(Configuration.getProperty("vm.min_memory"));
+		restrictions.maxMemory = Integer.parseInt(Configuration.getProperty("vm.max_memory"));
+		restrictions.minHdd = Integer.parseInt(Configuration.getProperty("vm.min_hdd"));
+		restrictions.maxHdd = Integer.parseInt(Configuration.getProperty("vm.max_hdd"));
+		restrictions.minVRam = Integer.parseInt(Configuration.getProperty("vm.min_vram"));
+		restrictions.maxVRam = Integer.parseInt(Configuration.getProperty("vm.max_vram"));
+
+		return restrictions;
 	}
 }
