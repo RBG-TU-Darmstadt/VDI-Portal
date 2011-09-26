@@ -1,5 +1,7 @@
 package vdi.commons.web.rest.objects;
 
+import java.util.List;
+
 public class ManagementCreateVMRequest {
 
 	public String name;
@@ -17,5 +19,7 @@ public class ManagementCreateVMRequest {
 	public boolean accelerate2d;
 
 	public boolean accelerate3d;
+	
+	public List<String> tags;
 
 }

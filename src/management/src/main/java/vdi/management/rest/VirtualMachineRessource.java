@@ -83,6 +83,13 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setVram(webRequest.vramSize);
 		vm.setAccelerate2d(webRequest.accelerate2d);
 		vm.setAccelerate3d(webRequest.accelerate3d);
+		if (webRequest.tags != null) {
+			for (String t : webRequest.tags) {
+				Tag tag = TagsDAO.get(t);
+				vm.getTags().add(tag);
+			}
+		}
+
 		User vmUser = UserDAO.get(userId);
 
 		if (vmUser == null) {
@@ -244,6 +251,13 @@ public class VirtualMachineRessource implements ManagementVMService {
 		if (webRequest.accelerate3d != null) {
 			vm.setAccelerate3d(webRequest.accelerate3d);
 		}
+		if (webRequest.tags != null) {
+			vm.getTags().clear();
+			for (String t : webRequest.tags) {
+				Tag tag = TagsDAO.get(t);
+				vm.getTags().add(tag);
+			}
+		}
 
 		VirtualMachineDAO.update(vm);
 	}
@@ -275,9 +289,9 @@ public class VirtualMachineRessource implements ManagementVMService {
 	 */
 	private void createVMOnNode(VirtualMachine vm) {
 		NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
-		nodeCreateRequest.name = vm.getMachineName();
+		nodeCreateRequest.name = vm.getMachineName() + vm.getId();
 		nodeCreateRequest.osTypeId = vm.getOsType();
-		nodeCreateRequest.description = vm.getDescription();
+		nodeCreateRequest.description = vm.getMachineName() + " tuid: " + vm.getUser().getTuid();
 		nodeCreateRequest.memorySize = vm.getMemorySize();
 		if (vm.getHddPath() == null) {
 			nodeCreateRequest.hddSize = vm.getHddSize();
