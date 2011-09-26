@@ -1,5 +1,7 @@
 package vdi.commons.web.rest.objects;
 
+import java.util.List;
+
 import vdi.commons.common.objects.VirtualMachineStatus;
 
 /**
@@ -23,5 +25,7 @@ public class ManagementUpdateVMRequest {
 	public Boolean accelerate2d;
 
 	public Boolean accelerate3d;
+	
+	public List<String> tags;
 
 }
