@@ -178,7 +178,7 @@ vdi = {
 			if (vm.status == 'STARTED') {
 				status = "Läuft";
 				rpd_url = vm.rdp_url;
-				var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + buttons.rdp + "</a>";
+				var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + self.buttons.rdp + "</a>";
 				active_buttons = [rdp, self.buttons.pause, disk, self.buttons.stop];
 			} else if (vm.status == 'STOPPED') {
 				status = "Ausgeschaltet";
