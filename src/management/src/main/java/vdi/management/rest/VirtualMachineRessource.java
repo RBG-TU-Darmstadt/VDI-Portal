@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeVMService;
 import vdi.commons.node.objects.NodeCreateVMRequest;
@@ -24,6 +25,8 @@ import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
 import vdi.commons.web.rest.objects.ManagementTag;
 import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
+import vdi.commons.web.rest.objects.ManagementVMRequest;
+import vdi.commons.web.rest.objects.ResourceRestrictions;
 import vdi.management.storage.Hibernate;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
@@ -32,6 +35,7 @@ import vdi.management.storage.entities.Node;
 import vdi.management.storage.entities.Tag;
 import vdi.management.storage.entities.User;
 import vdi.management.storage.entities.VirtualMachine;
+import vdi.management.util.BoundsException;
 import vdi.management.util.Scheduling;
 
 /**
@@ -71,6 +75,20 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 	@Override
 	public ManagementCreateVMResponse createVirtualMachine(String userId, ManagementCreateVMRequest webRequest) {
+		// Check against restriction
+		try {
+			checkBounds(webRequest);
+
+			if (webRequest.hddSize < loadRestrictions().minHdd) {
+				throw new BoundsException("HDD size must be higher than " + loadRestrictions().minHdd + "MB");
+			} else if (webRequest.hddSize > loadRestrictions().maxHdd) {
+				throw new BoundsException("HDD size must be lower than " + loadRestrictions().maxHdd + "MB");
+			}
+		} catch (BoundsException e) {
+			throw new WebApplicationException(Response.status(Status.FORBIDDEN)
+					.entity(e.getMessage()).build());
+		}
+
 		// Store VM to database
 		VirtualMachine vm = new VirtualMachine();
 
@@ -178,6 +196,13 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 	@Override
 	public void updateVirtualMachine(String userId, Long id, ManagementUpdateVMRequest webRequest) {
+		// Check against restriction
+		try {
+			checkBounds(webRequest);
+		} catch (BoundsException e) {
+			throw new WebApplicationException(Response.status(Status.FORBIDDEN)
+					.entity(e.getMessage()).build());
+		}
 
 		// get VM from database
 		VirtualMachine vm = VirtualMachineDAO.get(id);
@@ -233,8 +258,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 		if (webRequest.image != null) {
 			vm.setImage(webRequest.image);
 		}
-		if (webRequest.machineName != null) {
-			vm.setMachineName(webRequest.machineName);
+		if (webRequest.name != null) {
+			vm.setMachineName(webRequest.name);
 		}
 		if (webRequest.description != null) {
 			vm.setDescription(webRequest.description);
@@ -314,4 +339,39 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setMachineId(nodeResponse.machineId);
 		vm.setHddPath(nodeResponse.hddFile);
 	}
+
+	@Override
+	public ResourceRestrictions getResourceRestrictions() {
+		return loadRestrictions();
+	}
+
+	private static ResourceRestrictions loadRestrictions() {
+		ResourceRestrictions restrictions = new ResourceRestrictions();
+
+		restrictions.minMemory = Integer.parseInt(Configuration.getProperty("vm.min_memory"));
+		restrictions.maxMemory = Integer.parseInt(Configuration.getProperty("vm.max_memory"));
+		restrictions.minHdd = Integer.parseInt(Configuration.getProperty("vm.min_hdd"));
+		restrictions.maxHdd = Integer.parseInt(Configuration.getProperty("vm.max_hdd"));
+		restrictions.minVRam = Integer.parseInt(Configuration.getProperty("vm.min_vram"));
+		restrictions.maxVRam = Integer.parseInt(Configuration.getProperty("vm.max_vram"));
+
+		return restrictions;
+	}
+
+	private static void checkBounds(ManagementVMRequest webRequest) throws BoundsException {
+		if(webRequest.memorySize != null) {
+			if (webRequest.memorySize < loadRestrictions().minMemory) {
+				throw new BoundsException("Memory size must be higher than " + loadRestrictions().minMemory + "MB");
+			} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
+				throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
+			}
+		} else if(webRequest.vramSize != null) {
+			if (webRequest.vramSize < loadRestrictions().minVRam) {
+				throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
+			} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
+				throw new BoundsException("VRam size must be lower than " + loadRestrictions().maxVRam + "MB");
+			}
+		}
+	}
+
 }

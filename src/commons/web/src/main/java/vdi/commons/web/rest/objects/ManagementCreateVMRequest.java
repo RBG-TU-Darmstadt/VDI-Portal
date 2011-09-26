@@ -1,25 +1,13 @@
 package vdi.commons.web.rest.objects;
 
-import java.util.List;
-
-public class ManagementCreateVMRequest {
-
-	public String name;
+/**
+ * This request object contains attributes for creating a VM.
+ * Common attributes are inherited from {@link ManagementVMRequest}
+ */
+public class ManagementCreateVMRequest extends ManagementVMRequest {
 
 	public String osTypeId;
 
-	public String description;
-
-	public Long memorySize;
-
 	public Long hddSize;
-
-	public Long vramSize;
-
-	public boolean accelerate2d;
-
-	public boolean accelerate3d;
-	
-	public List<String> tags;
 
 }
