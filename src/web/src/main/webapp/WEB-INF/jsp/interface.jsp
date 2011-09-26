@@ -8,6 +8,8 @@
 
 	<!-- jQuery -->
 	<script type="text/javascript" src="../resources/js/jquery-1.6.2.min.js"> </script>
+	<script type="text/javascript" src="../resources/js/jquery-ui-1.8.16.custom.min.js"> </script>
+	<link rel="stylesheet" type="text/css" href="../resources/js/smoothness/jquery-ui-1.8.16.custom.css" />
 
 	<!-- Direct Web Remoting -->
 	<script type='text/javascript' src='../dwr/engine.js'> </script>
