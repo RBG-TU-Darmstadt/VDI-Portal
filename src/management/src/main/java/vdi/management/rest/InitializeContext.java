@@ -12,7 +12,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 import vdi.commons.common.Configuration;
 import vdi.management.storage.HibernateUtil;
-import vdi.management.util.PollMachineStatus;
+import vdi.management.util.PollNodeController;
 
 /**
  * This class registers as Tomcat ServletListener in order to be able to execute
@@ -50,7 +50,7 @@ public class InitializeContext implements ServletContextListener {
 
 		// start polling for MachineStatus changes
 		polling = new Timer();
-		polling.scheduleAtFixedRate(new PollMachineStatus(), 0, POLL_INTERVAL);
+		polling.scheduleAtFixedRate(new PollNodeController(), 0, POLL_INTERVAL);
 	}
 
 	@Override
