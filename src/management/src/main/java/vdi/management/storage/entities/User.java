@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -113,6 +114,7 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("creationDate")
 	public List<VirtualMachine> getVirtualMachines() {
 		return virtualMachines;
 	}
