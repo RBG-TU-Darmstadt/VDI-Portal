@@ -16,6 +16,7 @@ import org.jboss.resteasy.client.ProxyFactory;
 import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
+import vdi.commons.web.rest.interfaces.ManagementTagService;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
 import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
 import vdi.commons.web.rest.objects.ManagementCreateVMResponse;
@@ -35,12 +36,15 @@ public class Manager {
 
 	ManagementVMService mangementVMService;
 	ManagementImageService mangementImageService;
+	ManagementTagService mangementTagService;
 
 	public Manager() {
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
 				Configuration.getProperty("managementserver.uri") + "/vm/");
 		mangementImageService = ProxyFactory.create(ManagementImageService.class,
 				Configuration.getProperty("managementserver.uri") + "/images/");
+		mangementTagService = ProxyFactory.create(ManagementTagService.class,
+				Configuration.getProperty("managementserver.uri") + "/tags/");
 	}
 
 	@RemoteMethod
@@ -59,7 +63,7 @@ public class Manager {
 
 	@RemoteMethod
 	public String createVM(String name, String type, String description, Long memory, Long harddisk, Long vram,
-			boolean acceleration2d, boolean acceleration3d) {
+			boolean acceleration2d, boolean acceleration3d, List<String> tags) {
 		ManagementCreateVMRequest request = new ManagementCreateVMRequest();
 		request.name = name;
 		request.osTypeId = type;
@@ -69,6 +73,7 @@ public class Manager {
 		request.vramSize = vram;
 		request.accelerate2d = acceleration2d;
 		request.accelerate3d = acceleration3d;
+		request.tags = tags;
 
 		ManagementCreateVMResponse response = mangementVMService.createVirtualMachine(userId, request);
 
@@ -227,6 +232,24 @@ public class Manager {
 		JSONObject json = new JSONObject();
 
 		json.put("success", true);
+
+		return json.toString();
+	}
+
+	@RemoteMethod
+	public String getTags() {
+		List<ManagementTag> response = mangementTagService.getTags();
+
+		JSONObject json = new JSONObject();
+
+		json.put("success", true);
+
+		JSONArray tags = new JSONArray();
+		for(ManagementTag tag : response) {
+			tags.add(tag.name);
+		}
+
+		json.put("tags", tags);
 
 		return json.toString();
 	}

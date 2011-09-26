@@ -126,6 +126,14 @@
 					<input type="checkbox" id="vdi-create-vm-3d-acceleration" />
 				</div>
 			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-create-vm-tags">Tags:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="text" id="vdi-create-vm-tags" />
+				</div>
+			</div>
 
 			<div class="dialog-button">
 				<button class="vdi-create-vm-button">Erstellen</button>

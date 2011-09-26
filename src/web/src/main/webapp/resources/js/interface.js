@@ -21,7 +21,7 @@ vdi = {
 		Manager.register();
 
 		$('.vdi-create-vm').fancybox($.extend({
-			onStart: $.proxy(this, 'populateVMTypeFamilies'),
+			onStart: $.proxy(this, 'initCreateDialog'),
 			onClosed: $.proxy(this, 'resetCreateDialog')
 		}, this.fancyboxOptions));
 		$('#vdi-create-vm-type-family').change($.proxy(this, 'populateVMTypes'));
@@ -53,7 +53,65 @@ vdi = {
 		setInterval($.proxy(this, 'refreshVMScreenshots'), 5*1000);
 	},
 	
-	populateVMTypeFamilies: function() {
+	initCreateDialog: function() {
+		var self = this;
+
+		// Start autosuggest plugin on tag input field
+		Manager.getTags(function(json) {
+			var response = $.parseJSON(json);
+
+			if (response.success) {
+				var tags = response.tags;
+
+		 		$("#vdi-create-vm-tags")
+		 			// don't navigate away from the field on tab when selecting an item
+		 			.bind("keydown", function(event) {
+		 				if (event.keyCode === $.ui.keyCode.TAB &&
+		 						$(this).data("autocomplete").menu.active) {
+		 					event.preventDefault();
+		 				}
+		 			})
+		 			.autocomplete({
+		 				minLength: 0,
+		 				source: function(request, response) {
+		 					var currentTerms = self.split(request.term);
+		 					var lastTerm = currentTerms.pop();
+
+		 					// Remove already present terms
+		 					var terms = [];
+		 					$.each(tags, function(i, tag) {
+		 						if (currentTerms.indexOf(tag) == -1) {
+		 							terms.push(tag);
+		 						}
+		 					});
+
+		 					// delegate back to autocomplete, but extract the last term
+		 					response($.ui.autocomplete.filter(terms,  lastTerm));
+		 				},
+		 				focus: function() {
+		 					// prevent value inserted on focus
+		 					return false;
+		 				},
+		 				select: function(event, ui) {
+		 					var terms = self.split(this.value);
+
+		 					// remove the current input
+		 					terms.pop();
+
+		 					// add the selected item
+		 					terms.push(ui.item.value);
+
+		 					// add placeholder to get the comma-and-space at the end
+		 					terms.push("");
+		 					this.value = terms.join(", ");
+
+		 					return false;
+		 				}
+		 			});
+			}
+		});
+
+		// Populate VM type families
 		Manager.getVMTypes(function(json) {
 			var response = $.parseJSON(json);
 
@@ -235,15 +293,17 @@ vdi = {
 		var vram = $("#vdi-create-vm-vram").val();
 		var acceleration2d = $("#vdi-create-vm-2d-acceleration").prop("checked");
 		var acceleration3d = $("#vdi-create-vm-3d-acceleration").prop("checked");
+		var tags = $("#vdi-create-vm-tags").val();
 
 		// Sanitize input
 		memory = parseInt(memory, 10);
 		harddrive = parseInt(parseFloat(harddrive.replace(',', '.'), 10) * 1024, 10);
 		vram = parseInt(vram, 10);
+		tags = this.cleanTags(this.split(tags));
 
 		var self = this;
 		Manager.createVM(name, type, description, memory, harddrive,
-				vram, acceleration2d, acceleration3d, function(json) {
+				vram, acceleration2d, acceleration3d, tags, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
@@ -330,6 +390,7 @@ vdi = {
 		$('#vdi-create-vm-vram').val('');
 		$('#vdi-create-vm-2d-acceleration').prop("checked", false);
 		$('#vdi-create-vm-3d-acceleration').prop("checked", false);
+		$('#vdi-create-vm-tags').val('');
 
 		// Clear machine types
 		$('#vdi-create-vm-type').empty();
@@ -415,6 +476,29 @@ vdi = {
 
 	padDate: function(num) {
 		return ("0" + num).slice(-2);
+	},
+
+	split: function split(val) {
+		return val.split(/,\s*/);
+	},
+
+	cleanTags: function (arr) {
+		var i,
+			len=arr.length,
+			out=[],
+			obj={};
+
+		// Remove duplicates and empty entries
+		for (i=0;i<len;i++) {
+			if (arr[i] != "")
+				obj[arr[i]]=0;
+			
+		}
+		for (i in obj) {
+			out.push(i);
+		}
+
+		return out;
 	}
 
 };
