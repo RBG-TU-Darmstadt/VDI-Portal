@@ -77,7 +77,7 @@ public class Tag {
 		this.slug = slug;
 	}
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "TAG_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
 	@ForeignKey(name = "FK_Tag_VirtualMachine", inverseName = "FK_VirtualMachine_Tag")
 	public Set<VirtualMachine> getVirtualMachines() {
