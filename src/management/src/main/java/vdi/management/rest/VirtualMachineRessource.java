@@ -359,14 +359,18 @@ public class VirtualMachineRessource implements ManagementVMService {
 	}
 
 	private static void checkBounds(ManagementVMRequest webRequest) throws BoundsException {
-		if (webRequest.memorySize < loadRestrictions().minMemory) {
-			throw new BoundsException("Memory size must be higher than " + loadRestrictions().minMemory + "MB");
-		} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
-			throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
-		} else if (webRequest.vramSize < loadRestrictions().minVRam) {
-			throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
-		} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
-			throw new BoundsException("VRam size must be lower than " + loadRestrictions().maxVRam + "MB");
+		if(webRequest.memorySize != null) {
+			if (webRequest.memorySize < loadRestrictions().minMemory) {
+				throw new BoundsException("Memory size must be higher than " + loadRestrictions().minMemory + "MB");
+			} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
+				throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
+			}
+		} else if(webRequest.vramSize != null) {
+			if (webRequest.vramSize < loadRestrictions().minVRam) {
+				throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
+			} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
+				throw new BoundsException("VRam size must be lower than " + loadRestrictions().maxVRam + "MB");
+			}
 		}
 	}
 
