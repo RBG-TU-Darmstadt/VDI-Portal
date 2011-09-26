@@ -197,7 +197,7 @@ public class VirtualMachine {
 		this.rdpUrl = rdpUrl;
 	}
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "ID"), inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
 	@ForeignKey(name = "FK_VirtualMachine_Tag", inverseName = "FK_Tag_VirtualMachine")
 	public List<Tag> getTags() {
