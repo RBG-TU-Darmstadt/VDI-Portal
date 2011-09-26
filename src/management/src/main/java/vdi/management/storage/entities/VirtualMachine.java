@@ -132,7 +132,7 @@ public class VirtualMachine {
 		this.description = description;
 	}
 
-	@ManyToOne(optional = false, cascade = CascadeType.ALL)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "USER_ID")
 	public User getUser() {
 		return user;
