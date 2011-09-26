@@ -365,7 +365,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 			} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
 				throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
 			}
-		} else if(webRequest.vramSize != null) {
+		}
+		if(webRequest.vramSize != null) {
 			if (webRequest.vramSize < loadRestrictions().minVRam) {
 				throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
 			} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
