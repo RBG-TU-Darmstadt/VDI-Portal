@@ -289,9 +289,9 @@ public class VirtualMachineRessource implements ManagementVMService {
 	 */
 	private void createVMOnNode(VirtualMachine vm) {
 		NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
-		nodeCreateRequest.name = vm.getMachineName() + vm.getId();
+		nodeCreateRequest.name = "vdi_" + vm.getId();
 		nodeCreateRequest.osTypeId = vm.getOsType();
-		nodeCreateRequest.description = vm.getMachineName() + " tuid: " + vm.getUser().getTuid();
+		nodeCreateRequest.description = "'" + vm.getMachineName() + "' of user: " + vm.getUser().getTuid();
 		nodeCreateRequest.memorySize = vm.getMemorySize();
 		if (vm.getHddPath() == null) {
 			nodeCreateRequest.hddSize = vm.getHddSize();
