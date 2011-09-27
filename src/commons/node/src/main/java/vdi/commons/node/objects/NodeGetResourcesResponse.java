@@ -17,6 +17,9 @@ public class NodeGetResourcesResponse {
 	// Free disk space in MB
 	public long freeDiskSpace;
 
+	// Numbers of processor cores
+	public int cores;
+
 	@Override
 	public String toString() {
 		return "{memorySize=" + memorySize + ", freeMemorySize=" + freeMemorySize + ", cpuLoad="

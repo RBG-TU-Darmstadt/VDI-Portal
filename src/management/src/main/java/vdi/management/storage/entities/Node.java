@@ -23,6 +23,7 @@ public class Node {
 	private Double cpuLoad;
 	private Long diskSpace;
 	private Long freeDiskSpace;
+	private int cores;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -144,4 +145,19 @@ public class Node {
 		this.freeDiskSpace = freeDiskSpace;
 	}
 
+	/**
+	 * @return the cores the number of processor cores
+	 */
+	@Column(name = "PROCESSOR_CORES")
+	public int getCores() {
+		return cores;
+	}
+
+	/**
+	 * @param cores
+	 *            the cores to set
+	 */
+	public void setCores(int cores) {
+		this.cores = cores;
+	}
 }

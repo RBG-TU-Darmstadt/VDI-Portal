@@ -86,4 +86,11 @@ public class SystemInformation {
 	public static String getNodeEndpoint() {
 		return Configuration.getProperty("node.rdp_endpoint");
 	}
+
+	/**
+	 * @return the number of processor cores
+	 */
+	public static int getCores() {
+		return Runtime.getRuntime().availableProcessors();
+	}
 }
