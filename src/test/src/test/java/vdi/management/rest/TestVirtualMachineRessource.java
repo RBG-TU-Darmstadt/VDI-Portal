@@ -66,10 +66,12 @@ public class TestVirtualMachineRessource {
 		createVMRequest.osTypeId = osTypeID;
 		createVMRequest.description = "testing create delete vm";
 		createVMRequest.memorySize = 128L;
-		createVMRequest.hddSize = 512L;
+		createVMRequest.hddSize = 1024L;
 		createVMRequest.vramSize = 32L;
 		createVMRequest.accelerate2d = false;
 		createVMRequest.accelerate3d = false;
+		
+		// TODO: implement tests for testing hdd and memory boundary checks
 
 		ManagementVM vm = getVMByName(createVMRequest.name);
 		if (vm != null) {
