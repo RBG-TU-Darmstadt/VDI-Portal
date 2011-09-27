@@ -119,7 +119,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setUser(vmUser);
 		vm.setStatus(VirtualMachineStatus.STOPPED);
 
-		if (!Hibernate.saveObject(vm)) {
+		if (!Hibernate.saveOrUpdateObject(vm)) {
 			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
 					.entity("DB: vm insert failed.").build());
 		}
