@@ -5,11 +5,18 @@ import java.util.List;
 
 import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.entities.Node;
+import vdi.management.storage.entities.VirtualMachine;
 
 /**
- * Bundles scheduling functionality in one place
+ * Bundles scheduling functionality in one place.
  */
-public class Scheduling {
+public final class Scheduling {
+
+	/**
+	 * Private constructor.
+	 */
+	private Scheduling() {
+	}
 
 	/**
 	 * Chooses a NodeController.
