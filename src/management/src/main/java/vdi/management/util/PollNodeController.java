@@ -54,6 +54,7 @@ public class PollNodeController extends TimerTask {
 			n.setCpuLoad(response.cpuLoad);
 			n.setDiskSpace(response.diskSpace);
 			n.setFreeDiskSpace(response.freeDiskSpace);
+			n.setCores(response.cores);
 
 			if (!Hibernate.saveOrUpdateObject(n)) {
 				LOGGER.warning("DB: update node resources failed.");

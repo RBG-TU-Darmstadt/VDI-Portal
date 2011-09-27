@@ -24,7 +24,7 @@ public class ImageRessource implements ManagementImageService {
 		List<String> images = new ArrayList<String>();
 
 		NodeImageService nodeImageService = ProxyFactory.create(NodeImageService.class,
-				Scheduling.selectNode().getUri() + "/images/");
+				Scheduling.selectRandomNode().getUri() + "/images/");
 		images = nodeImageService.getImages();
 
 		return images;

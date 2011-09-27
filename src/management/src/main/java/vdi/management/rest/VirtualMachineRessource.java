@@ -28,6 +28,7 @@ import vdi.commons.web.rest.objects.ManagementVM;
 import vdi.commons.web.rest.objects.ManagementVMRequest;
 import vdi.commons.web.rest.objects.ResourceRestrictions;
 import vdi.management.storage.Hibernate;
+import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
 import vdi.management.storage.DAO.VirtualMachineDAO;
@@ -118,7 +119,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		vm.setUser(vmUser);
 		vm.setStatus(VirtualMachineStatus.STOPPED);
 
-		if (!Hibernate.saveObject(vm)) {
+		if (!Hibernate.saveOrUpdateObject(vm)) {
 			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
 					.entity("DB: vm insert failed.").build());
 		}
@@ -149,7 +150,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public HashMap<String, HashMap<String, String>> getVMTypes() {
 		HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
 
-		result = selectNodeService(Scheduling.selectNode()).getVMTypes();
+		result = selectNodeService(Scheduling.selectRandomNode()).getVMTypes();
 
 		return result;
 	}
@@ -330,7 +331,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
 
 		// choose NodeController
-		vm.setNode(Scheduling.selectNode());
+		List<Node> nodes = NodeDAO.getNodes();
+		vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
 
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
@@ -345,32 +347,56 @@ public class VirtualMachineRessource implements ManagementVMService {
 		return loadRestrictions();
 	}
 
+	/**
+	 * Load the Restrictions from configuration file.
+	 * 
+	 * @return {@link ResourceRestrictions} with all restrictions
+	 */
 	private static ResourceRestrictions loadRestrictions() {
 		ResourceRestrictions restrictions = new ResourceRestrictions();
 
-		restrictions.minMemory = Integer.parseInt(Configuration.getProperty("vm.min_memory"));
-		restrictions.maxMemory = Integer.parseInt(Configuration.getProperty("vm.max_memory"));
-		restrictions.minHdd = Integer.parseInt(Configuration.getProperty("vm.min_hdd"));
-		restrictions.maxHdd = Integer.parseInt(Configuration.getProperty("vm.max_hdd"));
-		restrictions.minVRam = Integer.parseInt(Configuration.getProperty("vm.min_vram"));
-		restrictions.maxVRam = Integer.parseInt(Configuration.getProperty("vm.max_vram"));
+		restrictions.minMemory = Integer.parseInt(Configuration
+				.getProperty("vm.min_memory"));
+		restrictions.maxMemory = Integer.parseInt(Configuration
+				.getProperty("vm.max_memory"));
+		restrictions.minHdd = Integer.parseInt(Configuration
+				.getProperty("vm.min_hdd"));
+		restrictions.maxHdd = Integer.parseInt(Configuration
+				.getProperty("vm.max_hdd"));
+		restrictions.minVRam = Integer.parseInt(Configuration
+				.getProperty("vm.min_vram"));
+		restrictions.maxVRam = Integer.parseInt(Configuration
+				.getProperty("vm.max_vram"));
 
 		return restrictions;
 	}
 
-	private static void checkBounds(ManagementVMRequest webRequest) throws BoundsException {
-		if(webRequest.memorySize != null) {
+	/**
+	 * Checks whether the request complies with the restrictions.
+	 * 
+	 * @param webRequest
+	 *            the request to check bounds
+	 * @throws BoundsException
+	 *             on invalid request parameters
+	 */
+	private static void checkBounds(ManagementVMRequest webRequest)
+			throws BoundsException {
+		if (webRequest.memorySize != null) {
 			if (webRequest.memorySize < loadRestrictions().minMemory) {
-				throw new BoundsException("Memory size must be higher than " + loadRestrictions().minMemory + "MB");
+				throw new BoundsException("Memory size must be higher than "
+						+ loadRestrictions().minMemory + "MB");
 			} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
-				throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
+				throw new BoundsException("Memory size must be lower than "
+						+ loadRestrictions().maxMemory + "MB");
 			}
 		}
-		if(webRequest.vramSize != null) {
+		if (webRequest.vramSize != null) {
 			if (webRequest.vramSize < loadRestrictions().minVRam) {
-				throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
+				throw new BoundsException("VRam size must be higher than "
+						+ loadRestrictions().minVRam + "MB");
 			} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
-				throw new BoundsException("VRam size must be lower than " + loadRestrictions().maxVRam + "MB");
+				throw new BoundsException("VRam size must be lower than "
+						+ loadRestrictions().maxVRam + "MB");
 			}
 		}
 	}
