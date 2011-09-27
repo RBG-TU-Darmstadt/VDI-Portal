@@ -62,11 +62,9 @@ public class RDP extends HttpServlet {
 		String filename = Util.generateSlug(vm.name) + ".rdp";
 
 		response.setHeader("Content-type", "application/x-rdp");
-		// TODO: set proper Filename
 		response.setHeader("Content-disposition", "attachment; filename=\"" + filename + "\"");
 
 		PrintWriter out = response.getWriter();
-		// TODO: set proper RDP URL and Port
 		out.println("full address:s:" + vm.rdpUrl);
 		out.println("compression:i:1");
 		out.println("displayconnectionbar:i:1");
