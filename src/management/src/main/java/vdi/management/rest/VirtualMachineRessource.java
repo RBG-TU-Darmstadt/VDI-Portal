@@ -28,6 +28,7 @@ import vdi.commons.web.rest.objects.ManagementVM;
 import vdi.commons.web.rest.objects.ManagementVMRequest;
 import vdi.commons.web.rest.objects.ResourceRestrictions;
 import vdi.management.storage.Hibernate;
+import vdi.management.storage.DAO.NodeDAO;
 import vdi.management.storage.DAO.TagsDAO;
 import vdi.management.storage.DAO.UserDAO;
 import vdi.management.storage.DAO.VirtualMachineDAO;
@@ -149,7 +150,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public HashMap<String, HashMap<String, String>> getVMTypes() {
 		HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
 
-		result = selectNodeService(Scheduling.selectNode()).getVMTypes();
+		result = selectNodeService(Scheduling.selectRandomNode()).getVMTypes();
 
 		return result;
 	}
@@ -330,7 +331,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
 
 		// choose NodeController
-		vm.setNode(Scheduling.selectNode());
+		List<Node> nodes = NodeDAO.getNodes();
+		vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
 
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
