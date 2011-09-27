@@ -345,32 +345,56 @@ public class VirtualMachineRessource implements ManagementVMService {
 		return loadRestrictions();
 	}
 
+	/**
+	 * Load the Restrictions from configuration file.
+	 * 
+	 * @return {@link ResourceRestrictions} with all restrictions
+	 */
 	private static ResourceRestrictions loadRestrictions() {
 		ResourceRestrictions restrictions = new ResourceRestrictions();
 
-		restrictions.minMemory = Integer.parseInt(Configuration.getProperty("vm.min_memory"));
-		restrictions.maxMemory = Integer.parseInt(Configuration.getProperty("vm.max_memory"));
-		restrictions.minHdd = Integer.parseInt(Configuration.getProperty("vm.min_hdd"));
-		restrictions.maxHdd = Integer.parseInt(Configuration.getProperty("vm.max_hdd"));
-		restrictions.minVRam = Integer.parseInt(Configuration.getProperty("vm.min_vram"));
-		restrictions.maxVRam = Integer.parseInt(Configuration.getProperty("vm.max_vram"));
+		restrictions.minMemory = Integer.parseInt(Configuration
+				.getProperty("vm.min_memory"));
+		restrictions.maxMemory = Integer.parseInt(Configuration
+				.getProperty("vm.max_memory"));
+		restrictions.minHdd = Integer.parseInt(Configuration
+				.getProperty("vm.min_hdd"));
+		restrictions.maxHdd = Integer.parseInt(Configuration
+				.getProperty("vm.max_hdd"));
+		restrictions.minVRam = Integer.parseInt(Configuration
+				.getProperty("vm.min_vram"));
+		restrictions.maxVRam = Integer.parseInt(Configuration
+				.getProperty("vm.max_vram"));
 
 		return restrictions;
 	}
 
-	private static void checkBounds(ManagementVMRequest webRequest) throws BoundsException {
-		if(webRequest.memorySize != null) {
+	/**
+	 * Checks whether the request complies with the restrictions.
+	 * 
+	 * @param webRequest
+	 *            the request to check bounds
+	 * @throws BoundsException
+	 *             on invalid request parameters
+	 */
+	private static void checkBounds(ManagementVMRequest webRequest)
+			throws BoundsException {
+		if (webRequest.memorySize != null) {
 			if (webRequest.memorySize < loadRestrictions().minMemory) {
-				throw new BoundsException("Memory size must be higher than " + loadRestrictions().minMemory + "MB");
+				throw new BoundsException("Memory size must be higher than "
+						+ loadRestrictions().minMemory + "MB");
 			} else if (webRequest.memorySize > loadRestrictions().maxMemory) {
-				throw new BoundsException("Memory size must be lower than " + loadRestrictions().maxMemory + "MB");
+				throw new BoundsException("Memory size must be lower than "
+						+ loadRestrictions().maxMemory + "MB");
 			}
 		}
-		if(webRequest.vramSize != null) {
+		if (webRequest.vramSize != null) {
 			if (webRequest.vramSize < loadRestrictions().minVRam) {
-				throw new BoundsException("VRam size must be higher than " + loadRestrictions().minVRam + "MB");
+				throw new BoundsException("VRam size must be higher than "
+						+ loadRestrictions().minVRam + "MB");
 			} else if (webRequest.vramSize > loadRestrictions().maxVRam) {
-				throw new BoundsException("VRam size must be lower than " + loadRestrictions().maxVRam + "MB");
+				throw new BoundsException("VRam size must be lower than "
+						+ loadRestrictions().maxVRam + "MB");
 			}
 		}
 	}
