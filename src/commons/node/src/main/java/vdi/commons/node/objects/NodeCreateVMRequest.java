@@ -26,7 +26,7 @@ public class NodeCreateVMRequest {
 	public long memorySize;
 
 	/**
-	 * HDD size in GB.
+	 * HDD size in MB.
 	 */
 	public long hddSize;
 
