@@ -14,6 +14,7 @@ import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 import org.junit.Test;
 
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.node.interfaces.NodeRegistrationService;
 import vdi.commons.node.objects.NodeGetResourcesResponse;
 import vdi.commons.node.objects.NodeRegisterRequest;
@@ -25,7 +26,7 @@ public class TestNodeRessource {
 	@Test
 	public void registerNode() {
 		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				"http://localhost:8080/ManagementServer" + "/node/");
+				"http://localhost:8080/ManagementServer" + "/node/", RESTEasyClientExecutor.get());
 
 		// REGISTER:
 
@@ -72,7 +73,7 @@ public class TestNodeRessource {
 	@Test
 	public void wrongAdressRegistration() {
 		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				"http://localhost:8080/ManagementServer" + "/node/");
+				"http://localhost:8080/ManagementServer" + "/node/", RESTEasyClientExecutor.get());
 
 		// REGISTER:
 

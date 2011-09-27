@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeVMService;
 import vdi.commons.node.objects.NodeCreateVMRequest;
@@ -304,7 +305,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	 * @return the {@link NodeVMService} for the given Node
 	 */
 	private NodeVMService selectNodeService(Node node) {
-		return ProxyFactory.create(NodeVMService.class, node.getUri() + "/vm/");
+		return ProxyFactory.create(NodeVMService.class, node.getUri() + "/vm/", RESTEasyClientExecutor.get());
 	}
 
 	/**

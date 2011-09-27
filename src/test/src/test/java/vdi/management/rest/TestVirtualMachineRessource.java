@@ -16,6 +16,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
 import vdi.commons.web.rest.objects.ManagementCreateVMRequest;
@@ -53,7 +54,8 @@ public class TestVirtualMachineRessource {
 	 */
 	@Before
 	public void setUp() {
-		vmr = ProxyFactory.create(ManagementVMService.class, "http://localhost:8080/ManagementServer" + "/vm/");
+		vmr = ProxyFactory.create(ManagementVMService.class, "http://localhost:8080/ManagementServer" + "/vm/",
+				RESTEasyClientExecutor.get());
 
 		HashMap<String, HashMap<String, String>> vmTypes = vmr.getVMTypes();
 		Assert.assertNotNull("vmTypes must not be null.", vmTypes);

@@ -7,6 +7,7 @@ import javax.ws.rs.Path;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.node.interfaces.NodeImageService;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
 import vdi.management.util.Scheduling;
@@ -24,7 +25,7 @@ public class ImageRessource implements ManagementImageService {
 		List<String> images = new ArrayList<String>();
 
 		NodeImageService nodeImageService = ProxyFactory.create(NodeImageService.class,
-				Scheduling.selectRandomNode().getUri() + "/images/");
+				Scheduling.selectRandomNode().getUri() + "/images/", RESTEasyClientExecutor.get());
 		images = nodeImageService.getImages();
 
 		return images;

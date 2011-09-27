@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.Util;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
@@ -32,7 +33,8 @@ public class RDP extends HttpServlet {
 		super();
 
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
-				Configuration.getProperty("managementserver.uri") + "/vm/");
+				Configuration.getProperty("managementserver.uri") + "/vm/",
+				RESTEasyClientExecutor.get());
 	}
 
 	/**

@@ -7,6 +7,7 @@ import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.node.interfaces.NodeRegistrationService;
 import vdi.commons.node.objects.NodeRegisterRequest;
 import vdi.commons.node.objects.NodeRegisterResponse;
@@ -23,7 +24,7 @@ public class Registration extends TimerTask {
 	@Override
 	public void run() {
 		NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-				Configuration.getProperty("managementserver.uri") + "/node/");
+				Configuration.getProperty("managementserver.uri") + "/node/", RESTEasyClientExecutor.get());
 
 		// create request
 		NodeRegisterRequest registerRequest = new NodeRegisterRequest();
@@ -57,7 +58,7 @@ public class Registration extends TimerTask {
 	public static void unregister() {
 		if (nodeId != null) {
 			NodeRegistrationService nodeRegistration = ProxyFactory.create(NodeRegistrationService.class,
-					Configuration.getProperty("managementserver.uri") + "/node/");
+					Configuration.getProperty("managementserver.uri") + "/node/", RESTEasyClientExecutor.get());
 
 			LOGGER.fine("Sending unregistration request with NodeID (" + nodeId + ") to ManagemetServer!");
 			// unregister

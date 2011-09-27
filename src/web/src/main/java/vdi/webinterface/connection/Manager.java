@@ -14,6 +14,7 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
 import vdi.commons.web.rest.interfaces.ManagementTagService;
@@ -41,11 +42,14 @@ public class Manager {
 
 	public Manager() {
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
-				Configuration.getProperty("managementserver.uri") + "/vm/");
+				Configuration.getProperty("managementserver.uri") + "/vm/",
+				RESTEasyClientExecutor.get());
 		mangementImageService = ProxyFactory.create(ManagementImageService.class,
-				Configuration.getProperty("managementserver.uri") + "/images/");
+				Configuration.getProperty("managementserver.uri") + "/images/",
+				RESTEasyClientExecutor.get());
 		mangementTagService = ProxyFactory.create(ManagementTagService.class,
-				Configuration.getProperty("managementserver.uri") + "/tags/");
+				Configuration.getProperty("managementserver.uri") + "/tags/",
+				RESTEasyClientExecutor.get());
 	}
 
 	@RemoteMethod

@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.node.interfaces.NodeVMService;
 
 public class TestRest {
@@ -13,7 +14,7 @@ public class TestRest {
 	public void TestRestVM() {
 		try {
 			NodeVMService nodeVMService = ProxyFactory.create(NodeVMService.class,
-					"http://localhost:8080/NodeController/vm/");
+					"http://localhost:8080/NodeController/vm/", RESTEasyClientExecutor.get());
 
 			Assert.assertNotNull("No rest: http://localhost:8080/NodeController/vm", nodeVMService);
 			Assert.assertFalse("NodeVMService: Empty VM Types entry", nodeVMService.getVMTypes().isEmpty());

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.jboss.resteasy.client.ProxyFactory;
 
+import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeResourceService;
 import vdi.commons.node.interfaces.NodeVMService;
@@ -45,7 +46,7 @@ public class PollNodeController extends TimerTask {
 	private void pollAvailableResources(List<Node> nodes) {
 		for (Node n : nodes) {
 			NodeResourceService resource = ProxyFactory.create(
-					NodeResourceService.class, n.getUri() + "/resources/");
+					NodeResourceService.class, n.getUri() + "/resources/", RESTEasyClientExecutor.get());
 			NodeGetResourcesResponse response = resource.getResources();
 
 			// store resources
@@ -74,7 +75,8 @@ public class PollNodeController extends TimerTask {
 
 		for (VirtualMachine vm : runningVMs) {
 			NodeVMService nodeVMService = ProxyFactory.create(
-					NodeVMService.class, vm.getNode().getUri() + "/vm/");
+					NodeVMService.class, vm.getNode().getUri() + "/vm/",
+					RESTEasyClientExecutor.get());
 			NodeVM nodeVM = nodeVMService.getVirtualMachine(vm.getMachineId());
 			// if VM is stopped on NodeController, update Database entry
 			if (nodeVM.status == VirtualMachineStatus.STOPPED) {
