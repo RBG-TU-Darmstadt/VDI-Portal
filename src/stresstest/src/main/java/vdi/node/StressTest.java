@@ -65,7 +65,7 @@ public class StressTest {
 		System.out.print(tupel);
 
 		try {
-			FileWriter fw = new FileWriter("performance.csv", true);
+			FileWriter fw = new FileWriter("userActions.csv", true);
 			fw.write(tupel);
 			fw.close();
 		} catch (IOException e1) {
