@@ -113,15 +113,15 @@ public class StressTest {
 			baseURI = value;
 		System.out.println("baseURI = " + baseURI);
 
-		value = Configuration.getProperty("vhd.basePath");
+		value = Configuration.getProperty("vm.vhdBasePath");
 		if (value != null)
 			vhdBasePath = value;
-		System.out.println("vhdBasePath = " + vhdBasePath);
+		System.out.println("vm.vhdBasePath = " + vhdBasePath);
 
-		value = Configuration.getProperty("vhd.fileName");
+		value = Configuration.getProperty("vm.vhdFileName");
 		if (value != null)
 			vhdFileName = value;
-		System.out.println("vhd.fileName = " + vhdFileName);
+		System.out.println("vm.vhdFileName = " + vhdFileName);
 		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vhd");
 
 		value = Configuration.getProperty("wait.beforeCreate");
@@ -160,6 +160,52 @@ public class StressTest {
 			userCount = Integer.parseInt(value);
 		System.out.println("test.users = " + userCount);
 
+		NodeCreateVMRequest vm = new NodeCreateVMRequest();
+		vm.name = "stresstest_vm_";
+		vm.osTypeId = "DOS";
+		vm.description = "";
+		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName;
+		vm.hddSize = 512;
+		vm.memorySize = 32;
+		vm.vramSize = 8;
+		vm.accelerate2d = true;
+		vm.accelerate3d = false;
+
+		value = Configuration.getProperty("vm.name");
+		if (value != null)
+			vm.name = value;
+		System.out.println("vm.name = " + vm.name);
+
+		value = Configuration.getProperty("vm.osTypeId");
+		if (value != null)
+			vm.osTypeId = value;
+		System.out.println("vm.osTypeId = " + vm.osTypeId);
+
+		value = Configuration.getProperty("vm.description");
+		if (value != null)
+			vm.description = value;
+		System.out.println("vm.description = " + vm.description);
+
+		value = Configuration.getProperty("vm.vhdSize");
+		if (value != null)
+			vm.hddSize = Long.parseLong(value);
+		System.out.println("vm.vhdSize = " + vm.hddSize);
+
+		value = Configuration.getProperty("vm.memorySize");
+		if (value != null)
+			vm.memorySize = Long.parseLong(value);
+		System.out.println("vm.memorySize = " + vm.memorySize);
+
+		value = Configuration.getProperty("vm.accelerate2d");
+		if (value != null)
+			vm.accelerate2d = Boolean.parseBoolean(value);
+		System.out.println("vm.accelerate2d = " + vm.accelerate2d);
+
+		value = Configuration.getProperty("vm.accelerate3d");
+		if (value != null)
+			vm.accelerate3d = Boolean.parseBoolean(value);
+		System.out.println("vm.accelerate3d = " + vm.accelerate3d);
+
 		// create userActions.csv
 		try {
 			FileWriter fw = new FileWriter("userActions.csv", false);
@@ -191,7 +237,7 @@ public class StressTest {
 		ArrayList<TestVMThread> users = new ArrayList<TestVMThread>();
 		for (int i = 0; i < userCount; ++i) {
 			TestVMThread thread = new TestVMThread(i, waitBeforeCreate, waitBeforeStart, waitBeforeStop,
-					waitBeforeRemove);
+					waitBeforeRemove, vm);
 			users.add(thread);
 			thread.start();
 		}
@@ -288,16 +334,30 @@ class TestVMThread extends Thread {
 	private int waitBeforeRemove;
 
 	private NodeVMService vmService;
+	private NodeCreateVMRequest vm;
 
 	private Date threadStartTime;
 
 	public TestVMThread(int threadNum, int waitBeforeCreate, int waitBeforeStart, int waitBeforeStop,
-			int waitBeforeRemove) {
+			int waitBeforeRemove, NodeCreateVMRequest vm) {
 		this.threadNum = threadNum;
 		this.waitBeforeCreate = waitBeforeCreate;
 		this.waitBeforeRemove = waitBeforeRemove;
 		this.waitBeforeStart = waitBeforeStart;
 		this.waitBeforeStop = waitBeforeStop;
+
+		this.vm = new NodeCreateVMRequest();
+
+		this.vm.name = vm.name + threadNum;
+		this.vm.hddFile += threadNum + ".vhd";
+
+		this.vm.accelerate2d = vm.accelerate2d;
+		this.vm.accelerate3d = vm.accelerate3d;
+		this.vm.description = vm.description;
+		this.vm.hddSize = vm.hddSize;
+		this.vm.memorySize = vm.memorySize;
+		this.vm.osTypeId = vm.osTypeId;
+		this.vm.vramSize = vm.vramSize;
 
 		vmService = ProxyFactory.create(NodeVMService.class, StressTest.baseURI + "/vm/");
 	}
@@ -331,18 +391,6 @@ class TestVMThread extends Thread {
 
 	private boolean createVm() {
 		startUserAction("createVM");
-
-		NodeCreateVMRequest vm = new NodeCreateVMRequest();
-
-		vm.name = "stresstest_vm_" + threadNum;
-		vm.osTypeId = "DOS";
-		vm.description = "";
-		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName + threadNum + ".vhd";
-		vm.hddSize = 512;
-		vm.memorySize = 32;
-		vm.vramSize = 8;
-		vm.accelerate2d = true;
-		vm.accelerate3d = false;
 
 		try {
 			NodeCreateVMResponse response = vmService.createVirtualMachine(vm);
