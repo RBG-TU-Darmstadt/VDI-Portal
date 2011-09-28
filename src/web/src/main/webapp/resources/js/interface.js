@@ -541,7 +541,7 @@ vdi = {
 		return ("0" + num).slice(-2);
 	},
 
-	split: function split(val) {
+	split: function(val) {
 		return val.split(/,\s*/);
 	},
 
