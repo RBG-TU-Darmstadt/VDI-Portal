@@ -155,7 +155,9 @@ public class Manager {
 		try {
 			mangementVMService.updateVirtualMachine(userId, id, request);
 		} catch(ClientResponseFailure f) {
-			success = false;
+			if (f.getResponse().getStatus() == 507) {
+				success = false;
+			}
 		}
 
 		JSONObject json = new JSONObject();
@@ -195,11 +197,18 @@ public class Manager {
 
 	@RemoteMethod
 	public String removeVM(Long id) {
-		mangementVMService.removeVirtualMachine(userId, id);
+		boolean success = true;
+		try {
+			mangementVMService.removeVirtualMachine(userId, id);
+		} catch(ClientResponseFailure f) {
+			if (f.getResponse().getStatus() == 507) {
+				success = false;
+			}
+		}
 
 		JSONObject json = new JSONObject();
 
-		json.put("success", true);
+		json.put("success", success);
 
 		return json.toString();
 	}
