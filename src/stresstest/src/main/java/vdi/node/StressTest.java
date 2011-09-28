@@ -23,11 +23,13 @@ import vdi.commons.node.objects.NodeUpdateVMRequest;
 import vdi.commons.node.objects.NodeUpdateVMResponse;
 
 public class StressTest {
+	public static final boolean deleteVHD = false;
+
 	public static String baseURI = "http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController";
 	public static String vhdBasePath = "";
 	public static String vhdFileName = "vhd"; // + threadNum + ".vhd"
 
-	public static int userCount = 10;
+	public static int userCount = 5;
 	private static String csvToken = ";";
 
 	private static long testDuration = 10 * 60 * 1000;
@@ -39,7 +41,9 @@ public class StressTest {
 
 	private static int performanceCheckInterval = 60 * 1000;
 
-	private static int usersRunning;
+	private static int usersRunning = 0;
+	private static int vmsCreated = 0;
+	private static int vmsRunning = 0;
 
 	public static synchronized void userStoped() {
 		usersRunning -= 1;
@@ -47,6 +51,30 @@ public class StressTest {
 
 	public static synchronized int getUsersRunning() {
 		return usersRunning;
+	}
+
+	public static void vmCreated() {
+		vmsCreated += 1;
+	}
+
+	public static void vmRemoved() {
+		vmsCreated -= 1;
+	}
+
+	public static void vmStarted() {
+		vmsRunning += 1;
+	}
+
+	public static void vmStopped() {
+		vmsRunning -= 1;
+	}
+
+	public static synchronized int getVmsRunning() {
+		return vmsRunning;
+	}
+
+	public static synchronized int getVmsCreated() {
+		return vmsCreated;
 	}
 
 	private static DateFormat dateFormat = DateFormat.getDateTimeInstance();
@@ -58,10 +86,29 @@ public class StressTest {
 		return r;
 	}
 
+	public static String getHMS(long time) {
+		String r = new String();
+		long h = time / (60 * 60 * 1000);
+		long m = (time % (60 * 60 * 1000)) / (60 * 1000);
+		double s = (time % (60 * 1000)) / 1000.0;
+		if (h > 0)
+			r = h + " h " + m + " min " + s + " sec";
+		else if (m > 0)
+			r = m + " min " + s + " sec";
+		else
+			r = s + " sec";
+		return r;
+	}
+
+	public static Date testStartTime;
+
 	public static synchronized void logUserAction(int userNum, String action, Date start, Date stop, String status) {
 		long duration = stop.getTime() - start.getTime();
-		String tupel = userNum + csvToken + action + csvToken + formatTime(start) + csvToken + formatTime(stop)
-				+ csvToken + duration + csvToken + status + "\n";
+		
+		String tupel = (start.getTime() - testStartTime.getTime()) + csvToken + userNum + csvToken + action
+				+ csvToken + formatTime(start) + csvToken + formatTime(stop) + csvToken + duration + csvToken
+				+ status + "\n";
+		
 		System.out.print(tupel);
 
 		try {
@@ -74,22 +121,130 @@ public class StressTest {
 	}
 
 	public static void main(String[] args) {
+		String configFile = "configuration.properties";
+		if (args.length > 0)
+			configFile = args[0];
+
 		// Load configuration
 		try {
-			InputStream is = new FileInputStream("configuration.properties");
+			InputStream is = new FileInputStream(configFile);
 			Configuration.loadProperties(is);
 			is.close();
+
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
+
+		// Setting Values:
+		String value;
+
+		value = Configuration.getProperty("baseURI");
+		if (value != null)
+			baseURI = value;
+		System.out.println("baseURI = " + baseURI);
+
+		value = Configuration.getProperty("vm.vhdBasePath");
+		if (value != null)
+			vhdBasePath = value;
+		System.out.println("vm.vhdBasePath = " + vhdBasePath);
+
+		value = Configuration.getProperty("vm.vhdFileName");
+		if (value != null)
+			vhdFileName = value;
+		System.out.println("vm.vhdFileName = " + vhdFileName);
+		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vhd");
+
+		value = Configuration.getProperty("wait.beforeCreate");
+		if (value != null)
+			waitBeforeCreate = Integer.parseInt(value);
+		System.out.println("wait.beforeCreate = " + waitBeforeCreate + " (" + getHMS(waitBeforeCreate) + ")");
+
+		value = Configuration.getProperty("wait.beforeStart");
+		if (value != null)
+			waitBeforeStart = Integer.parseInt(value);
+		System.out.println("wait.beforeStart = " + waitBeforeStart + " (" + getHMS(waitBeforeStart) + ")");
+
+		value = Configuration.getProperty("wait.beforeStop");
+		if (value != null)
+			waitBeforeStop = Integer.parseInt(value);
+		System.out.println("wait.beforeStop = " + waitBeforeStop + " (" + getHMS(waitBeforeStop) + ")");
+
+		value = Configuration.getProperty("wait.beforeRemove");
+		if (value != null)
+			waitBeforeRemove = Integer.parseInt(value);
+		System.out.println("wait.beforeRemove = " + waitBeforeRemove + " (" + getHMS(waitBeforeRemove) + ")");
+
+		value = Configuration.getProperty("performance.checkInterval");
+		if (value != null)
+			performanceCheckInterval = Integer.parseInt(value);
+		System.out.println("performance.checkInterval = " + performanceCheckInterval + " ("
+				+ getHMS(performanceCheckInterval) + ")");
+
+		value = Configuration.getProperty("test.duration");
+		if (value != null)
+			testDuration = Long.parseLong(value);
+		System.out.println("test.duration = " + testDuration + " (" + getHMS(testDuration) + ")");
+
+		value = Configuration.getProperty("test.users");
+		if (value != null)
+			userCount = Integer.parseInt(value);
+		System.out.println("test.users = " + userCount);
+
+		NodeCreateVMRequest vm = new NodeCreateVMRequest();
+		vm.name = "stresstest_vm_";
+		vm.osTypeId = "DOS";
+		vm.description = "";
+		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName;
+		vm.hddSize = 512;
+		vm.memorySize = 32;
+		vm.vramSize = 8;
+		vm.accelerate2d = true;
+		vm.accelerate3d = false;
+
+		value = Configuration.getProperty("vm.name");
+		if (value != null)
+			vm.name = value;
+		System.out.println("vm.name = " + vm.name);
+
+		value = Configuration.getProperty("vm.osTypeId");
+		if (value != null)
+			vm.osTypeId = value;
+		System.out.println("vm.osTypeId = " + vm.osTypeId);
+
+		value = Configuration.getProperty("vm.description");
+		if (value != null)
+			vm.description = value;
+		System.out.println("vm.description = " + vm.description);
+
+		value = Configuration.getProperty("vm.vhdSize");
+		if (value != null)
+			vm.hddSize = Long.parseLong(value);
+		System.out.println("vm.vhdSize = " + vm.hddSize);
+
+		value = Configuration.getProperty("vm.memorySize");
+		if (value != null)
+			vm.memorySize = Long.parseLong(value);
+		System.out.println("vm.memorySize = " + vm.memorySize);
+
+		value = Configuration.getProperty("vm.accelerate2d");
+		if (value != null)
+			vm.accelerate2d = Boolean.parseBoolean(value);
+		System.out.println("vm.accelerate2d = " + vm.accelerate2d);
+
+		value = Configuration.getProperty("vm.accelerate3d");
+		if (value != null)
+			vm.accelerate3d = Boolean.parseBoolean(value);
+		System.out.println("vm.accelerate3d = " + vm.accelerate3d);
 
 		// create userActions.csv
 		try {
+			String header = "time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken + "stop"
+					+ csvToken + "duration" + csvToken + "status" + "\n";
+
+			System.out.print("\n" + header);
+
 			FileWriter fw = new FileWriter("userActions.csv", false);
-			fw.write("user" + csvToken + "action" + csvToken + "start" + csvToken + "stop" + csvToken + "duration"
-					+ csvToken + "status" + "\n");
-			System.out.println("user" + csvToken + "action" + csvToken + "start" + csvToken + "stop" + csvToken
-					+ "duration" + csvToken + "status");
+			fw.write(header);
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -98,10 +253,13 @@ public class StressTest {
 
 		// create userActions.csv
 		try {
+			String header = "time" + csvToken + "date" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken
+					+ "freeHDD" + csvToken + "created" + csvToken + "running" + "\n";
+
+			System.out.print(header);
+
 			FileWriter fw = new FileWriter("performance.csv", false);
-			fw.write("time" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken + "freeHDD" + "\n");
-			System.out.println("time" + csvToken + "testPercent" + csvToken + "cpuLoad" + csvToken + "freeMemory"
-					+ csvToken + "freeHDD");
+			fw.write(header);
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -113,7 +271,7 @@ public class StressTest {
 		ArrayList<TestVMThread> users = new ArrayList<TestVMThread>();
 		for (int i = 0; i < userCount; ++i) {
 			TestVMThread thread = new TestVMThread(i, waitBeforeCreate, waitBeforeStart, waitBeforeStop,
-					waitBeforeRemove);
+					waitBeforeRemove, vm);
 			users.add(thread);
 			thread.start();
 		}
@@ -121,35 +279,59 @@ public class StressTest {
 		NodeResourceService nodeRes = ProxyFactory.create(NodeResourceService.class, StressTest.baseURI
 				+ "/resources/");
 
-		Date testStartTime = new Date();
-		Date curTime;
+		NodeGetResourcesResponse resources;
+		try {
+			resources = nodeRes.getResources();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return;
+		}
+
+		testStartTime = new Date();
+		Date curTime = new Date();
+		String performanceStr = 0 + csvToken + formatTime(curTime) + csvToken + 0 + csvToken + resources.cpuLoad
+				+ csvToken + resources.freeMemorySize + csvToken + resources.freeDiskSpace + csvToken + 0 + csvToken
+				+ 0 + "\n";
+
+		System.out.print(performanceStr);
+
+		try {
+			FileWriter fw = new FileWriter("performance.csv", true);
+			fw.write(performanceStr);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		long duration;
 		do {
+			try {
+				Thread.sleep(performanceCheckInterval);
+			} catch (InterruptedException e) {
+			}
+
 			curTime = new Date();
 			duration = curTime.getTime() - testStartTime.getTime();
 
-			NodeGetResourcesResponse resources = nodeRes.getResources();
+			resources = nodeRes.getResources();
+
+			performanceStr = duration + csvToken + formatTime(curTime) + csvToken + resources.cpuLoad + csvToken
+					+ resources.freeMemorySize + csvToken + resources.freeDiskSpace + csvToken + getVmsCreated()
+					+ csvToken + getVmsRunning() + "\n";
+
+			System.out.print(performanceStr);
 
 			try {
 				FileWriter fw = new FileWriter("performance.csv", true);
-				fw.write(formatTime(curTime) + csvToken + (duration * 100 / testDuration) + csvToken
-						+ resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken
-						+ resources.freeDiskSpace + "\n");
+				fw.write(performanceStr);
 				fw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println(formatTime(curTime) + csvToken + (duration * 100 / testDuration) + csvToken
-					+ resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken + resources.freeDiskSpace);
 
 			if (getUsersRunning() <= 0) {
 				System.err.println("all users failed");
 				break;
-			}
-
-			try {
-				Thread.sleep(performanceCheckInterval);
-			} catch (InterruptedException e) {
 			}
 		} while ((curTime.getTime() - testStartTime.getTime()) < testDuration);
 
@@ -157,13 +339,17 @@ public class StressTest {
 			testVMThread.endThread();
 		}
 
+		System.out.print("waiting for user threads to finish .");
+
 		// wait for all Threads to finish:
 		while (getUsersRunning() > 0) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
+			System.out.print(".");
 		}
+		System.out.println(" finished.");
 	}
 
 	public static void setUp() {
@@ -182,16 +368,30 @@ class TestVMThread extends Thread {
 	private int waitBeforeRemove;
 
 	private NodeVMService vmService;
+	private NodeCreateVMRequest vm;
 
 	private Date threadStartTime;
 
 	public TestVMThread(int threadNum, int waitBeforeCreate, int waitBeforeStart, int waitBeforeStop,
-			int waitBeforeRemove) {
+			int waitBeforeRemove, NodeCreateVMRequest vm) {
 		this.threadNum = threadNum;
 		this.waitBeforeCreate = waitBeforeCreate;
 		this.waitBeforeRemove = waitBeforeRemove;
 		this.waitBeforeStart = waitBeforeStart;
 		this.waitBeforeStop = waitBeforeStop;
+
+		this.vm = new NodeCreateVMRequest();
+
+		this.vm.name = vm.name + threadNum;
+		this.vm.hddFile += threadNum + ".vhd";
+
+		this.vm.accelerate2d = vm.accelerate2d;
+		this.vm.accelerate3d = vm.accelerate3d;
+		this.vm.description = vm.description;
+		this.vm.hddSize = vm.hddSize;
+		this.vm.memorySize = vm.memorySize;
+		this.vm.osTypeId = vm.osTypeId;
+		this.vm.vramSize = vm.vramSize;
 
 		vmService = ProxyFactory.create(NodeVMService.class, StressTest.baseURI + "/vm/");
 	}
@@ -226,18 +426,6 @@ class TestVMThread extends Thread {
 	private boolean createVm() {
 		startUserAction("createVM");
 
-		NodeCreateVMRequest vm = new NodeCreateVMRequest();
-
-		vm.name = "stresstest_vm_" + threadNum;
-		vm.osTypeId = "DOS";
-		vm.description = "";
-		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName + threadNum + ".vhd";
-		vm.hddSize = 512;
-		vm.memorySize = 32;
-		vm.vramSize = 8;
-		vm.accelerate2d = true;
-		vm.accelerate3d = false;
-
 		try {
 			NodeCreateVMResponse response = vmService.createVirtualMachine(vm);
 			machineID = response.machineId;
@@ -252,6 +440,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmCreated();
 		return true;
 	}
 
@@ -266,6 +455,7 @@ class TestVMThread extends Thread {
 			NodeUpdateVMResponse response = vmService.updateVirtualMachine(machineID, vm);
 			if (response.rdpUrl != null) {
 				endUserAction("ok");
+				StressTest.vmStarted();
 				return true;
 			}
 		} catch (ClientResponseFailure f) {
@@ -298,6 +488,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmStopped();
 		return true;
 	}
 
@@ -317,6 +508,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmRemoved();
 		return true;
 	}
 
@@ -346,7 +538,7 @@ class TestVMThread extends Thread {
 				}
 
 				if (!stopVM()) {
-					removeVM(true);
+					removeVM(StressTest.deleteVHD);
 					break;
 				}
 			}
@@ -356,7 +548,7 @@ class TestVMThread extends Thread {
 			} catch (InterruptedException e) {
 			}
 
-			if (!removeVM(true)) {
+			if (!removeVM(StressTest.deleteVHD)) {
 				break;
 			}
 		}
