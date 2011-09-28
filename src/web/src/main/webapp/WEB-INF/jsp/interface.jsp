@@ -66,6 +66,14 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
+					<label for="vdi-create-vm-description">Beschreibung:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="text" id="vdi-create-vm-description" />
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
 					<label for="vdi-create-vm-type">Typ:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
@@ -80,10 +88,10 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-description">Beschreibung:</label>
+					<label for="vdi-create-vm-image">Mount Image:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-description" />
+					<select id="vdi-create-vm-image"></select>
 				</div>
 			</div>
 			<div class="vdi-dialog-option">

@@ -27,7 +27,7 @@ vdi = {
 		$('#vdi-create-vm-type-family').change($.proxy(this, 'populateVMTypes'));
 
 		$('.vdi-mount-image').fancybox($.extend({
-			onStart: $.proxy(this, 'populateImages'),
+			onStart: $.proxy(this, 'initMountImageDialog'),
 			onClosed: $.proxy(this, 'resetImageDialog')
 		}, this.fancyboxOptions));
 
@@ -125,6 +125,11 @@ vdi = {
 				});
 			}
 		});
+
+		// Populate ISO images
+		var imageSelect = $('#vdi-create-vm-image');
+		imageSelect.append("<option value=''>keines</option>");
+		this.populateImages(imageSelect);
 
 		// Retrieve resource restrictions
 		Manager.getRestrictions(function(json) {
@@ -337,8 +342,9 @@ vdi = {
 	
 	createVM: function() {
 		var name = $("#vdi-create-vm-name").val();
-		var type = $("#vdi-create-vm-type").val();
 		var description = $("#vdi-create-vm-description").val();
+		var type = $("#vdi-create-vm-type").val();
+		var image = $("#vdi-create-vm-image").val();
 		var memory = $("#vdi-create-vm-memory").val();
 		var harddrive = $("#vdi-create-vm-harddrive").val();
 		var vram = $("#vdi-create-vm-vram").val();
@@ -353,7 +359,7 @@ vdi = {
 		tags = this.cleanTags(this.split(tags));
 
 		var self = this;
-		Manager.createVM(name, type, description, memory, harddrive,
+		Manager.createVM(name, description, type, image, memory, harddrive,
 				vram, acceleration2d, acceleration3d, tags, function(json) {
 			var response = $.parseJSON(json);
 
@@ -436,9 +442,10 @@ vdi = {
 	
 	resetCreateDialog: function() {
 		$('#vdi-create-vm-name').val('');
+		$('#vdi-create-vm-description').val('');
 		$("#vdi-create-vm-type-family option[value!='']").remove();
 		$('#vdi-create-vm-type').val('');
-		$('#vdi-create-vm-description').val('');
+		$('#vdi-create-vm-image').empty();
 		$('#vdi-create-vm-memory').val('');
 		$('#vdi-create-vm-harddrive').val('');
 		$('#vdi-create-vm-vram').val('');
@@ -469,13 +476,15 @@ vdi = {
 		$('.vdi-mount-image').click();
 	},
 
-	populateImages: function(event) {
+	initMountImageDialog: function() {
+		this.populateImages($('#vdi-mount-image-identifier'));
+	},
+
+	populateImages: function(imageSelect) {
 		Manager.getImages(function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
-				var imageSelect = $('#vdi-mount-image-identifier');
-
 				$.each(response.images, function(i, name) {
 					imageSelect.append("<option value='" + name + "'>" + name + "</option>");
 				});

@@ -68,25 +68,34 @@ public class Manager {
 	}
 
 	@RemoteMethod
-	public String createVM(String name, String type, String description, Long memory, Long harddisk, Long vram,
+	public String createVM(String name, String description, String type,
+			String image, Long memory, Long harddisk, Long vram,
 			boolean acceleration2d, boolean acceleration3d, List<String> tags) {
-		ManagementCreateVMRequest request = new ManagementCreateVMRequest();
-		request.name = name;
-		request.osTypeId = type;
-		request.description = description;
-		request.memorySize = memory;
-		request.hddSize = harddisk;
-		request.vramSize = vram;
-		request.accelerate2d = acceleration2d;
-		request.accelerate3d = acceleration3d;
-		request.tags = tags;
+		ManagementCreateVMRequest createRequest = new ManagementCreateVMRequest();
+		createRequest.name = name;
+		createRequest.osTypeId = type;
+		createRequest.description = description;
+		createRequest.memorySize = memory;
+		createRequest.hddSize = harddisk;
+		createRequest.vramSize = vram;
+		createRequest.accelerate2d = acceleration2d;
+		createRequest.accelerate3d = acceleration3d;
+		createRequest.tags = tags;
 
-		ManagementCreateVMResponse response = mangementVMService.createVirtualMachine(userId, request);
+		// Create machine
+		ManagementCreateVMResponse createResponse = mangementVMService.createVirtualMachine(userId, createRequest);
+
+		if ( ! image.isEmpty()) {
+			ManagementUpdateVMRequest mountRequest = new ManagementUpdateVMRequest();
+			mountRequest.image = image;
+
+			mangementVMService.updateVirtualMachine(userId, createResponse.id, mountRequest);
+		}
 
 		JSONObject json = new JSONObject();
 
 		json.put("success", true);
-		json.put("id", response.id);
+		json.put("id", createResponse.id);
 
 		return json.toString();
 	}
