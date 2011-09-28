@@ -27,7 +27,7 @@ public class StressTest {
 
 	public static String baseURI = "http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController";
 	public static String vhdBasePath = "";
-	public static String vhdFileName = "vhd"; // + threadNum + ".vhd"
+	public static String vhdFileName = "vhd"; // + threadNum + ".vdi"
 
 	public static int userCount = 5;
 	private static String csvToken = ";";
@@ -104,11 +104,11 @@ public class StressTest {
 
 	public static synchronized void logUserAction(int userNum, String action, Date start, Date stop, String status) {
 		long duration = stop.getTime() - start.getTime();
-		
+
 		String tupel = (start.getTime() - testStartTime.getTime()) + csvToken + userNum + csvToken + action
 				+ csvToken + formatTime(start) + csvToken + formatTime(stop) + csvToken + duration + csvToken
 				+ status + "\n";
-		
+
 		System.out.print(tupel);
 
 		try {
@@ -152,7 +152,7 @@ public class StressTest {
 		if (value != null)
 			vhdFileName = value;
 		System.out.println("vm.vhdFileName = " + vhdFileName);
-		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vhd");
+		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vdi");
 
 		value = Configuration.getProperty("wait.beforeCreate");
 		if (value != null)
@@ -383,7 +383,7 @@ class TestVMThread extends Thread {
 		this.vm = new NodeCreateVMRequest();
 
 		this.vm.name = vm.name + threadNum;
-		this.vm.hddFile += threadNum + ".vhd";
+		this.vm.hddFile += threadNum + ".vdi";
 
 		this.vm.accelerate2d = vm.accelerate2d;
 		this.vm.accelerate3d = vm.accelerate3d;
