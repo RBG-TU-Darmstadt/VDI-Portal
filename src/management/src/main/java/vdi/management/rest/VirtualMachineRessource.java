@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.client.ProxyFactory;
+import org.jboss.resteasy.spi.NoLogWebApplicationException;
 
 import vdi.commons.common.Configuration;
 import vdi.commons.common.RESTEasyClientExecutor;
@@ -335,10 +336,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 		List<Node> nodes = NodeDAO.getNodes();
 		vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
 		if (vm.getNode() == null) {
-			// Http StatusCode: 
-			// 507 Insufficient Storage
-			final int statusCode = 507;
-			throw new WebApplicationException(statusCode);
+			// HTTP Status Code: 507 Insufficient Storage
+			throw new NoLogWebApplicationException(507);
 		}
 
 		// Create machine on node controller
