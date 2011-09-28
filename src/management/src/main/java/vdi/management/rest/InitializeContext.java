@@ -2,7 +2,12 @@ package vdi.management.rest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Timer;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -21,6 +26,8 @@ import vdi.management.util.PollNodeController;
 public class InitializeContext implements ServletContextListener {
 
 	private Timer polling;
+
+	private static Logger LOGGER = Logger.getLogger(InitializeContext.class.getName());
 
 	@Override
 	public void contextInitialized(ServletContextEvent contextEvent) {
@@ -54,6 +61,18 @@ public class InitializeContext implements ServletContextListener {
 
 		// closing Hibernate SessionFactory:
 		HibernateUtil.getSessionFactory().close();
-	}
 
+		// unregisters JDBC driver
+		Enumeration<Driver> drivers = DriverManager.getDrivers();
+
+		while (drivers.hasMoreElements()) {
+			Driver d = drivers.nextElement();
+			try {
+				DriverManager.deregisterDriver(d);
+			} catch (SQLException e) {
+				LOGGER.warning("Error deregistering driver '"
+						+ d.getClass().getName() + "'!");
+			}
+		}
+	}
 }
