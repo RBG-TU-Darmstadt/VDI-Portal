@@ -27,7 +27,7 @@ public class StressTest {
 	public static String vhdBasePath = "";
 	public static String vhdFileName = "vhd"; // + threadNum + ".vhd"
 
-	public static int userCount = 10;
+	public static int userCount = 0;
 	private static String csvToken = ";";
 
 	private static long testDuration = 10 * 60 * 1000;
@@ -58,10 +58,27 @@ public class StressTest {
 		return r;
 	}
 
+	public static String getHMS(long time) {
+		String r = new String();
+		long h = time / (60 * 60 * 1000);
+		long m = (time % (60 * 60 * 1000)) / (60 * 1000);
+		double s = (time % (60 * 1000)) / 1000.0;
+		if (h > 0)
+			r = h + " h " + m + " min " + s + " sec";
+		else if (m > 0)
+			r = m + " min " + s + " sec";
+		else
+			r = s + " sec";
+		return r;
+	}
+
+	public static Date testStartTime;
+
 	public static synchronized void logUserAction(int userNum, String action, Date start, Date stop, String status) {
 		long duration = stop.getTime() - start.getTime();
-		String tupel = userNum + csvToken + action + csvToken + formatTime(start) + csvToken + formatTime(stop)
-				+ csvToken + duration + csvToken + status + "\n";
+		String tupel = (start.getTime() - testStartTime.getTime()) + csvToken + userNum + csvToken + action
+				+ csvToken + formatTime(start) + csvToken + formatTime(stop) + csvToken + duration + csvToken
+				+ status + "\n";
 		System.out.print(tupel);
 
 		try {
@@ -74,22 +91,82 @@ public class StressTest {
 	}
 
 	public static void main(String[] args) {
+		String configFile = "configuration.properties";
+		if (args.length > 0)
+			configFile = args[0];
+
 		// Load configuration
 		try {
-			InputStream is = new FileInputStream("configuration.properties");
+			InputStream is = new FileInputStream(configFile);
 			Configuration.loadProperties(is);
 			is.close();
+
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
+
+		// Setting Values:
+		String value;
+
+		value = Configuration.getProperty("baseURI");
+		if (value != null)
+			baseURI = value;
+		System.out.println("baseURI = " + baseURI);
+
+		value = Configuration.getProperty("vhd.basePath");
+		if (value != null)
+			vhdBasePath = value;
+		System.out.println("vhdBasePath = " + vhdBasePath);
+
+		value = Configuration.getProperty("vhd.fileName");
+		if (value != null)
+			vhdFileName = value;
+		System.out.println("vhd.fileName = " + vhdFileName);
+		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vhd");
+
+		value = Configuration.getProperty("wait.beforeCreate");
+		if (value != null)
+			waitBeforeCreate = Integer.parseInt(value);
+		System.out.println("wait.beforeCreate = " + waitBeforeCreate + " (" + getHMS(waitBeforeCreate) + ")");
+
+		value = Configuration.getProperty("wait.beforeStart");
+		if (value != null)
+			waitBeforeStart = Integer.parseInt(value);
+		System.out.println("wait.beforeStart = " + waitBeforeStart + " (" + getHMS(waitBeforeStart) + ")");
+
+		value = Configuration.getProperty("wait.beforeStop");
+		if (value != null)
+			waitBeforeStop = Integer.parseInt(value);
+		System.out.println("wait.beforeStop = " + waitBeforeStop + " (" + getHMS(waitBeforeStop) + ")");
+
+		value = Configuration.getProperty("wait.beforeRemove");
+		if (value != null)
+			waitBeforeRemove = Integer.parseInt(value);
+		System.out.println("wait.beforeRemove = " + waitBeforeRemove + " (" + getHMS(waitBeforeRemove) + ")");
+
+		value = Configuration.getProperty("performance.checkInterval");
+		if (value != null)
+			performanceCheckInterval = Integer.parseInt(value);
+		System.out.println("performance.checkInterval = " + performanceCheckInterval + " ("
+				+ getHMS(performanceCheckInterval) + ")");
+
+		value = Configuration.getProperty("test.duration");
+		if (value != null)
+			testDuration = Long.parseLong(value);
+		System.out.println("test.duration = " + testDuration + " (" + getHMS(testDuration) + ")");
+
+		value = Configuration.getProperty("test.users");
+		if (value != null)
+			userCount = Integer.parseInt(value);
+		System.out.println("test.users = " + userCount);
 
 		// create userActions.csv
 		try {
 			FileWriter fw = new FileWriter("userActions.csv", false);
-			fw.write("user" + csvToken + "action" + csvToken + "start" + csvToken + "stop" + csvToken + "duration"
-					+ csvToken + "status" + "\n");
-			System.out.println("user" + csvToken + "action" + csvToken + "start" + csvToken + "stop" + csvToken
-					+ "duration" + csvToken + "status");
+			fw.write("time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken + "stop"
+					+ csvToken + "duration" + csvToken + "status" + "\n");
+			System.out.println("time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken
+					+ "stop" + csvToken + "duration" + csvToken + "status");
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -99,9 +176,10 @@ public class StressTest {
 		// create userActions.csv
 		try {
 			FileWriter fw = new FileWriter("performance.csv", false);
-			fw.write("time" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken + "freeHDD" + "\n");
-			System.out.println("time" + csvToken + "testPercent" + csvToken + "cpuLoad" + csvToken + "freeMemory"
-					+ csvToken + "freeHDD");
+			fw.write("time" + csvToken + "date" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken
+					+ "freeHDD" + "\n");
+			System.out.println("time" + csvToken + "date" + csvToken + "testPercent" + csvToken + "cpuLoad"
+					+ csvToken + "freeMemory" + csvToken + "freeHDD");
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -121,35 +199,59 @@ public class StressTest {
 		NodeResourceService nodeRes = ProxyFactory.create(NodeResourceService.class, StressTest.baseURI
 				+ "/resources/");
 
-		Date testStartTime = new Date();
-		Date curTime;
+		NodeGetResourcesResponse resources;
+		try {
+			resources = nodeRes.getResources();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return;
+		}
+
+		testStartTime = new Date();
+		Date curTime = new Date();
+		String performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
+				+ csvToken + 0 + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken
+				+ resources.freeDiskSpace + "\n";
+
+		System.out.print(performanceStr);
+
+		try {
+			FileWriter fw = new FileWriter("performance.csv", true);
+			fw.write(performanceStr);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		long duration;
 		do {
+			try {
+				Thread.sleep(performanceCheckInterval);
+			} catch (InterruptedException e) {
+			}
+
 			curTime = new Date();
 			duration = curTime.getTime() - testStartTime.getTime();
 
-			NodeGetResourcesResponse resources = nodeRes.getResources();
+			resources = nodeRes.getResources();
+
+			performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
+					+ csvToken + duration + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize
+					+ csvToken + resources.freeDiskSpace + "\n";
+
+			System.out.print(performanceStr);
 
 			try {
 				FileWriter fw = new FileWriter("performance.csv", true);
-				fw.write(formatTime(curTime) + csvToken + (duration * 100 / testDuration) + csvToken
-						+ resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken
-						+ resources.freeDiskSpace + "\n");
+				fw.write(performanceStr);
 				fw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println(formatTime(curTime) + csvToken + (duration * 100 / testDuration) + csvToken
-					+ resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken + resources.freeDiskSpace);
 
 			if (getUsersRunning() <= 0) {
 				System.err.println("all users failed");
 				break;
-			}
-
-			try {
-				Thread.sleep(performanceCheckInterval);
-			} catch (InterruptedException e) {
 			}
 		} while ((curTime.getTime() - testStartTime.getTime()) < testDuration);
 
@@ -157,13 +259,17 @@ public class StressTest {
 			testVMThread.endThread();
 		}
 
+		System.out.print("waiting for user threads to finish .");
+
 		// wait for all Threads to finish:
 		while (getUsersRunning() > 0) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 			}
+			System.out.print(".");
 		}
+		System.out.println(" finished.");
 	}
 
 	public static void setUp() {
