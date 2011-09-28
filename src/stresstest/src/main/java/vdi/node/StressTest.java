@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
@@ -30,7 +32,7 @@ public class StressTest {
 	public static String vhdFileName = "vhd"; // + threadNum + ".vdi"
 
 	public static int userCount = 5;
-	private static String csvToken = ";";
+	public static String csvToken = ",";
 
 	private static long testDuration = 10 * 60 * 1000;
 
@@ -119,23 +121,6 @@ public class StressTest {
 			fw.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		}
-	}
-
-	public static synchronized void logPerformanceData(Date curTime, long duration, double cpuLoad,
-			long freeMemorySize, long freeDiskSpace) {
-		String performanceStr = duration + csvToken + formatTime(curTime) + csvToken + cpuLoad + csvToken
-				+ freeMemorySize + csvToken + freeDiskSpace + csvToken + getVmsCreated() + csvToken + getVmsRunning()
-				+ "\n";
-
-		System.out.print(performanceStr);
-
-		try {
-			FileWriter fw = new FileWriter("performance.csv", true);
-			fw.write(performanceStr);
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -285,21 +270,12 @@ public class StressTest {
 		}
 
 		testStartTime = new Date();
-		Date curTime = new Date();
-
-		NodeResourceService nodeRes = ProxyFactory.create(NodeResourceService.class, StressTest.baseURI
-				+ "/resources/");
-
-		NodeGetResourcesResponse resources;
-		try {
-			resources = nodeRes.getResources();
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return;
-		}
-		logPerformanceData(curTime, 0, resources.cpuLoad, resources.freeMemorySize, resources.freeDiskSpace);
 
 		usersRunning = userCount;
+
+		// Start performance monitoring
+		Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new PerformanceCheckThread(testStartTime), testStartTime, performanceCheckInterval);
 
 		ArrayList<TestVMThread> users = new ArrayList<TestVMThread>();
 		for (int i = 0; i < userCount; ++i) {
@@ -313,50 +289,85 @@ public class StressTest {
 			}
 		}
 
-		long duration;
+		// Wait till test time has elapsed
 		do {
 			try {
-				Thread.sleep(performanceCheckInterval);
-			} catch (InterruptedException e) {
-			}
-
-			curTime = new Date();
-			duration = curTime.getTime() - testStartTime.getTime();
-
-			resources = nodeRes.getResources();
-			logPerformanceData(curTime, duration, resources.cpuLoad, resources.freeMemorySize,
-					resources.freeDiskSpace);
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {}
 
 			if (getUsersRunning() <= 0) {
 				System.err.println("all users failed");
 				break;
 			}
-		} while ((curTime.getTime() - testStartTime.getTime()) < testDuration);
+		} while ((new Date().getTime() - testStartTime.getTime()) < testDuration);
 
 		for (TestVMThread testVMThread : users) {
 			testVMThread.endThread();
 		}
 
-		System.out.println("waiting for user threads to finish .");
+		System.out.println("Waiting for user threads to finish.");
 
 		// wait for all Threads to finish:
 		while (getUsersRunning() > 0) {
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
+			} catch (InterruptedException e) {}
 		}
 
-		curTime = new Date();
-		duration = curTime.getTime() - testStartTime.getTime();
-		resources = nodeRes.getResources();
-		logPerformanceData(curTime, duration, resources.cpuLoad, resources.freeMemorySize, resources.freeDiskSpace);
+		// Stop performance monitoring
+		try {
+			Thread.sleep(performanceCheckInterval);
+		} catch (InterruptedException e) {}
+
+		timer.cancel();
+
+		System.out.println("Done.");
 	}
 
 	public static void setUp() {
 	}
 
 };
+
+class PerformanceCheckThread extends TimerTask {
+
+	Date start;
+	NodeResourceService nodeResourceService;
+
+	public PerformanceCheckThread(Date start) {
+		this.start = start;
+		nodeResourceService = ProxyFactory.create(NodeResourceService.class,
+				StressTest.baseURI + "/resources/");
+	}
+
+	@Override
+	public void run() {
+		Date curTime = new Date();
+		long duration = curTime.getTime() - start.getTime();
+
+		NodeGetResourcesResponse resources = nodeResourceService.getResources();
+		logPerformanceData(curTime, duration, resources.cpuLoad, resources.freeMemorySize,
+				resources.freeDiskSpace);
+	}
+
+	public static synchronized void logPerformanceData(Date curTime, long duration, double cpuLoad,
+			long freeMemorySize, long freeDiskSpace) {
+		String performanceStr = duration + StressTest.csvToken + StressTest.formatTime(curTime) + StressTest.csvToken + cpuLoad + StressTest.csvToken
+				+ freeMemorySize + StressTest.csvToken + freeDiskSpace + StressTest.csvToken + StressTest.getVmsCreated() + StressTest.csvToken + StressTest.getVmsRunning()
+				+ "\n";
+
+		System.out.print(performanceStr);
+
+		try {
+			FileWriter fw = new FileWriter("performance.csv", true);
+			fw.write(performanceStr);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
 
 class TestVMThread extends Thread {
 	private int threadNum;
