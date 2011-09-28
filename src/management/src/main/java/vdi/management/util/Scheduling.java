@@ -39,6 +39,15 @@ public final class Scheduling {
 	/**
 	 * Selects the best Node to deploy the given VM on.
 	 * 
+	 * <p>
+	 * For every Node an index is calculated using the following algorithm: <br />
+	 * {@code index = (freeRAM^2 / RAM) * (core / load)}
+	 * </p>
+	 * 
+	 * <p>
+	 * The Node with the highest index is returned as the most suitable Node.
+	 * </p>
+	 * 
 	 * @param nodes
 	 *            the list of available Nodes
 	 * @param vm
