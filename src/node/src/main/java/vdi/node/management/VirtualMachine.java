@@ -139,8 +139,8 @@ public class VirtualMachine {
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		if (Configuration.getProperty("node.vdipath") != null && Configuration.getProperty("node.vdipath").length() > 0) {
-			createHdd(hddSize, Configuration.getProperty("node.vdipath") + "/hdd0.vdi");
+		if (Configuration.getProperty("node.vdifolder") != null && ! Configuration.getProperty("node.vdifolder").isEmpty()) {
+			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 		} else {
 			createHdd(hddSize, getPath() + "hdd0.vdi");
 		}
