@@ -45,6 +45,14 @@ public final class Scheduling {
 	 * </p>
 	 * 
 	 * <p>
+	 * (freeRAM / RAM) calculates the free Memory percentage. Since we want to
+	 * prefer Nodes with more free RAM but equal percentage, we multiply by
+	 * freeRAM again to get a higher score. <br />As the load is relative to the number
+	 * of processor cores available, we divide (load / core), but as a higher
+	 * load means lower scores we use the multiplicative inverse (core / load).
+	 * </p>
+	 * 
+	 * <p>
 	 * The Node with the highest index is returned as the most suitable Node.
 	 * </p>
 	 * 
