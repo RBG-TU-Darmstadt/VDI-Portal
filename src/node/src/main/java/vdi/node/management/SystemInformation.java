@@ -104,7 +104,7 @@ public class SystemInformation {
 	 */
 	public static long getDiskSpace() {
 		File file = new File("/");
-		return file.getTotalSpace() / 1024;
+		return file.getTotalSpace() / 1024 / 1024;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class SystemInformation {
 	 */
 	public static long getFreeDiskSpace() {
 		File file = new File("/");
-		return file.getFreeSpace() / 1024;
+		return file.getFreeSpace() / 1024 / 1024;
 	}
 
 	public static String getNodeEndpoint() {
