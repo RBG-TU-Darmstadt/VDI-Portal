@@ -11,6 +11,7 @@ import org.directwebremoting.ServerContext;
 import org.directwebremoting.ServerContextFactory;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
@@ -141,11 +142,16 @@ public class Manager {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.status = VirtualMachineStatus.STARTED;
 
-		mangementVMService.updateVirtualMachine(userId, id, request);
+		boolean success = true;
+		try {
+			mangementVMService.updateVirtualMachine(userId, id, request);
+		} catch(ClientResponseFailure f) {
+			success = false;
+		}
 
 		JSONObject json = new JSONObject();
 
-		json.put("success", true);
+		json.put("success", success);
 
 		return json.toString();
 	}

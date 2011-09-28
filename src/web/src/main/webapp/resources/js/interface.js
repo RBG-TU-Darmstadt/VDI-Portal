@@ -380,6 +380,9 @@ vdi = {
 			if (response.success) {
 				// Reload VMs
 				self.getVMs();
+			} else {
+				alert("Leider stehen nicht genug Resourcen zur Verfügung! "
+						+ "Bitte versuchen sie es später erneut.");
 			}
 		});
 	},
