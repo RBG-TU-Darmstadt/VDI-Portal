@@ -260,6 +260,14 @@ public class VirtualMachineRessource implements ManagementVMService {
 		}
 		if (webRequest.image != null) {
 			vm.setImage(webRequest.image);
+			if (vm.getStatus() == VirtualMachineStatus.STARTED
+					|| vm.getStatus() == VirtualMachineStatus.PAUSED) {
+				NodeUpdateVMRequest request = new NodeUpdateVMRequest();
+				request.image = webRequest.image;
+
+				selectNodeService(vm.getNode())
+						.updateVirtualMachine(vm.getMachineId(), request);
+			}
 		}
 		if (webRequest.name != null) {
 			vm.setMachineName(webRequest.name);
