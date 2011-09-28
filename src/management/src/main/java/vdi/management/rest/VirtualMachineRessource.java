@@ -334,6 +334,12 @@ public class VirtualMachineRessource implements ManagementVMService {
 		// choose NodeController
 		List<Node> nodes = NodeDAO.getNodes();
 		vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
+		if (vm.getNode() == null) {
+			// Http StatusCode: 
+			// 507 Insufficient Storage
+			final int statusCode = 507;
+			throw new WebApplicationException(statusCode);
+		}
 
 		// Create machine on node controller
 		NodeCreateVMResponse nodeResponse = selectNodeService(vm.getNode()).createVirtualMachine(nodeCreateRequest);
