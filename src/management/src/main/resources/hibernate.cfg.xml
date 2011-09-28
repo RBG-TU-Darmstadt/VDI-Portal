@@ -8,7 +8,7 @@
 		<!-- Database connection settings -->
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.characterEncoding">UTF-8</property>
-		<property name="hibernate.connection.hibernate.connection.useUnicode">true</property>
+		<property name="hibernate.connection.useUnicode">true</property>
 		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
 		<!-- Deployment -->
