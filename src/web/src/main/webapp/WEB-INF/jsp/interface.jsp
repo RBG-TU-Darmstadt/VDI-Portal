@@ -50,6 +50,10 @@
 		</div>
 
 		<div class="clear-layout"></div>
+
+		<div class="vdi-footer">
+			&copy; RBG TU Darmstadt 2011
+		</div>
 	</div>
 
 	<div class="vdi-dialog-container">

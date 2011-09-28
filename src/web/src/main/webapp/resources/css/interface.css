@@ -228,3 +228,11 @@ div.vdi-dialog h2 {
 #vdi-mount-image-dialog div.dialog-button {
 	margin-top:50px;
 }
+
+/*
+ * Footer
+ */
+div.vdi-footer {
+	margin:20px 0 10px;
+	text-align:center;
+}
