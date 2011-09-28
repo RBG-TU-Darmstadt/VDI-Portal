@@ -2,7 +2,6 @@ package vdi.management.storage.entities;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 
 import vdi.commons.common.Util;
@@ -77,7 +78,8 @@ public class Tag {
 		this.slug = slug;
 	}
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Cascade({CascadeType.SAVE_UPDATE })
 	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "TAG_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
 	@ForeignKey(name = "FK_Tag_VirtualMachine", inverseName = "FK_VirtualMachine_Tag")
 	public Set<VirtualMachine> getVirtualMachines() {

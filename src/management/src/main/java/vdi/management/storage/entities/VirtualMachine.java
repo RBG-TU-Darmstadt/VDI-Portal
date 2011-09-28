@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,6 +17,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
@@ -197,7 +198,8 @@ public class VirtualMachine {
 		this.rdpUrl = rdpUrl;
 	}
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Cascade({CascadeType.SAVE_UPDATE})
 	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "ID"), inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
 	@ForeignKey(name = "FK_VirtualMachine_Tag", inverseName = "FK_Tag_VirtualMachine")
 	public List<Tag> getTags() {
