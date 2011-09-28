@@ -41,7 +41,7 @@
 				<node.rdp_endpoint>xf06-vm4.rbg.informatik.tu-darmstadt.de</node.rdp_endpoint>
 				<node.internal_address>http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController</node.internal_address>
 				<node.registration_delay>10</node.registration_delay>
-				<node.vdifolder>/usr/share/Tomcat6/Virtualbox VM</node.vdifolder>
+				<node.vdifolder>/usr/share/tomcat6/VirtualBox VMs</node.vdifolder>
 			</properties>
 		</profile>
 	</profiles>
