@@ -195,7 +195,6 @@ public class StressTest {
 		vm.osTypeId = "DOS";
 		vm.description = "";
 		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName;
-		vm.hddSize = 512;
 		vm.memorySize = 32;
 		vm.vramSize = 8;
 		vm.accelerate2d = true;
@@ -215,11 +214,6 @@ public class StressTest {
 		if (value != null)
 			vm.description = value;
 		System.out.println("vm.description = " + vm.description);
-
-		value = Configuration.getProperty("vm.vhdSize");
-		if (value != null)
-			vm.hddSize = Long.parseLong(value);
-		System.out.println("vm.vhdSize = " + vm.hddSize);
 
 		value = Configuration.getProperty("vm.memorySize");
 		if (value != null)
@@ -383,12 +377,11 @@ class TestVMThread extends Thread {
 		this.vm = new NodeCreateVMRequest();
 
 		this.vm.name = vm.name + threadNum;
-		this.vm.hddFile += threadNum + ".vdi";
+		this.vm.hddFile = vm.hddFile + threadNum + ".vdi";
 
 		this.vm.accelerate2d = vm.accelerate2d;
 		this.vm.accelerate3d = vm.accelerate3d;
 		this.vm.description = vm.description;
-		this.vm.hddSize = vm.hddSize;
 		this.vm.memorySize = vm.memorySize;
 		this.vm.osTypeId = vm.osTypeId;
 		this.vm.vramSize = vm.vramSize;
