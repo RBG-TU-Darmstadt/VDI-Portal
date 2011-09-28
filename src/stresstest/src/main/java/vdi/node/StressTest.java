@@ -23,11 +23,13 @@ import vdi.commons.node.objects.NodeUpdateVMRequest;
 import vdi.commons.node.objects.NodeUpdateVMResponse;
 
 public class StressTest {
+	public static final boolean deleteVHD = false;
+
 	public static String baseURI = "http://xf06-vm4.rbg.informatik.tu-darmstadt.de:8080/NodeController";
 	public static String vhdBasePath = "";
 	public static String vhdFileName = "vhd"; // + threadNum + ".vhd"
 
-	public static int userCount = 0;
+	public static int userCount = 5;
 	private static String csvToken = ";";
 
 	private static long testDuration = 10 * 60 * 1000;
@@ -39,7 +41,9 @@ public class StressTest {
 
 	private static int performanceCheckInterval = 60 * 1000;
 
-	private static int usersRunning;
+	private static int usersRunning = 0;
+	private static int vmsCreated = 0;
+	private static int vmsRunning = 0;
 
 	public static synchronized void userStoped() {
 		usersRunning -= 1;
@@ -47,6 +51,30 @@ public class StressTest {
 
 	public static synchronized int getUsersRunning() {
 		return usersRunning;
+	}
+
+	public static void vmCreated() {
+		vmsCreated += 1;
+	}
+
+	public static void vmRemoved() {
+		vmsCreated -= 1;
+	}
+
+	public static void vmStarted() {
+		vmsRunning += 1;
+	}
+
+	public static void vmStopped() {
+		vmsRunning -= 1;
+	}
+
+	public static synchronized int getVmsRunning() {
+		return vmsRunning;
+	}
+
+	public static synchronized int getVmsCreated() {
+		return vmsCreated;
 	}
 
 	private static DateFormat dateFormat = DateFormat.getDateTimeInstance();
@@ -208,11 +236,13 @@ public class StressTest {
 
 		// create userActions.csv
 		try {
+			String header = "time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken + "stop"
+					+ csvToken + "duration" + csvToken + "status" + "\n";
+
+			System.out.print("\n"+header);
+
 			FileWriter fw = new FileWriter("userActions.csv", false);
-			fw.write("time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken + "stop"
-					+ csvToken + "duration" + csvToken + "status" + "\n");
-			System.out.println("time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken
-					+ "stop" + csvToken + "duration" + csvToken + "status");
+			fw.write(header);
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -221,11 +251,13 @@ public class StressTest {
 
 		// create userActions.csv
 		try {
+			String header = "time" + csvToken + "date" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken
+					+ "freeHDD" + csvToken + "created" + csvToken + "running" + "\n";
+
+			System.out.print(header);
+
 			FileWriter fw = new FileWriter("performance.csv", false);
-			fw.write("time" + csvToken + "date" + csvToken + "cpuLoad" + csvToken + "freeMemory" + csvToken
-					+ "freeHDD" + "\n");
-			System.out.println("time" + csvToken + "date" + csvToken + "testPercent" + csvToken + "cpuLoad"
-					+ csvToken + "freeMemory" + csvToken + "freeHDD");
+			fw.write(header);
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -257,7 +289,7 @@ public class StressTest {
 		Date curTime = new Date();
 		String performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
 				+ csvToken + 0 + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken
-				+ resources.freeDiskSpace + "\n";
+				+ resources.freeDiskSpace + csvToken + 0 + csvToken + 0 + "\n";
 
 		System.out.print(performanceStr);
 
@@ -283,7 +315,8 @@ public class StressTest {
 
 			performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
 					+ csvToken + duration + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize
-					+ csvToken + resources.freeDiskSpace + "\n";
+					+ csvToken + resources.freeDiskSpace + csvToken + getVmsCreated() + csvToken + getVmsRunning()
+					+ "\n";
 
 			System.out.print(performanceStr);
 
@@ -406,6 +439,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmCreated();
 		return true;
 	}
 
@@ -420,6 +454,7 @@ class TestVMThread extends Thread {
 			NodeUpdateVMResponse response = vmService.updateVirtualMachine(machineID, vm);
 			if (response.rdpUrl != null) {
 				endUserAction("ok");
+				StressTest.vmStarted();
 				return true;
 			}
 		} catch (ClientResponseFailure f) {
@@ -452,6 +487,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmStopped();
 		return true;
 	}
 
@@ -471,6 +507,7 @@ class TestVMThread extends Thread {
 			return false;
 		}
 		endUserAction("ok");
+		StressTest.vmRemoved();
 		return true;
 	}
 
@@ -500,7 +537,7 @@ class TestVMThread extends Thread {
 				}
 
 				if (!stopVM()) {
-					removeVM(true);
+					removeVM(StressTest.deleteVHD);
 					break;
 				}
 			}
@@ -510,7 +547,7 @@ class TestVMThread extends Thread {
 			} catch (InterruptedException e) {
 			}
 
-			if (!removeVM(true)) {
+			if (!removeVM(StressTest.deleteVHD)) {
 				break;
 			}
 		}
