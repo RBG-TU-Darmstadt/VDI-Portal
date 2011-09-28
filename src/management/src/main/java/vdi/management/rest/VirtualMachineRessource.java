@@ -139,7 +139,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		// Delete VM from NodeController
 		if (vm.getNode() == null) {
-			createVMOnNode(vm);
+			createVMOnNode(vm, true);
 		}
 		NodeVMService service = selectNodeService(vm.getNode());
 		service.removeVirtualMachine(vm.getMachineId(), true);
@@ -219,7 +219,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 			if (webRequest.status == VirtualMachineStatus.STARTED) {
 				if (vm.getStatus() == VirtualMachineStatus.STOPPED && vm.getNode() == null) {
 					// create virtual machine on NodeController
-					createVMOnNode(vm);
+					createVMOnNode(vm, false);
 				}
 
 				// start VM
@@ -323,7 +323,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	 * @param vm
 	 *            the virtual machine to create
 	 */
-	private void createVMOnNode(VirtualMachine vm) {
+	private void createVMOnNode(VirtualMachine vm, boolean randomNode) {
 		NodeCreateVMRequest nodeCreateRequest = new NodeCreateVMRequest();
 		nodeCreateRequest.name = "vdi_" + vm.getId();
 		nodeCreateRequest.osTypeId = vm.getOsType();
@@ -341,8 +341,12 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.accelerate3d = vm.isAccelerate3d();
 
 		// choose NodeController
-		List<Node> nodes = NodeDAO.getNodes();
-		vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
+		if (randomNode) {
+			vm.setNode(Scheduling.selectRandomNode());
+		} else {
+			List<Node> nodes = NodeDAO.getNodes();
+			vm.setNode(Scheduling.selectSuitableNode(nodes, vm));
+		}
 		if (vm.getNode() == null) {
 			// HTTP Status Code: 507 Insufficient Storage
 			throw new NoLogWebApplicationException(507);
