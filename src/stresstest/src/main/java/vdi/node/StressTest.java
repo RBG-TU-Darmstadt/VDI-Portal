@@ -104,9 +104,11 @@ public class StressTest {
 
 	public static synchronized void logUserAction(int userNum, String action, Date start, Date stop, String status) {
 		long duration = stop.getTime() - start.getTime();
+		
 		String tupel = (start.getTime() - testStartTime.getTime()) + csvToken + userNum + csvToken + action
 				+ csvToken + formatTime(start) + csvToken + formatTime(stop) + csvToken + duration + csvToken
 				+ status + "\n";
+		
 		System.out.print(tupel);
 
 		try {
@@ -239,7 +241,7 @@ public class StressTest {
 			String header = "time" + csvToken + "user" + csvToken + "action" + csvToken + "start" + csvToken + "stop"
 					+ csvToken + "duration" + csvToken + "status" + "\n";
 
-			System.out.print("\n"+header);
+			System.out.print("\n" + header);
 
 			FileWriter fw = new FileWriter("userActions.csv", false);
 			fw.write(header);
@@ -287,9 +289,9 @@ public class StressTest {
 
 		testStartTime = new Date();
 		Date curTime = new Date();
-		String performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
-				+ csvToken + 0 + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize + csvToken
-				+ resources.freeDiskSpace + csvToken + 0 + csvToken + 0 + "\n";
+		String performanceStr = 0 + csvToken + formatTime(curTime) + csvToken + 0 + csvToken + resources.cpuLoad
+				+ csvToken + resources.freeMemorySize + csvToken + resources.freeDiskSpace + csvToken + 0 + csvToken
+				+ 0 + "\n";
 
 		System.out.print(performanceStr);
 
@@ -313,10 +315,9 @@ public class StressTest {
 
 			resources = nodeRes.getResources();
 
-			performanceStr = (curTime.getTime() - testStartTime.getTime()) + csvToken + formatTime(curTime)
-					+ csvToken + duration + csvToken + resources.cpuLoad + csvToken + resources.freeMemorySize
-					+ csvToken + resources.freeDiskSpace + csvToken + getVmsCreated() + csvToken + getVmsRunning()
-					+ "\n";
+			performanceStr = duration + csvToken + formatTime(curTime) + csvToken + resources.cpuLoad + csvToken
+					+ resources.freeMemorySize + csvToken + resources.freeDiskSpace + csvToken + getVmsCreated()
+					+ csvToken + getVmsRunning() + "\n";
 
 			System.out.print(performanceStr);
 
