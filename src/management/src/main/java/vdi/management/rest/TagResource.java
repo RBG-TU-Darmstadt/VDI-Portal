@@ -12,7 +12,7 @@ import vdi.management.storage.entities.Tag;
 
 /**
  * This class exports the {@link ManagementTagService} Interface for the
- * WebInterface, in order to receive all tags that are already available
+ * WebInterface, in order to receive all tags that are already available.
  */
 @Path("/tags")
 public class TagResource implements ManagementTagService {
