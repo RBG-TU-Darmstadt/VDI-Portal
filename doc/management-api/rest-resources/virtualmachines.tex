@@ -53,13 +53,36 @@
 	\begin{tabularx}{\textwidth}{llX} 
 	    \toprule
 					\textbf{Request}        &   HTTP method             &   \texttt{DELETE}			\tabularnewline
-		                        			&   URL                     &   \texttt{/vm/\{id\}?deleteHdd=[true|false]}           	\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/\{id\}}           	\tabularnewline
 									& Parameter & Header: User: \texttt{userId} \tabularnewline
 													& & \texttt{id: [a-zA-Z0-9-]+} \tabularnewline
                                   &   Consumes                &   nothing					      	\tabularnewline \midrule                       
           \textbf{Response}       &   Success status code     &   \texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content) 	\tabularnewline
                                   &   Produces                &   nothing								\tabularnewline
                                   &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+           \bottomrule
+	\end{tabularx}
+\end{center}
+\pagebreak[3] 	
+\pagebreak[3]
+% subsection (end)
+
+
+\subsection{Delete a Virtual Harddisk} % (fold)
+
+\begin{center}
+	\begin{tabularx}{\textwidth}{llX} 
+	    \toprule
+					\textbf{Request}        &   HTTP method             &   \texttt{DELETE}			\tabularnewline
+		                        			&   URL                     &   \texttt{/vm/disk/\{file\}}           	\tabularnewline
+									& Parameter & Header: User: \texttt{userId} \tabularnewline
+													& & \texttt{file: [a-zA-Z0-9-\_.]+} \tabularnewline
+                                  &   Consumes                &   nothing					      	\tabularnewline \midrule                       
+          \textbf{Response}       &   Success status code     &   \texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content) 	\tabularnewline
+                                  &   Produces                &   nothing								\tabularnewline
+                                  &   Failure status code     &   \texttt{404 NOT FOUND} (No resource with the requested id found)	\tabularnewline
+																																		& & \texttt{409 CONFLICT} (The request could not be completed due tu the current state of the resource.) \tabularnewline
+																																		& & \texttt{500 INTERNAL SERVER ERROR} (The server encountered an unexpected condition which prevented it from fulfilling the request.) \tabularnewline
            \bottomrule
 	\end{tabularx}
 \end{center}

@@ -41,14 +41,18 @@ public interface NodeVMService {
 	 * 
 	 * @param machineId
 	 *            the machineId of the VM to delete.
-	 * @param deleteHdd
-	 *            true, if the attached vhd should be removed (removing the
-	 *            whole vm).
 	 */
 	@DELETE
 	@Path("/{machineId: [a-zA-Z0-9-_]+}")
-	void removeVirtualMachine(@PathParam("machineId") String machineId, @QueryParam("deleteHdd") boolean deleteHdd);
+	void removeVirtualMachine(@PathParam("machineId") String machineId);
 
+	/**
+	 * Deletes a virtual harddisk file (vdi)
+	 */
+	@DELETE
+	@Path("/disk/{hddFile: [a-zA-Z0-9-_.]+}")
+	void removeDisk(@PathParam("hddFile") String hddFile);
+	
 	/**
 	 * Get information of a VirtualMachine.
 	 * 

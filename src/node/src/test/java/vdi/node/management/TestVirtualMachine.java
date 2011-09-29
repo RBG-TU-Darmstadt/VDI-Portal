@@ -15,11 +15,10 @@ import org.junit.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VBoxException;
 
-import vdi.node.exception.DuplicateMachineNameException;
-import vdi.node.exception.MachineNotFoundException;
 import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
-import vdi.node.management.VirtualMachine;
+import vdi.node.exception.DuplicateMachineNameException;
+import vdi.node.exception.MachineNotFoundException;
 
 public class TestVirtualMachine {
 	boolean init = false;
@@ -79,11 +78,13 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					vm.stop();
 				}
-				vm.delete(true);
+				String vdi = vm.getHarddiskMedium().getLocation();
+				vm.delete();
+				VirtualMachine.deleteDisk(vdi);
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
 			}
-		} catch (ExceptionInInitializerError e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -98,7 +99,9 @@ public class TestVirtualMachine {
 					vm.stop();
 					Thread.sleep(10 * 1000);
 				}
-				vm.delete(true);
+				String vdi = vm.getHarddiskMedium().getLocation();
+				vm.delete();
+				VirtualMachine.deleteDisk(vdi);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -109,7 +112,9 @@ public class TestVirtualMachine {
 			if (vm != null) {
 				if (vm.getState() != VirtualMachineStatus.STOPPED)
 					vm.stop();
-				vm.delete(true);
+				String vdi = vm.getHarddiskMedium().getLocation();
+				vm.delete();
+				VirtualMachine.deleteDisk(vdi);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -146,7 +151,7 @@ public class TestVirtualMachine {
 	}
 
 	@Test
-	public void createDeleteVm() {
+	public void createDeleteVm() throws Exception {
 		skipOnInitFailure();
 
 		createVM(vm_name);
@@ -178,7 +183,9 @@ public class TestVirtualMachine {
 			try {
 				VirtualMachine vm2 = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L,
 						false, false, 32L);
-				vm2.delete(true);
+				String vdi = vm2.getHarddiskMedium().getLocation();
+				vm2.delete();
+				VirtualMachine.deleteDisk(vdi);
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
 			}
@@ -188,12 +195,14 @@ public class TestVirtualMachine {
 		}
 	}
 
-	private void deleteVm(String name) {
+	private void deleteVm(String name) throws Exception {
 		VirtualMachine vm = getVMByName(name);
 
 		Assert.assertNotNull("Machine '" + name + "' not found", vm);
 
-		vm.delete(true);
+		String vdi = vm.getHarddiskMedium().getLocation();
+		vm.delete();
+		VirtualMachine.deleteDisk(vdi);
 
 		vm = getVMByName(name);
 		Assert.assertNull("Machine '" + name + "' found after delete()", vm);
@@ -227,9 +236,11 @@ public class TestVirtualMachine {
 		Assume.assumeNotNull(vm);
 	}
 
-	private boolean deleteVM(VirtualMachine vm) {
+	private boolean deleteVM(VirtualMachine vm) throws Exception {
 		try {
-			vm.delete(true);
+			String vdi = vm.getHarddiskMedium().getLocation();
+			vm.delete();
+			VirtualMachine.deleteDisk(vdi);
 		} catch (VBoxException e) {
 			// catching
 			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
@@ -240,7 +251,7 @@ public class TestVirtualMachine {
 	}
 
 	@Test
-	public void vmStartPauseResumeTest() {
+	public void vmStartPauseResumeTest() throws Exception {
 		getTestVM("vm status test");
 
 		VirtualMachineStatus vmStatus = vm.getState();

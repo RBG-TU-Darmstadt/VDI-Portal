@@ -1,5 +1,7 @@
 package vdi.node.management;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
@@ -88,6 +90,32 @@ public class VirtualMachine {
 		}
 
 		return osTypes;
+	}
+	
+	/**
+	 * Deletes a vdi-file
+	 * 
+	 * @param hddFile
+	 *            filename of the virtual harddisk
+	 */
+	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
+		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
+		
+		if (file.exists()) {
+			if (file.canWrite()) {
+				if (file.isDirectory()) {
+					throw new IllegalArgumentException();
+				} else {
+					if (file.delete() == false) {
+						throw new Exception("Error while deleting vdi-file.");
+					}
+				}
+			} else {
+				throw new IllegalAccessException();
+			}
+		} else {
+			throw new FileNotFoundException();
+		}
 	}
 
 	/**
@@ -306,17 +334,10 @@ public class VirtualMachine {
 
 	/**
 	 * Deletes the virtual machine.
-	 * 
-	 * @param deleteHdd
-	 *            true to delete vm's attached vhd.
 	 */
-	public synchronized void delete(boolean deleteHdd) {
+	public synchronized void delete() {
 		LOGGER.info("Delete virtual machine with ID " + this.getId());
-		if (deleteHdd) {
-			machine.delete(machine.unregister(CleanupMode.DetachAllReturnHardDisksOnly));
-		} else {
-			machine.delete(machine.unregister(CleanupMode.DetachAllReturnNone));
-		}
+		machine.delete(machine.unregister(CleanupMode.DetachAllReturnNone));
 	}
 
 	/**

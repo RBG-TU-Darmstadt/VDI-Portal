@@ -138,12 +138,14 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public void removeVirtualMachine(String userId, Long vmId) {
 		VirtualMachine vm = VirtualMachineDAO.get(vmId);
 
-		// Delete VM from NodeController
-		if (vm.getNode() == null) {
-			createVMOnNode(vm, true);
+		// Remove machine if deployed
+		if (vm.getNode() != null) {
+			NodeVMService service = selectNodeService(vm.getNode());
+			service.removeVirtualMachine(vm.getMachineId());
 		}
-		NodeVMService service = selectNodeService(vm.getNode());
-		service.removeVirtualMachine(vm.getMachineId(), true);
+
+		// Remove disk image
+		selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddPath());
 
 		// Delete VM from the database
 		Hibernate.deleteObject(vm);
@@ -244,7 +246,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 				}
 
 				// delete virtual machine from NodeController
-				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId(), false);
+				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId());
 
 				vm.setRdpUrl(null);
 				vm.setMachineId(null);

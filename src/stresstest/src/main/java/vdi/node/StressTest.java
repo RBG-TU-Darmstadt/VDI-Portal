@@ -25,8 +25,6 @@ import vdi.commons.node.objects.NodeUpdateVMRequest;
 import vdi.commons.node.objects.NodeUpdateVMResponse;
 
 public class StressTest {
-	public static final boolean deleteVHD = false;
-
 	public static String baseURI = null;
 	public static String vhdBasePath = "";
 	public static String vhdFileName = "vhd"; // + threadNum + ".vdi"
@@ -503,11 +501,11 @@ class TestVMThread extends Thread {
 		return true;
 	}
 
-	private boolean removeVM(boolean deleteVHD) {
+	private boolean removeVM() {
 		startUserAction("removeVM");
 
 		try {
-			vmService.removeVirtualMachine(machineID, deleteVHD);
+			vmService.removeVirtualMachine(machineID);
 		} catch (ClientResponseFailure f) {
 			System.err.println(f.getResponse().getResponseStatus());
 			System.err.println(((ClientResponse<?>) f.getResponse()).getEntity(String.class));
@@ -549,7 +547,7 @@ class TestVMThread extends Thread {
 				}
 
 				if (!stopVM()) {
-					removeVM(StressTest.deleteVHD);
+					removeVM();
 					break;
 				}
 			}
@@ -559,7 +557,7 @@ class TestVMThread extends Thread {
 			} catch (InterruptedException e) {
 			}
 
-			if (!removeVM(StressTest.deleteVHD)) {
+			if (!removeVM()) {
 				break;
 			}
 		}

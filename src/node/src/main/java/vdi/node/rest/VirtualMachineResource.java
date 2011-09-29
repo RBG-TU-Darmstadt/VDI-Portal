@@ -1,5 +1,7 @@
 package vdi.node.rest;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 
@@ -51,7 +53,8 @@ public class VirtualMachineResource implements NodeVMService {
 
 		NodeCreateVMResponse response = new NodeCreateVMResponse();
 		response.machineId = machine.getId();
-		response.hddFile = machine.getHarddiskMedium().getLocation();
+		File file = new File(machine.getHarddiskMedium().getLocation());
+		response.hddFile = file.getName();
 
 		return response;
 	}
@@ -170,7 +173,7 @@ public class VirtualMachineResource implements NodeVMService {
 	}
 
 	@Override
-	public void removeVirtualMachine(String machineId, boolean deleteHdd) {
+	public void removeVirtualMachine(String machineId) {
 		VirtualMachine machine;
 		try {
 			machine = new VirtualMachine(machineId);
@@ -178,7 +181,7 @@ public class VirtualMachineResource implements NodeVMService {
 			throw new NoLogWebApplicationException(Status.NOT_FOUND);
 		}
 
-		machine.delete(deleteHdd);
+		machine.delete();
 	}
 
 	@Override
@@ -191,6 +194,19 @@ public class VirtualMachineResource implements NodeVMService {
 		}
 
 		return machine.getThumbnail(width, height);
+	}
+
+	@Override
+	public void removeDisk(String hddFile) {
+		try {
+			VirtualMachine.deleteDisk(hddFile);
+		} catch (FileNotFoundException e) {
+			throw new NoLogWebApplicationException(Status.NOT_FOUND);
+		} catch (IllegalAccessException e) {
+			throw new NoLogWebApplicationException(Status.CONFLICT);
+		} catch (Exception e) {
+			throw new NoLogWebApplicationException(Status.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

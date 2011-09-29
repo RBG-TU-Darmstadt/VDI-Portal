@@ -6,8 +6,10 @@
         "201": "\\texttt{201 CREATED} (Resource was created successfully)",
         "204": "\\texttt{204 NO CONTENT} (Request was successfully processed, but the server does not return any content)",
         "404": "\\texttt{404 NOT FOUND} (No resource with the requested id found)",
+        "409": "\\texttt{409 CONFLICT} (The request could not be completed due tu the current state of the resource.)",
         "422": "\\texttt{422 UNPROCESSABLE ENTITY} (JSON object was semantically not correct)",
-        "424": "\\texttt{424 FAILED DEPENDENCY} (A referenced resource could not be found)"
+        "424": "\\texttt{424 FAILED DEPENDENCY} (A referenced resource could not be found)",
+        "500": "\\texttt{500 INTERNAL SERVER ERROR} (The server encountered an unexpected condition which prevented it from fulfilling the request.)"
     },
 
     "resources": {
@@ -105,7 +107,7 @@
                 "title": "Delete a VM",
                 "request": {
                     "http_method": "DELETE",
-                    "url": "/vm/\\{id\\}?deleteHdd=[true|false]",
+                    "url": "/vm/\\{id\\}",
                     "consumes": "nothing",
                     "parameter": ["Header: User: \\texttt{userId}", "\\texttt{id: [a-zA-Z0-9-]+}"]
                 },
@@ -113,6 +115,20 @@
                     "success_status_code": ["204"],
                     "produces": "nothing",
                     "failure_status_code": ["404"]
+                }
+            },
+      {
+                "title": "Delete a Virtual Harddisk",
+                "request": {
+                    "http_method": "DELETE",
+                    "url": "/vm/disk/\\{file\\}",
+                    "consumes": "nothing",
+                    "parameter": ["Header: User: \\texttt{userId}", "\\texttt{file: [a-zA-Z0-9-\\_.]+}"]
+                },
+                "response": {
+                    "success_status_code": ["204"],
+                    "produces": "nothing",
+                    "failure_status_code": ["404", "409", "500"]
                 }
             },
 			{
