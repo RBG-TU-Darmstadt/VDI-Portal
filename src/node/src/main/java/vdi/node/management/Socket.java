@@ -5,8 +5,14 @@ package vdi.node.management;
  */
 public class Socket {
 
+	/**
+	 * IP or DNS.
+	 */
 	public String ip;
 
+	/**
+	 * String containing the port number.
+	 */
 	public String port;
 
 	/**
