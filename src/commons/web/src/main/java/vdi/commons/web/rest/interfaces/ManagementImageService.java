@@ -6,10 +6,18 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+/**
+ * REST interface providing a list of available ISO images.
+ */
 public interface ManagementImageService {
 
+	/**
+	 * Query a list of images from ManagementServer.
+	 * 
+	 * @return list of available images.
+	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<String> getImages();
+	List<String> getImages();
 
 }
