@@ -27,7 +27,7 @@ public class InitializeContext implements ServletContextListener {
 
 	private Timer polling;
 
-	private static Logger LOGGER = Logger.getLogger(InitializeContext.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(InitializeContext.class.getName());
 
 	@Override
 	public void contextInitialized(ServletContextEvent contextEvent) {

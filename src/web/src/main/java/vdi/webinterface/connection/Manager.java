@@ -15,6 +15,7 @@ import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.HttpStatus;
 import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.web.rest.interfaces.ManagementImageService;
@@ -41,6 +42,9 @@ public class Manager {
 	ManagementImageService mangementImageService;
 	ManagementTagService mangementTagService;
 
+	/**
+	 * Default constructor initializing ManagementServer services. 
+	 */
 	public Manager() {
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
 				Configuration.getProperty("managementserver.uri") + "/vm/",
@@ -154,8 +158,8 @@ public class Manager {
 		boolean success = true;
 		try {
 			mangementVMService.updateVirtualMachine(userId, id, request);
-		} catch(ClientResponseFailure f) {
-			if (f.getResponse().getStatus() == 507) {
+		} catch (ClientResponseFailure f) {
+			if (f.getResponse().getStatus() == HttpStatus.INSUFFICIENT_STORAGE.getStatusCode()) {
 				success = false;
 			}
 		}
@@ -200,8 +204,8 @@ public class Manager {
 		boolean success = true;
 		try {
 			mangementVMService.removeVirtualMachine(userId, id);
-		} catch(ClientResponseFailure f) {
-			if (f.getResponse().getStatus() == 507) {
+		} catch (ClientResponseFailure f) {
+			if (f.getResponse().getStatus() == HttpStatus.INSUFFICIENT_STORAGE.getStatusCode()) {
 				success = false;
 			}
 		}
@@ -293,7 +297,7 @@ public class Manager {
 		json.put("success", true);
 
 		JSONArray tags = new JSONArray();
-		for(ManagementTag tag : response) {
+		for (ManagementTag tag : response) {
 			tags.add(tag.name);
 		}
 

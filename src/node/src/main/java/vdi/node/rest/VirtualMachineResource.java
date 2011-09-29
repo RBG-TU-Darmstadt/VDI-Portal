@@ -4,10 +4,11 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.virtualbox_4_1.IMachine;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
@@ -41,9 +42,11 @@ public class VirtualMachineResource implements NodeVMService {
 						request.hddSize, request.accelerate2d, request.accelerate3d, request.vramSize);
 			}
 		} catch (InvalidParameterException e) {
-			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+			throw new NoLogWebApplicationException(Response.status(Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
+					.entity(e.getMessage()).build());
 		} catch (DuplicateMachineNameException e) {
-			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+			throw new NoLogWebApplicationException(Response.status(Status.BAD_REQUEST).type(MediaType.TEXT_PLAIN)
+					.entity(e.getMessage()).build());
 		}
 
 		NodeCreateVMResponse response = new NodeCreateVMResponse();
@@ -76,7 +79,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new NoLogWebApplicationException(Status.NOT_FOUND);
 		}
 
 		NodeVM responseVM = new NodeVM();
@@ -98,7 +101,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new NoLogWebApplicationException(Status.NOT_FOUND);
 		}
 
 		NodeUpdateVMResponse response = new NodeUpdateVMResponse();
@@ -172,7 +175,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new NoLogWebApplicationException(Status.NOT_FOUND);
 		}
 
 		machine.delete(deleteHdd);
@@ -184,7 +187,7 @@ public class VirtualMachineResource implements NodeVMService {
 		try {
 			machine = new VirtualMachine(machineId);
 		} catch (MachineNotFoundException e) {
-			throw new WebApplicationException(Status.NOT_FOUND);
+			throw new NoLogWebApplicationException(Status.NOT_FOUND);
 		}
 
 		return machine.getThumbnail(width, height);

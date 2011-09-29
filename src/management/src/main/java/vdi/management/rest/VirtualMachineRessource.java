@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -14,6 +14,7 @@ import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 
 import vdi.commons.common.Configuration;
+import vdi.commons.common.HttpStatus;
 import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeVMService;
@@ -88,7 +89,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 				throw new BoundsException("HDD size must be lower than " + loadRestrictions().maxHdd + "MB");
 			}
 		} catch (BoundsException e) {
-			throw new WebApplicationException(Response.status(Status.FORBIDDEN)
+			throw new NoLogWebApplicationException(Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN)
 					.entity(e.getMessage()).build());
 		}
 
@@ -114,16 +115,16 @@ public class VirtualMachineRessource implements ManagementVMService {
 		User vmUser = UserDAO.get(userId);
 
 		if (vmUser == null) {
-			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
-					.entity("DB: user request failed.").build());
+			throw new NoLogWebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
+					.type(MediaType.TEXT_PLAIN).entity("DB: user request failed.").build());
 		}
 
 		vm.setUser(vmUser);
 		vm.setStatus(VirtualMachineStatus.STOPPED);
 
 		if (!Hibernate.saveObject(vm)) {
-			throw new WebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
-					.entity("DB: vm insert failed.").build());
+			throw new NoLogWebApplicationException(Response.status(Status.SERVICE_UNAVAILABLE)
+					.type(MediaType.TEXT_PLAIN).entity("DB: vm insert failed.").build());
 		}
 
 		// send response to WebInterface
@@ -203,7 +204,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		try {
 			checkBounds(webRequest);
 		} catch (BoundsException e) {
-			throw new WebApplicationException(Response.status(Status.FORBIDDEN)
+			throw new NoLogWebApplicationException(Response.status(Status.FORBIDDEN).type(MediaType.TEXT_PLAIN)
 					.entity(e.getMessage()).build());
 		}
 
@@ -349,7 +350,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		}
 		if (vm.getNode() == null) {
 			// HTTP Status Code: 507 Insufficient Storage
-			throw new NoLogWebApplicationException(507);
+			throw new NoLogWebApplicationException(Response.status(HttpStatus.INSUFFICIENT_STORAGE).build());
 		}
 
 		// Create machine on node controller
