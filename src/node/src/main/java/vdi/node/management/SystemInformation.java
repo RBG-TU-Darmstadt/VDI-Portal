@@ -20,9 +20,16 @@ import vdi.commons.common.Configuration;
 /**
  * Class for retrieving system information.
  */
-public class SystemInformation {
+public final class SystemInformation {
 
 	private static final Logger LOGGER = Logger.getLogger(SystemInformation.class.getName());
+
+	private static final Integer PORT = 5000;
+
+	/**
+	 * Memory page size used by 'vm_stat'.
+	 */
+	private static final int PAGE_SIZE = 4096;
 
 	private static Set<Integer> ports = new HashSet<Integer>();
 
@@ -30,7 +37,7 @@ public class SystemInformation {
 	 * @return a free port
 	 */
 	public static synchronized Integer getPort() {
-		Integer port = 5000;
+		Integer port = PORT;
 		while (ports.contains(port)) {
 			port++;
 		}
@@ -63,20 +70,20 @@ public class SystemInformation {
 			BufferedReader buff = new BufferedReader(new InputStreamReader(inStr));
 
 			String str;
-			Long free_pages = 0l;
-			while ((str = buff.readLine()) != null) { 
+			Long freePages = 0L;
+			while ((str = buff.readLine()) != null) {
 				Pattern pattern = Pattern.compile("(Pages free|Pages inactive|Pages speculative): +(\\d+).");
 				Matcher matcher = pattern.matcher(str);
 
 				while (matcher.find()) {
-					free_pages += Integer.valueOf(matcher.group(2));
+					freePages += Integer.valueOf(matcher.group(2));
 				}
 			}
 
-			return free_pages * 4096 / 1024 / 1024;
+			return freePages * PAGE_SIZE / 1024 / 1024;
 		} catch (IOException e) {
 			return -1;
-		} 
+		}
 	}
 
 	/**
@@ -125,4 +132,9 @@ public class SystemInformation {
 	public static int getCores() {
 		return Runtime.getRuntime().availableProcessors();
 	}
+
+	/**
+	 * Utility class must not be instantiated.
+	 */
+	private SystemInformation() { }
 }
