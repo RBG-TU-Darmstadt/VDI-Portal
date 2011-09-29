@@ -201,18 +201,11 @@ public class Manager {
 
 	@RemoteMethod
 	public String removeVM(Long id) {
-		boolean success = true;
-		try {
-			mangementVMService.removeVirtualMachine(userId, id);
-		} catch (ClientResponseFailure f) {
-			if (f.getResponse().getStatus() == HttpStatus.INSUFFICIENT_STORAGE.getStatusCode()) {
-				success = false;
-			}
-		}
+		mangementVMService.removeVirtualMachine(userId, id);
 
 		JSONObject json = new JSONObject();
 
-		json.put("success", success);
+		json.put("success", true);
 
 		return json.toString();
 	}
