@@ -1,11 +1,21 @@
 package vdi.commons.node.objects;
 
+/**
+ * Request used to register at a ManagementServer.
+ * 
+ * @see vdi.commons.node.interfaces.NodeRegistrationService#register(NodeRegisterRequest)
+ *      NodeRegistrationService.register(NodeRegisterRequest)
+ */
 public class NodeRegisterRequest {
 
-	// The nodes address
+	/**
+	 * NodeController's URI.
+	 */
 	public String address;
 
-	// The nodes current resource information
+	/**
+	 * Node's current resource information.
+	 */
 	public NodeGetResourcesResponse resources;
 
 	@Override

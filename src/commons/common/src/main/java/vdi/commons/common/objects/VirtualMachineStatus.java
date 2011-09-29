@@ -5,7 +5,15 @@ package vdi.commons.common.objects;
  */
 public enum VirtualMachineStatus {
 	/**
-	 * 
+	 * VM is running or should be started.
 	 */
-	STARTED, STOPPED, PAUSED
+	STARTED,
+	/**
+	 * vm is stopped or should be stopped.
+	 */
+	STOPPED,
+	/**
+	 * vm is paused or should be paused.
+	 */
+	PAUSED
 }

@@ -1,11 +1,20 @@
 package vdi.commons.node.objects;
 
+/**
+ * Response used by
+ * {@link vdi.commons.node.interfaces.NodeVMService#createVirtualMachine
+ * NodeVMService.createVirtualMachine}.
+ */
 public class NodeCreateVMResponse {
 
-	// The machines ID
+	/**
+	 * The machines ID.
+	 */
 	public String machineId;
 
-	// path and filename for the virtual hard disk file
+	/**
+	 * Path to the virtual hard disk file.
+	 */
 	public String hddFile;
 
 }

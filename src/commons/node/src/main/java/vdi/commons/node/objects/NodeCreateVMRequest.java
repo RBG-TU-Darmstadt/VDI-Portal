@@ -1,7 +1,10 @@
 package vdi.commons.node.objects;
 
 /**
- * Contains informations for creating a VM.
+ * Contains informations for creating a VM. <br />
+ * Used by
+ * {@link vdi.commons.node.interfaces.NodeVMService#createVirtualMachine(NodeCreateVMRequest)
+ * NodeVMService.createVirtualMachine(NodeCreateVMRequest)}.
  */
 public class NodeCreateVMRequest {
 
@@ -26,7 +29,7 @@ public class NodeCreateVMRequest {
 	public long memorySize;
 
 	/**
-	 * HDD size in MB.
+	 * HDD size in MB. Ignored if {@link NodeCreateVMRequest#hddFile hddFile} is set.
 	 */
 	public long hddSize;
 
@@ -36,17 +39,17 @@ public class NodeCreateVMRequest {
 	public long vramSize;
 
 	/**
-	 * 2D hardware-acceleration.
+	 * Enable 2D hardware-acceleration.
 	 */
 	public boolean accelerate2d;
 
 	/**
-	 * 3D hardware-acceleration.
+	 * Enable 3D hardware-acceleration.
 	 */
 	public boolean accelerate3d;
 
 	/**
-	 * path to an existing virtual hard disk image.
+	 * Path to an existing virtual hard disk image.
 	 */
 	public String hddFile;
 

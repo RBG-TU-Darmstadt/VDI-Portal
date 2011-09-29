@@ -2,24 +2,39 @@ package vdi.commons.node.objects;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
 
+/**
+ * Request used to update an existing VM.
+ */
 public class NodeUpdateVMRequest {
 
-	// The new VM status
+	/**
+	 * Set to start, stop or pause the VM.
+	 */
 	public VirtualMachineStatus status;
 
-	// The image to be mounted
+	/**
+	 * Set to image path, if an image should be mounted.
+	 */
 	public String image;
 
-	// The new RAM size in MB
+	/**
+	 * Set to change RAM size (in MB).
+	 */
 	public Long memorySize;
 
-	// The new VRAM size in MB
+	/**
+	 * Set to change VRAM size (in MB).
+	 */
 	public Long vramSize;
 
-	// The new 2D-acceleration value
+	/**
+	 * Set to enable or disable 2D acceleration.
+	 */
 	public Boolean accelerate2d;
 
-	// The new 3D-acceleration value
+	/**
+	 * Set to enable or disable 3D acceleration.
+	 */
 	public Boolean accelerate3d;
 
 }

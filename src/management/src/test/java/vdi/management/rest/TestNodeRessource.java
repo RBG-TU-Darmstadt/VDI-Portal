@@ -50,7 +50,8 @@ public class TestNodeRessource {
 		} catch (ClientResponseFailure f) {
 			LOGGER.warning(f.getMessage());
 			LOGGER.info(ExceptionUtils.getFullStackTrace(f));
-			throw new AssertionFailedError(f.getResponse().toString());
+			LOGGER.info(((ClientResponse<?>)f.getResponse()).getEntity(String.class));
+			throw new AssertionFailedError(((ClientResponse<?>)f.getResponse()).getEntity(String.class));
 		}
 
 		Assert.assertNotNull("Couldn't register at ManagementServer, response is null!", response);

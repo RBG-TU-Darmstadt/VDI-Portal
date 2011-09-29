@@ -277,16 +277,22 @@ public class VirtualMachine {
 	private void createHdd(long size, String pathAndFilename) {
 		ISession session = manager.getSessionObject();
 		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
+		try {
+			IMachine mutable = session.getMachine();
 
-		// Attach HDD
-		IMedium hdd = virtualBox.createHardDisk("vdi", pathAndFilename);
-		IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
-		createHdd.waitForCompletion(10000);
-		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
+			// Attach HDD
+			IMedium hdd = virtualBox.createHardDisk("vdi", pathAndFilename);
+			IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
+			createHdd.waitForCompletion(10000);
+			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
-		mutable.saveSettings();
-		session.unlockMachine();
+			mutable.saveSettings();
+		} catch (VBoxException e) {
+			// TODO: something went wrong.
+			throw e;
+		} finally {
+			session.unlockMachine();
+		}
 	}
 
 	/**
