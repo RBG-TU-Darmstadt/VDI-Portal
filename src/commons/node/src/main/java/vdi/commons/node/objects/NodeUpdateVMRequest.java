@@ -13,7 +13,7 @@ public class NodeUpdateVMRequest {
 	public VirtualMachineStatus status;
 
 	/**
-	 * Set to image path, if an image should be mounted.
+	 * Set to image name to mount or to empty string to unmount an image.
 	 */
 	public String image;
 
