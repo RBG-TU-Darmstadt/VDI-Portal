@@ -34,7 +34,7 @@ public class InitializeContext implements ServletContextListener {
 			throw new Error("Missing configuration file '/WEB-INF/configuration.properties'");
 		}
 
-		// start registration in 10s
+		// Start registration after delay
 		int seconds = Integer.parseInt(Configuration.getProperty("node.registration_delay"));
 		LOGGER.info("starting registration to '" + Configuration.getProperty("managementserver.uri") + "' in "
 				+ seconds + " seconds.");
