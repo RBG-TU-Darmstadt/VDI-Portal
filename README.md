@@ -34,7 +34,7 @@ IMPORTANT: Due to Java XPCOM-issues the VirtualBox-API can not be accessed from 
 
 1. Install the latest VirtualBox, get it from the VirtualBox [(download page)](https://www.virtualbox.org/wiki/Downloads)
 2. Install the ExtensionPack, get it from the VirtualBox [(download page)](https://www.virtualbox.org/wiki/Downloads)
-3. Create the following symbolic link: `ln -s /usr/lib/virtualbox/libvboxjxpcom.so /usr/lib/libvboxjxpcom.so
+3. Create the following symbolic link: `ln -s /usr/lib/virtualbox/libvboxjxpcom.so /usr/lib/libvboxjxpcom.so`
 
 IMPORTANT: The home folder must be writeable for the user executing the NodeController, i.e. tomcat6
 
