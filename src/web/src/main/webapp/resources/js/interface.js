@@ -367,8 +367,8 @@ vdi = {
 	createVM: function(event) {
 		event.preventDefault();
 
-		var name = $("#vdi-create-vm-name").val();
-		var description = $("#vdi-create-vm-description").val();
+		var name = $.trim($("#vdi-create-vm-name").val());
+		var description = $.trim($("#vdi-create-vm-description").val());
 		var type = $("#vdi-create-vm-type").val();
 		var image = $("#vdi-create-vm-image").val();
 		var memory = $("#vdi-create-vm-memory").text();
@@ -377,6 +377,13 @@ vdi = {
 		var acceleration2d = $("#vdi-create-vm-2d-acceleration").prop("checked");
 		var acceleration3d = $("#vdi-create-vm-3d-acceleration").prop("checked");
 		var tags = $("#vdi-create-vm-tags").val();
+
+		// Validate
+		if (type == null || type == '') {
+			$("#vdi-create-vm-type-family, #vdi-create-vm-type").closest('div.clearfix').addClass('error');
+
+			return;
+		}
 
 		// Sanitize input
 		memory = parseInt(memory, 10);
@@ -502,8 +509,8 @@ vdi = {
 
 		var id = $('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val();
 
-		var name = $("#vdi-edit-vm-name").val();
-		var description = $("#vdi-edit-vm-description").val();
+		var name = $.trim($("#vdi-edit-vm-name").val());
+		var description = $.trim($("#vdi-edit-vm-description").val());
 		var memory = $("#vdi-edit-vm-memory").text();
 		var vram = $("#vdi-edit-vm-vram").text();
 		var acceleration2d = $("#vdi-edit-vm-2d-acceleration").prop("checked");
@@ -541,6 +548,8 @@ vdi = {
 		$('#vdi-create-vm-2d-acceleration').prop("checked", false);
 		$('#vdi-create-vm-3d-acceleration').prop("checked", false);
 		$('#vdi-create-vm-tags').val('');
+
+		$('#vdi-create-vm-dialog div.clearfix').removeClass('error');
 
 		// Clear machine types
 		$('#vdi-create-vm-type').empty();
