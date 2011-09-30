@@ -248,16 +248,16 @@ public class TestVirtualMachine {
 	}
 
 	private boolean deleteVM(VirtualMachine vm) throws Exception {
+		IMedium vdi = vm.getHarddiskMedium();
 		try {
-			IMedium vdi = vm.getHarddiskMedium();
 			vm.delete();
-			VirtualMachine.deleteDisk(vdi.getLocation());
 		} catch (VBoxException e) {
 			// catching
 			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
 			// (0x80bb0007)
 			return false;
 		}
+		VirtualMachine.deleteDisk(vdi.getLocation());
 		return true;
 	}
 
