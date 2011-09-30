@@ -11,6 +11,10 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 import vdi.commons.common.Configuration;
 
+/**
+ * This class registers as Tomcat ServletListener in order to be able to execute
+ * commands on Serlvet initialization.
+ */
 public class InitializeContext implements ServletContextListener {
 
 	@Override

@@ -49,12 +49,12 @@ public class ManagementVM {
 	public Long vRamSize;
 
 	/**
-	 * 2D acceleration
+	 * 2D acceleration.
 	 */
 	public boolean accelerate2d;
 
 	/**
-	 * 3D acceleration
+	 * 3D acceleration.
 	 */
 	public boolean accelerate3d;
 
