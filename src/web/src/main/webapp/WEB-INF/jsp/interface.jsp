@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	
-	<meta name="viewport" content="width=1024px" />
+	<meta name="viewport" content="width=820" />
 
 	<title>VDI Portal - TUD FB20</title>
 
@@ -22,7 +22,8 @@
 	<script type="text/javascript" src="../resources/js/bootstrap-modal.js"> </script>
 	<link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.min.css" />
 
-	<link rel="stylesheet" type="text/css" href="../resources/css/interface.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="../resources/css/interface.css" />
+	<link rel="stylesheet" type="text/css" media="screen and (max-width: 960px)" href="../resources/css/interface-small.css" />
 	<script type="text/javascript" src="../resources/js/interface.js"> </script>
 </head>
 <body>

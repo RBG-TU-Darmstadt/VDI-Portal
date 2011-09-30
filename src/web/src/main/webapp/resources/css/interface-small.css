@@ -1,0 +1,25 @@
+/*
+ * Layout sub 960px width
+ */
+.container {
+	width: 760px;
+}
+
+.content .row > div.span3 {
+	width: 100%;
+	min-height: 0;
+}
+
+.content .row > div.span13 {
+	min-height: 400px;
+	border-left: none;
+}
+
+.content .span3 h2 {
+	float: left;
+	margin-right: 20px;
+}
+
+.pills > li {
+	float: left;
+}
