@@ -265,5 +265,20 @@
 		</form>
 	</div>
 
+	<div id="vdi-delete-vm-dialog" class="modal hide fade">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>VM löschen</h3>
+		</div>
+			<input type="hidden" id="vdi-delete-vm-machine-id">
+			<div class="modal-body">
+				<p>Soll die VM '<span id="vdi-delete-vm-name"></span>' wirklich gelöscht werden?</p>
+			</div>
+		<div class="modal-footer">
+			<button class="btn danger">Löschen</button>
+			<span class="btn secondary">Abbrechen</span>
+		</div>
+	</div>
+
 </body>
 </html>

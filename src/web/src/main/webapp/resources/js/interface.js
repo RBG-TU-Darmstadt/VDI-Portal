@@ -44,6 +44,14 @@ vdi = {
 		});
 		$('#vdi-mount-image-dialog form').submit($.proxy(this, 'mountImage'));
 
+		// Delete dialog
+		$('#vdi-delete-vm-dialog').modal(this.modalOptions);
+		$('.vdi-machine-remove').live('click', $.proxy(this, 'initRemoveVMDialog'));
+		$('#vdi-delete-vm-dialog .secondary').click(function() {
+			$('#vdi-delete-vm-dialog').modal('hide');
+		});
+		$('#vdi-delete-vm-dialog .danger').click($.proxy(this, 'removeVM'));
+
 		// Tag navigation
 		$('ul.tag-nav li a, div.vdi-machine span.vdi-machine-tags a').live('click', $.proxy(this, 'showVMsWithTag'));
 
@@ -51,7 +59,6 @@ vdi = {
 		$('.vdi-machine-start, .vdi-machine-unpause').live('click', $.proxy(this, 'startVM'));
 		$('.vdi-machine-pause').live('click', $.proxy(this, 'pauseVM'));
 		$('.vdi-machine-stop').live('click', $.proxy(this, 'stopVM'));
-		$('.vdi-machine-remove').live('click', $.proxy(this, 'removeVM'));
 		$('.vdi-machine-eject').live('click', $.proxy(this, 'unmountImage'));
 
 		// Load VMs
@@ -453,20 +460,26 @@ vdi = {
 			}
 		});
 	},
+
+	initRemoveVMDialog: function(event) {
+		var vm = this.getMachineData(event);
+		$('#vdi-delete-vm-machine-id').val(vm.id);
+
+		$('#vdi-delete-vm-name').text(vm.name);
+
+		$('#vdi-delete-vm-dialog').modal('show');
+	},
 	
-	removeVM: function(event) {
-		var confirmation = confirm("VM wirklich entfernen?");
-
-		if ( ! confirmation)
-			return;
-
-		var id = this.getMachineData(event).id;
+	removeVM: function() {
+		var id = $('#vdi-delete-vm-machine-id').val();
 
 		var self = this;
 		Manager.removeVM(id, function(json) {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
+				$('#vdi-delete-vm-dialog').modal('hide');
+
 				// Reload VMs
 				self.getVMs();
 			} else {
@@ -477,7 +490,7 @@ vdi = {
 
 	initEditVMDialog: function(event) {
 		var vm = this.getMachineData(event);
-		$('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val(vm.id);
+		$('#vdi-edit-vm-machine-id').val(vm.id);
 
 		// Populate inputs
 		$('#vdi-edit-vm-name').val(vm.name);
@@ -570,8 +583,8 @@ vdi = {
 	initMountImageDialog: function(event) {
 		var vm = this.getMachineData(event);
 
-		$('#vdi-mount-image-dialog #vdi-mount-image-machine-id').val(vm.id);
-		$('#vdi-mount-image-dialog #vdi-mount-image-name').text(vm.name);
+		$('#vdi-mount-image-machine-id').val(vm.id);
+		$('#vdi-mount-image-name').text(vm.name);
 
 		this.populateImages($('#vdi-mount-image-identifier'));
 
