@@ -291,7 +291,7 @@ vdi = {
 			stop:		"<button class='btn danger vdi-machine-stop'>Stop</button>",
 			disk:		"<button class='btn info vdi-machine-mount'>Mount Image</button>",
 			eject:		"<button class='btn info vdi-machine-eject'>Eject Image</button>",
-			rdp:		"<button class='btn vdi-machine-eject'>RDP Link</button>"
+			rdp:		"<a class='btn' target='_blank'>RDP Link</a>"
 	},
 
 	renderVMs: function(vms) {
@@ -319,7 +319,7 @@ vdi = {
 			if (vm.status == 'STARTED') {
 				status = "Läuft";
 				rpd_url = vm.rdp_url;
-				var rdp = "<a href=\"./rdp/?machine=" + vm.id + "\" target=\"_blank\">" + self.buttons.rdp + "</a>";
+				var rdp = $(self.buttons.rdp).attr('href', './rdp/?machine=' + vm.id);
 				active_buttons = [rdp, self.buttons.pause, disk, self.buttons.stop];
 			} else if (vm.status == 'STOPPED') {
 				status = "Ausgeschaltet";
@@ -346,9 +346,7 @@ vdi = {
 			+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
 			+ "	</div>"
 			+ "	<div class='vdi-machine-container'>"
-			+ "		<div class='vdi-machine-actions'>"
-			+ active_buttons.join("\n")
-			+ "		</div>"
+			+ "		<div class='vdi-machine-actions'></div>"
 			+ "		<div class='vdi-machine-infos'>"
 			+ "			<span class='vdi-machine-info-title'>Name:</span> " + vm.name + "<br />"
 			+ "			<span class='vdi-machine-info-title'>Beschreibung:</span> " + vm.description + "<br />"
@@ -361,6 +359,11 @@ vdi = {
 			+ "	</div>"
 			+ "<div class='clear-layout'></div>"
 			+ "</div>");
+
+			// Add action buttons
+			$.each(active_buttons, function(i, button) {
+				vmDom.find('.vdi-machine-actions').append(button);
+			});
 
 			// Add hidden data for VM
 			vmDom.data("vm", vm);

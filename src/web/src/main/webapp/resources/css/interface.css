@@ -152,6 +152,10 @@ body {
 	bottom: 14px;
 }
 
+.vdi-machine-drawer .vdi-machine div.vdi-machine-actions button {
+	margin-left: 4px;
+}
+
 /*
  * Dialogs
  */
