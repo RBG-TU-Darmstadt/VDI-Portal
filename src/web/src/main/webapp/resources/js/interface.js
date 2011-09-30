@@ -541,7 +541,7 @@ vdi = {
 		$('div.vdi-machine').each(function() {
 			var $elem = $(this);
 
-			if($elem.data('status') == 'STARTED') {
+			if($elem.data('vm').status == 'STARTED') {
 				var image = $elem.find('div.vdi-machine-screenshot img');
 
 				image.attr('src', image.attr('src').replace(/(.*)&[0-9]+/, "$1&" + (new Date()).getTime()));
