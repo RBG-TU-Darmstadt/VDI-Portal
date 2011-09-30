@@ -220,6 +220,8 @@
 				</div>
 			</div>
 
+			<p>Änderungen an RAM, VRAM, 2D & 3D Beschleunigung werden erst beim nächsten Start der Maschine aktiv.</p>
+
 			<div class="dialog-button">
 				<button class="vdi-edit-vm-button">Bearbeiten</button>
 			</div>
