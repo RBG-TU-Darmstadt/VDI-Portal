@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.virtualbox_4_1.IMedium;
-import org.virtualbox_4_1.VBoxException;
 
 import vdi.commons.common.Configuration;
 import vdi.commons.common.objects.VirtualMachineStatus;
@@ -35,6 +34,27 @@ public class TestVirtualMachine {
 		} catch (MachineNotFoundException e) {
 		}
 		return null;
+	}
+
+	private void deleteVmAndVdi(VirtualMachine vm) {
+		String hddFilename = null;
+
+		IMedium vdi = vm.getHarddiskMedium();
+		if (vdi != null) {
+			File file = new File(vdi.getLocation());
+			hddFilename = file.getName();
+		}
+
+		vm.delete();
+
+		if (hddFilename != null) {
+			try {
+				VirtualMachine.deleteDisk(hddFilename);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Removing of hdd '" + hddFilename + "' failed.");
+			}
+		}
 	}
 
 	private String getOsTypeId() {
@@ -70,12 +90,9 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					vm.stop();
 				}
-				IMedium vdi = vm.getHarddiskMedium();
-				vm.delete();
-				if (vdi != null) {
-					File file = new File(vdi.getLocation());
-					VirtualMachine.deleteDisk(file.getName());
-				}
+
+				deleteVmAndVdi(vm);
+
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
 			}
@@ -89,17 +106,13 @@ public class TestVirtualMachine {
 		// trying to delete machine if something went wrong
 		try {
 			if (vm != null) {
+				System.err.println("vm was not removed by tests");
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					System.out.println("Stoping test vm.");
 					vm.stop();
 					Thread.sleep(10 * 1000);
 				}
-				IMedium vdi = vm.getHarddiskMedium();
-				vm.delete();
-				if (vdi != null) {
-					File file = new File(vdi.getLocation());
-					VirtualMachine.deleteDisk(file.getName());
-				}
+				deleteVmAndVdi(vm);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -108,14 +121,10 @@ public class TestVirtualMachine {
 		try {
 			vm = getVMByName(vm_name);
 			if (vm != null) {
+				System.err.println("vm found, trying to remove...");
 				if (vm.getState() != VirtualMachineStatus.STOPPED)
 					vm.stop();
-				IMedium vdi = vm.getHarddiskMedium();
-				vm.delete();
-				if (vdi != null) {
-					File file = new File(vdi.getLocation());
-					VirtualMachine.deleteDisk(file.getName());
-				}
+				deleteVmAndVdi(vm);
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -205,12 +214,7 @@ public class TestVirtualMachine {
 
 		Assert.assertNotNull("Machine '" + name + "' not found", vm);
 
-		IMedium vdi = vm.getHarddiskMedium();
-		vm.delete();
-		if (vdi != null) {
-			File file = new File(vdi.getLocation());
-			VirtualMachine.deleteDisk(file.getName());
-		}
+		deleteVmAndVdi(vm);
 
 		vm = getVMByName(name);
 		Assert.assertNull("Machine '" + name + "' found after delete()", vm);
@@ -276,21 +280,7 @@ public class TestVirtualMachine {
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 
-		IMedium vdi = vm.getHarddiskMedium();
-		try {
-			vm.delete();
-
-			if (vdi != null) {
-				File file = new File(vdi.getLocation());
-				VirtualMachine.deleteDisk(file.getName());
-			}
-		} catch (VBoxException e) {
-			// catching
-			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
-			// (0x80bb0007)
-			e.printStackTrace();
-			throw new AssertionFailedError("Deleting VM failed.");
-		}
+		deleteVmAndVdi(vm);
 
 		vm = null;
 	}
