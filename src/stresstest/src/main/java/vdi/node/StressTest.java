@@ -520,23 +520,18 @@ class TestVMThread extends Thread {
 		threadStartTime = new Date();
 
 		while (running()) {
-			try {
-				sleep(waitBeforeCreate);
-			} catch (InterruptedException e) {
-			}
-
 			if (!createVm()) {
 				break;
 			}
 
 			try {
-				sleep(waitBeforeStart);
+				sleep(waitBeforeCreate);
 			} catch (InterruptedException e) {
 			}
 
 			if (startVM()) {
 				try {
-					sleep(waitBeforeStop);
+					sleep(waitBeforeStart);
 				} catch (InterruptedException e) {
 				}
 
@@ -544,16 +539,22 @@ class TestVMThread extends Thread {
 					removeVM();
 					break;
 				}
+
+				try {
+					sleep(waitBeforeStop);
+				} catch (InterruptedException e) {
+				}
+			}
+
+			if (!removeVM()) {
+				break;
 			}
 
 			try {
 				sleep(waitBeforeRemove);
 			} catch (InterruptedException e) {
 			}
-
-			if (!removeVM()) {
-				break;
-			}
+		
 		}
 		String status;
 		if (running())
