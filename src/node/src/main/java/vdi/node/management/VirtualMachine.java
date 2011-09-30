@@ -189,7 +189,7 @@ public class VirtualMachine {
 				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
 			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 		} else {
-			createHdd(hddSize, getPath() + "hdd0.vdi");
+			createHdd(hddSize, getPath() + "/hdd0.vdi");
 		}
 
 	}
@@ -450,7 +450,7 @@ public class VirtualMachine {
 	 * @return the virtual machine's path
 	 */
 	private synchronized String getPath() {
-		return machine.getLogFolder().substring(0, machine.getLogFolder().lastIndexOf('/') + 1);
+		return new File(machine.getLogFolder()).getParent();
 	}
 
 	/**
