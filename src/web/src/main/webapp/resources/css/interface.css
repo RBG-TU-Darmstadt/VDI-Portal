@@ -137,11 +137,15 @@ body {
  * Dialogs
  */
 
-.vdi-slider {
+.modal div.clearfix {
+	margin-bottom: 10px;	
+}
+
+.modal .vdi-slider {
 	margin: 8px 0;
 }
 
-.vdi-slider-output {
+.modal .vdi-slider-output {
 	width: 60px;
 }
 
