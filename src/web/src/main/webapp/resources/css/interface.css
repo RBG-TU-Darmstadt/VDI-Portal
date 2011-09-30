@@ -1,252 +1,168 @@
-a img {
-	border:none;
-}
-
-a:visited {
-	color:blue;
-}
-
 /*
  * Layout
  */
+html, body {
+	background-color: #eee;
+}
 
 body {
-	margin:0; padding:0; border:0;
-	font-family:Helvetica, Arial, sans-serif;
-	color:#333333;
-	font-size:12px;
+	padding-top: 40px;
 }
 
-.vdi-view {
-	position:relative;
-	margin:10px auto 0;
-	border:0;
-	width:900px;
+.content {
+	background-color: #fff;
+	padding: 20px;
+	margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+	-webkit-border-radius: 6px;
+	   -moz-border-radius: 6px;
+	    -ms-border-radius: 6px;
+	     -o-border-radius: 6px;
+	        border-radius: 6px;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	    -ms-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	     -o-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+	        box-shadow: 0 1px 2px rgba(0,0,0,.15);
 }
 
-.vdi-view .vdi-header {
-	height:110px;
-	line-height:80px;
-	background-image:url(../images/rbg.jpg);
-	background-position:right center;
-	background-repeat:no-repeat;
+.page-header {
+	-webkit-border-radius: 6px 6px 0 0;
+	   -moz-border-radius: 6px 6px 0 0;
+	    -ms-border-radius: 6px 6px 0 0;
+	     -o-border-radius: 6px 6px 0 0;
+	        border-radius: 6px 6px 0 0;
+	background-color: whiteSmoke;
+	padding: 20px 0 10px 100px;
+	margin: -20px -20px 20px;
+	background-image: url(../images/rbg.png);
+	background-position: 10px center;
+	background-repeat: no-repeat;
 }
 
-.vdi-view .vdi-header h1 {
-	font-size:30px;
+.page-header button {
+	float: right;
+	margin-right: 20px;
 }
 
-.vdi-view .vdi-control {
-	margin:0 0 10px 200px;
+.page-header button span {
+	font-size: 16pt;
+	line-height: 10px;
 }
 
-.vdi-view .vdi-control .vdi-create-vm {
-	display:block;
-	background-image:url('../images/plus.png');
-	background-repeat:no-repeat;
-	width:90px;
-	height:24px;
-	line-height:28px;
-	font-size:14pt;
-	padding-left:28px;
-	cursor:pointer;
-	text-decoration:none;
+.pills > li {
+	float: none;
 }
 
-.vdi-view .vdi-nav {
-	position:relative;
-	width:200px;
-	float:left;
-}
-
-.vdi-view .vdi-nav ul {
-	padding-left:20px;
-}
-
-.vdi-view .vdi-nav ul li {
-	list-style:none;
-	padding-bottom:5px;
-}
-
-.vdi-view .vdi-nav ul li a {
-	text-decoration:none;
-}
-
-.vdi-view .vdi-nav ul li a.vdi-tag-active {
-	color:black;
-}
-
-.vdi-view .vdi-content {
-	padding:5px;
-	float:right;
-	width:690px;
-	background-color:#eee;
-	border-radius:0 10px 10px 0;
+.content .row > div {
 	min-height:500px;
 }
 
-.clear-layout {
-	clear:both;
+.content .span3 {
+}
+
+.content .span13 {
+	margin-left: 9px;
+	padding-left: 10px;
+	border-left: 1px solid #EEE;
 }
 
 /*
  * VM Liste
  */
 
-.vdi-view .vdi-content .vdi-machine-drawer {
-	background-color:#fff;
-	padding:10px;
+.vdi-machine-drawer .well {
+	padding: 14px;
+	margin-bottom: 15px;
+	height: 100px;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine {
-	line-height:16px;
-	margin-bottom:5px;
-	padding-bottom:5px;
-	border-bottom:1px dotted gray;
-	height:100px;
+.vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
+	position: relative;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine:last-child {
-	margin-bottom:0;
-	padding-bottom:0;
-	border-bottom:none;
+.vdi-machine-drawer .vdi-machine .vdi-machine-buttons span {
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	background: #666;
+	background: rgba(0, 0, 0, .4);
+	background-image: url(../images/icons-18-white.png);
+	background-repeat: no-repeat;
+	-webkit-border-radius: 9px;
+	   -moz-border-radius: 9px;
+	    -ms-border-radius: 9px;
+	     -o-border-radius: 9px;
+	        border-radius: 9px;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
-	float:right;
-	cursor:pointer;
+.vdi-machine-drawer .vdi-machine .vdi-machine-buttons span.vdi-machine-edit {
+	background-position: -540px 50%;
+	right: 26px;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
-	margin-right:4px;
+.vdi-machine-drawer .vdi-machine .vdi-machine-buttons span.vdi-machine-remove {
+	background-position: -72px 50%;
+	right: 0;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-remove {
+.vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
+	position: relative;
+	float: left;
+	padding: 0 5px;
+	width: 120px;
+	height: 90px;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
-	float:left;
-	padding:0 5px;
-	width:120px;
-	height:90px;
-	position:relative;
+.vdi-machine-drawer .vdi-machine .vdi-machine-screenshot img {
+	position: absolute;
+	width: 120px;
+	height: 90px;
+	-webkit-box-shadow: 0 0 4px 0.5px #333;
+	   -moz-box-shadow: 0 0 4px 0.5px #333;
+	    -ms-box-shadow: 0 0 4px 0.5px #333;
+	     -o-box-shadow: 0 0 4px 0.5px #333;
+	        box-shadow: 0 0 4px 0.5px #333;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot img {
-	width:120px;
-	height:90px;
-	position:absolute;
-}
-
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos span.vdi-machine-info-title {
+.vdi-machine-drawer .vdi-machine .vdi-machine-infos span.vdi-machine-info-title {
 	font-weight:bold;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions {
+.vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions {
 	float:right;
-	margin-top:58px;
-	height:32px;
-}
-
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions span {
-	color:blue;
-	cursor:pointer;
-	font-weight:bold;
+	margin-top:60px;
 }
 
 /*
  * Dialogs
  */
 
-div.vdi-dialog-container {
-	display:none;
+.vdi-slider {
+	margin: 8px 0;
 }
 
-div.vdi-dialog h2 {
-	margin-top:0;
-}
-
-/*
- * Create & Edit Dialog
- */
-.vdi-dialog-create-edit div.vdi-dialog-option {
-	margin-bottom:3px;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-label {
-	display:inline-block;
-	vertical-align:top;
-	width:120px;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input {
-	display:inline-block;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input span.vdi-dialog-option-input-description {
-	display:inline-block;
-	width:100px;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-slider {
-	width:200px;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-slider .ui-slider {
-	margin-bottom:5px;
-}
-
-.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input input {
-	margin:0;
-	padding:0;
-}
-
-.vdi-dialog-create-edit div.dialog-button {
-	margin-top:30px;
+.vdi-slider-output {
+	width: 60px;
 }
 
 /*
  * Create dialog
  */
-
 #vdi-create-vm-dialog {
-	width:500px;
-	height:380px;
+	margin-top: -350px;
 }
 
 /*
  * Edit dialog
  */
-#vdi-edit-vm-dialog {
-	width:500px;
-	height:350px;
-}
 
 /*
  * Mount dialog
  */
 
-#vdi-mount-image-dialog {
-	width:400px;
-	height:200px;
-}
-
-#vdi-mount-image-dialog div.vdi-mount-image-machine-info {
-	margin-bottom:5px;
-}
-
-#vdi-mount-image-dialog div.vdi-mount-image-machine-info span.vdi-mount-image-machine-name-title {
-	font-weight:bold;
-}
-
-#vdi-mount-image-dialog div.dialog-button {
-	margin-top:50px;
-}
-
 /*
  * Footer
  */
-div.vdi-footer {
-	margin:20px 0 10px;
-	text-align:center;
+.container > footer p {
+	text-align: center;
 }

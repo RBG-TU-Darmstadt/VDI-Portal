@@ -1,11 +1,8 @@
 vdi = {
 
-	fancyboxOptions: {
-		overlayShow: true,
-		hideOnOverlayClick: false,
-		hideOnContentClick: false,
-		enableEscapeButton: true,
-		showCloseButton: true
+	modalOptions: {
+		backdrop: true,
+		keyboard: true
 	},
 
 	init: function() {
@@ -20,41 +17,45 @@ vdi = {
 		// Register with manager
 		Manager.register();
 
-		$('.vdi-create-vm').fancybox($.extend({
-			onStart: $.proxy(this, 'initCreateDialog'),
-			onClosed: $.proxy(this, 'resetCreateDialog')
-		}, this.fancyboxOptions));
+		// Create dialog
+		$('#vdi-create-vm-dialog').modal(this.modalOptions);
+		$('.vdi-create-vm').click($.proxy(this, 'initCreateDialog'));
+		$('#vdi-create-vm-dialog').bind('hidden', $.proxy(this, 'resetCreateDialog'));
 		$('#vdi-create-vm-type-family').change($.proxy(this, 'populateVMTypes'));
+		$('#vdi-create-vm-dialog .secondary').click(function() {
+			$('#vdi-create-vm-dialog').modal('hide');
+		});
+		$('#vdi-create-vm-dialog form').submit($.proxy(this, 'createVM'));
 
-		$('.vdi-edit-vm').fancybox($.extend({
-			onStart: $.proxy(this, 'initEditVMDialog'),
-			onClosed: $.proxy(this, 'resetEditVMDialog')
-		}, this.fancyboxOptions));
+		// Edit dialog
+		$('#vdi-edit-vm-dialog').modal(this.modalOptions);
+		$('.vdi-machine-edit').live('click', $.proxy(this, 'initEditVMDialog'));
+		$('#vdi-edit-vm-dialog .secondary').click(function() {
+			$('#vdi-edit-vm-dialog').modal('hide');
+		});
+		$('#vdi-edit-vm-dialog form').submit($.proxy(this, 'editVM'));
 
-		$('.vdi-mount-image').fancybox($.extend({
-			onStart: $.proxy(this, 'initMountImageDialog'),
-			onClosed: $.proxy(this, 'resetImageDialog')
-		}, this.fancyboxOptions));
+		// Mount dialog
+		$('#vdi-mount-image-dialog').modal(this.modalOptions);
+		$('.vdi-machine-mount').live('click', $.proxy(this, 'initMountImageDialog'));
+		$('#vdi-mount-image-dialog').bind('hidden', $.proxy(this, 'resetMountImageDialog'));
+		$('#vdi-mount-image-dialog .secondary').click(function() {
+			$('#vdi-mount-image-dialog').modal('hide');
+		});
+		$('#vdi-mount-image-dialog form').submit($.proxy(this, 'mountImage'));
 
 		// Tag navigation
-		$('div.vdi-nav ul li a, div.vdi-machine span.vdi-machine-tags a').live('click', $.proxy(this, 'showVMsWithTag'));
-
-		// Load VMs
-		this.getVMs();
+		$('ul.tag-nav li a, div.vdi-machine span.vdi-machine-tags a').live('click', $.proxy(this, 'showVMsWithTag'));
 
 		// VM list buttons
-		$('.vdi-machine-start').live('click', $.proxy(this, 'startVM'));
+		$('.vdi-machine-start, .vdi-machine-unpause').live('click', $.proxy(this, 'startVM'));
 		$('.vdi-machine-pause').live('click', $.proxy(this, 'pauseVM'));
 		$('.vdi-machine-stop').live('click', $.proxy(this, 'stopVM'));
 		$('.vdi-machine-remove').live('click', $.proxy(this, 'removeVM'));
-		$('.vdi-machine-edit').live('click', $.proxy(this, 'prepareEditVM'));
-		$('.vdi-machine-mount').live('click', $.proxy(this, 'prepareMountImage'));
 		$('.vdi-machine-eject').live('click', $.proxy(this, 'unmountImage'));
 
-		// Dialog buttons
-		$('.vdi-create-vm-button').click($.proxy(this, 'createVM'));
-		$('.vdi-edit-vm-button').click($.proxy(this, 'editVM'));
-		$('.vdi-mount-image-button').click($.proxy(this, 'mountImage'));
+		// Load VMs
+		this.getVMs();
 
 		// Register screenshot refresher
 		setInterval($.proxy(this, 'refreshVMScreenshots'), 5*1000);
@@ -86,10 +87,13 @@ vdi = {
 
 		// Init sliders
 		this.initResourceSliders(
-			$('#vdi-create-vm-memory').val('256 MB'),
-			$('#vdi-create-vm-harddrive').val('5 GB'),
-			$('#vdi-create-vm-vram').val('32 MB')
+			$('#vdi-create-vm-memory').text('256 MB'),
+			$('#vdi-create-vm-harddrive').text('5 GB'),
+			$('#vdi-create-vm-vram').text('32 MB')
 		);
+
+		// Show dialog
+		$('#vdi-create-vm-dialog').modal('show');
 	},
 	
 	populateVMTypes: function(event) {
@@ -114,24 +118,24 @@ vdi = {
 					maxMemory = memoryValues.indexOf(response.restrictions.maxMemory);
 				memoryValues = memoryValues.splice(minMemory, maxMemory - minMemory + 1);
 				memoryInput.prev('.vdi-slider').slider({
-					value: memoryValues.indexOf(parseInt(memoryInput.val(), 10)),
+					value: memoryValues.indexOf(parseInt(memoryInput.text(), 10)),
 					min: 0,
 					max: memoryValues.length-1,
 					step: 1,
 					slide: function(event, ui) {
-						memoryInput.val(memoryValues[ui.value] + " MB");
+						memoryInput.text(memoryValues[ui.value] + " MB");
 					}
 				});
 
 				if(hddInput != null) {
 					// HDD slider
 					hddInput.prev('.vdi-slider').slider({
-						value: parseInt(hddInput.val(), 10),
+						value: parseInt(hddInput.text(), 10),
 						min: response.restrictions.minHdd / 1024,
 						max: response.restrictions.maxHdd / 1024,
 						step: 1,
 						slide: function(event, ui) {
-							hddInput.val(ui.value + " GB");
+							hddInput.text(ui.value + " GB");
 						}
 					});
 				}
@@ -142,12 +146,12 @@ vdi = {
 					maxVRam = vramValues.indexOf(response.restrictions.maxVRam);
 				vramValues = vramValues.splice(minVRam, maxVRam - minVRam + 1);
 				vramInput.prev('.vdi-slider').slider({
-					value: vramValues.indexOf(parseInt(vramInput.val(), 10)),
+					value: vramValues.indexOf(parseInt(vramInput.text(), 10)),
 					min: 0,
 					max: vramValues.length-1,
 					step: 1,
 					slide: function(event, ui) {
-						vramInput.val(vramValues[ui.value] + " MB");
+						vramInput.text(vramValues[ui.value] + " MB");
 					}
 				});
 			}
@@ -217,7 +221,7 @@ vdi = {
 
 	getVMs: function() {
 		// Unmark all anchors in tag navigation
-		$("div.vdi-nav ul li a").removeClass('vdi-tag-active');
+		$("ul.tag-nav li").removeClass('active');
 
 		this.tags = {
 			all: {
@@ -252,11 +256,11 @@ vdi = {
 				// Initialize tag navigation
 				var tags_dom = '';
 				$.each(self.tags, function(identifier, tag) {
-					tags_dom += "<li><a href='#tag/" + identifier + "' "
-						+ (identifier == 'all' ? "class='vdi-tag-active'" : "") + ">"
+					tags_dom += "<li " + (identifier == 'all' ? "class='active'" : "")+ ">"
+						+ "<a href='#tag/" + identifier + "'>"
 						+ tag.name + " (" + tag.vms.length + ")</a></li>";
 				});
-				$('div.vdi-nav ul').html(tags_dom);
+				$('ul.tag-nav').html(tags_dom);
 			}
 		});
 	},
@@ -268,22 +272,23 @@ vdi = {
 		var tagIdentifier = href.match(/#tag\/(.+)/)[1];
 
 		// Unmark all anchors in tag navigation
-		$("div.vdi-nav ul li a").removeClass('vdi-tag-active');
+		$("ul.tag-nav li").removeClass('active');
 
 		// Mark active tag
-		$("div.vdi-nav ul li a[href='" + href + "']").addClass('vdi-tag-active');
+		$("ul.tag-nav li a[href='" + href + "']").closest('li').addClass('active');
 
 		// Render VMs matching the tag
 		this.renderVMs(this.tags[tagIdentifier].vms);
 	},
 
 	buttons: {
-			start:	"<span class='vdi-machine-start'><img src=\"../resources/images/play.png\"></span>",
-			pause:	"<span class='vdi-machine-pause'><img src=\"../resources/images/pause.png\"></span>",
-			stop:	"<span class='vdi-machine-stop'><img src=\"../resources/images/stop.png\"></span>",
-			disk:	"<span class='vdi-machine-mount'><img src=\"../resources/images/disk.png\"></span>",
-			eject:	"<span class='vdi-machine-eject'><img src=\"../resources/images/eject.png\"></span>",
-			rdp:	"<img src=\"../resources/images/eye.png\">"
+			start:		"<button class='btn success vdi-machine-start'>Start</button>",
+			pause:		"<button class='btn vdi-machine-pause'>Pause</button>",
+			unpause:	"<button class='btn success vdi-machine-unpause'>Fortsetzen</button>",
+			stop:		"<button class='btn danger vdi-machine-stop'>Stop</button>",
+			disk:		"<button class='btn info vdi-machine-mount'>Mount Image</button>",
+			eject:		"<button class='btn info vdi-machine-eject'>Eject Image</button>",
+			rdp:		"<button class='btn vdi-machine-eject'>RDP Link</button>"
 	},
 
 	renderVMs: function(vms) {
@@ -324,13 +329,15 @@ vdi = {
 				screenshot = "../resources/images/machine-off.png";
 			} else if (vm.status == 'PAUSED') {
 				status = "Angehalten";
-				active_buttons = [self.buttons.start];
+				active_buttons = [self.buttons.unpause];
 				show_paused = true;
 			}
 
-			var vmDom = $("<div class='vdi-machine'>"
-			+ "	<div class='vdi-machine-remove vdi-machine-buttons'><img src=\"../resources/images/delete.png\"></div>"
-			+ "	<div class='vdi-machine-edit vdi-machine-buttons'><img src=\"../resources/images/edit.png\"></div>"
+			var vmDom = $("<div class='well vdi-machine'>"
+			+ "	<div class='vdi-machine-buttons'>"
+			+ "		<span class='vdi-machine-edit'></span>"
+			+ "		<span class='vdi-machine-remove'></span>"
+			+ "	</div>"
 			+ "	<div class='vdi-machine-screenshot'>"
 			+ "		<img src='" + screenshot + "'>"
 			+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
@@ -357,14 +364,16 @@ vdi = {
 		});
 	},
 	
-	createVM: function() {
+	createVM: function(event) {
+		event.preventDefault();
+
 		var name = $("#vdi-create-vm-name").val();
 		var description = $("#vdi-create-vm-description").val();
 		var type = $("#vdi-create-vm-type").val();
 		var image = $("#vdi-create-vm-image").val();
-		var memory = $("#vdi-create-vm-memory").val();
-		var harddrive = $("#vdi-create-vm-harddrive").val();
-		var vram = $("#vdi-create-vm-vram").val();
+		var memory = $("#vdi-create-vm-memory").text();
+		var harddrive = $("#vdi-create-vm-harddrive").text();
+		var vram = $("#vdi-create-vm-vram").text();
 		var acceleration2d = $("#vdi-create-vm-2d-acceleration").prop("checked");
 		var acceleration3d = $("#vdi-create-vm-3d-acceleration").prop("checked");
 		var tags = $("#vdi-create-vm-tags").val();
@@ -381,7 +390,7 @@ vdi = {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
-				$.fancybox.close();
+				$('#vdi-create-vm-dialog').modal('hide');
 
 				// Reload VMs
 				self.getVMs();
@@ -459,15 +468,15 @@ vdi = {
 		});
 	},
 
-	prepareEditVM: function(event) {
+	initEditVMDialog: function(event) {
 		var vm = this.getMachineData(event);
 		$('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val(vm.id);
 
 		// Populate inputs
 		$('#vdi-edit-vm-name').val(vm.name);
 		$('#vdi-edit-vm-description').val(vm.description);
-		$('#vdi-edit-vm-memory').val(vm.memory + " MB");
-		$('#vdi-edit-vm-vram').val(vm.vram + " MB");
+		$('#vdi-edit-vm-memory').text(vm.memory + " MB");
+		$('#vdi-edit-vm-vram').text(vm.vram + " MB");
 		$('#vdi-edit-vm-2d-acceleration').prop("checked", vm.accelerate2d);
 		$('#vdi-edit-vm-3d-acceleration').prop("checked", vm.accelerate3d);
 		var tags = $.map(vm.tags, function(tag) {
@@ -475,10 +484,6 @@ vdi = {
 		});
 		$('#vdi-edit-vm-tags').val(tags.join(', '));
 
-		$('.vdi-edit-vm').click();
-	},
-
-	initEditVMDialog: function() {
 		// Init tagging
 		this.initTagInput($("#vdi-edit-vm-tags"));
 
@@ -488,15 +493,19 @@ vdi = {
 			null,
 			$('#vdi-edit-vm-vram')
 		);
+
+		$('#vdi-edit-vm-dialog').modal('show');
 	},
 	
-	editVM: function() {
+	editVM: function(event) {
+		event.preventDefault();
+
 		var id = $('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val();
 
 		var name = $("#vdi-edit-vm-name").val();
 		var description = $("#vdi-edit-vm-description").val();
-		var memory = $("#vdi-edit-vm-memory").val();
-		var vram = $("#vdi-edit-vm-vram").val();
+		var memory = $("#vdi-edit-vm-memory").text();
+		var vram = $("#vdi-edit-vm-vram").text();
 		var acceleration2d = $("#vdi-edit-vm-2d-acceleration").prop("checked");
 		var acceleration3d = $("#vdi-edit-vm-3d-acceleration").prop("checked");
 		var tags = $("#vdi-edit-vm-tags").val();
@@ -512,7 +521,7 @@ vdi = {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
-				$.fancybox.close();
+				$('#vdi-edit-vm-dialog').modal('hide');
 
 				// Reload VMs
 				self.getVMs();
@@ -526,9 +535,9 @@ vdi = {
 		$("#vdi-create-vm-type-family option[value!='']").remove();
 		$('#vdi-create-vm-type').val('');
 		$('#vdi-create-vm-image').empty();
-		$('#vdi-create-vm-memory').val('');
-		$('#vdi-create-vm-harddrive').val('');
-		$('#vdi-create-vm-vram').val('');
+		$('#vdi-create-vm-memory').text('');
+		$('#vdi-create-vm-harddrive').text('');
+		$('#vdi-create-vm-vram').text('');
 		$('#vdi-create-vm-2d-acceleration').prop("checked", false);
 		$('#vdi-create-vm-3d-acceleration').prop("checked", false);
 		$('#vdi-create-vm-tags').val('');
@@ -549,15 +558,15 @@ vdi = {
 		});
 	},
 
-	prepareMountImage: function(event) {
-		$('#vdi-mount-image-dialog #vdi-mount-image-machine-id').val(this.getMachineData(event).id);
-		$('#vdi-mount-image-dialog .vdi-mount-image-machine-name').text(this.getMachineData(event).name);
+	initMountImageDialog: function(event) {
+		var vm = this.getMachineData(event);
 
-		$('.vdi-mount-image').click();
-	},
+		$('#vdi-mount-image-dialog #vdi-mount-image-machine-id').val(vm.id);
+		$('#vdi-mount-image-dialog #vdi-mount-image-name').text(vm.name);
 
-	initMountImageDialog: function() {
 		this.populateImages($('#vdi-mount-image-identifier'));
+
+		$('#vdi-mount-image-dialog').modal('show');
 	},
 
 	populateImages: function(imageSelect) {
@@ -573,6 +582,8 @@ vdi = {
 	},
 
 	mountImage: function(event) {
+		event.preventDefault();
+
 		var id = $("#vdi-mount-image-machine-id").val();
 		var image = $("#vdi-mount-image-identifier").val();
 
@@ -581,7 +592,7 @@ vdi = {
 			var response = $.parseJSON(json);
 
 			if (response.success) {
-				$.fancybox.close();
+				$('#vdi-mount-image-dialog').modal('hide');
 
 				// Reload VMs
 				self.getVMs();
@@ -603,9 +614,7 @@ vdi = {
 		});
 	},
 
-	resetImageDialog: function() {
-		$('#vdi-mount-image-machine-id').val('');
-
+	resetMountImageDialog: function() {
 		// Clear images
 		$('#vdi-mount-image-identifier').empty();
 	},

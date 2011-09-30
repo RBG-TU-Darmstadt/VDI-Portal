@@ -16,236 +16,253 @@
 	<script type='text/javascript' src='../dwr/interface/Manager.js'> </script>
 	<script type='text/javascript' src='../dwr/util.js'> </script>
 
-	<!-- Fancybox -->
-	<link rel="stylesheet" type="text/css" href="../resources/fancybox/jquery.fancybox-1.3.4.css" />
-	<script type="text/javascript" src="../resources/fancybox/jquery.fancybox-1.3.4.pack.js"> </script>
+	<!-- Bootstrap -->
+	<script type="text/javascript" src="../resources/js/bootstrap-modal.js"> </script>
+	<link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.min.css" />
 
 	<link rel="stylesheet" type="text/css" href="../resources/css/interface.css" />
 	<script type="text/javascript" src="../resources/js/interface.js"> </script>
 </head>
 <body>
 
-	<div class="vdi-view">
+	<div class="container">
 
-		<div class="vdi-header">
-			<h1>Meine VMs</h1>
-		</div>
+		<div class="content">
 
-		<div class="vdi-control">
-			<a class="vdi-create-vm" href="#vdi-create-vm-dialog">Neue VM</a>
-			<a class='vdi-edit-vm' href='#vdi-edit-vm-dialog'></a>
-			<a class='vdi-mount-image' href='#vdi-mount-image-dialog'></a>
-		</div>
+			<div class="page-header">
+				<button class="btn large primary vdi-create-vm">
+					<span>+</span> Neue VM
+				</button>
 
-		<div class="vdi-nav">
-			<h2>Tags</h2>
-			<ul>
-			</ul>
-		</div>
-
-		<div class="vdi-content">
-			<div class="vdi-machine-drawer">
-				<div class="vdi-machine-drawer-machines"></div>
-				<div class="clear-layout"></div>
+				<h1>Meine VMs</h1>
 			</div>
+
+			<div class="row">
+			
+				<div class="span3">
+					<h2>Tags</h2>
+
+					<ul class="pills tag-nav"></ul>
+				</div>
+
+				<div class="span13">
+					<div class="vdi-machine-drawer">
+						<div class="vdi-machine-drawer-machines"></div>
+						<div class="clear-layout"></div>
+					</div>
+				</div>
+
+			</div>
+
 		</div>
 
-		<div class="clear-layout"></div>
-
-		<div class="vdi-footer">
-			&copy; RBG TU Darmstadt 2011
-		</div>
+		<footer>
+			<p>&copy; RBG TU Darmstadt 2011</p>
+		</footer>
 	</div>
 
-	<div class="vdi-dialog-container">
-		<div id="vdi-create-vm-dialog" class="vdi-dialog vdi-dialog-create-edit">
-			<h2>Neue VM erstellen</h2>
-
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-name">Name:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-name" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-description">Beschreibung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-description" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-type">Typ:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<span class="vdi-dialog-option-input-description">Betriebssystem:</span>
-					<select id="vdi-create-vm-type-family">
-						<option value=''></option>
-					</select>
-					<br />
-					<span class="vdi-dialog-option-input-description">Version:</span>
-					<select id="vdi-create-vm-type"></select>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-image">Mount Image:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<select id="vdi-create-vm-image"></select>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-memory">RAM (MB):</label>
-				</div>
-				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-memory-slider" class="vdi-slider"></div>
-					<input type="text" id="vdi-create-vm-memory" disabled/>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-harddrive">HDD (GB):</label>
-				</div>
-				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-harddrive-slider" class="vdi-slider"></div>
-					<input type="text" id="vdi-create-vm-harddrive" disabled/>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-vram">VRAM (MB):</label>
-				</div>
-				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-vram-slider" class="vdi-slider"></div>
-					<input type="text" id="vdi-create-vm-vram" disabled/>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-2d-acceleration">2D Beschleunigung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="checkbox" id="vdi-create-vm-2d-acceleration" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-3d-acceleration">3D Beschleunigung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="checkbox" id="vdi-create-vm-3d-acceleration" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-tags">Tags:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-create-vm-tags" />
-				</div>
-			</div>
-
-			<div class="dialog-button">
-				<button class="vdi-create-vm-button">Erstellen</button>
-			</div>
+	<div id="vdi-create-vm-dialog" class="modal hide fade">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>Neue VM erstellen</h3>
 		</div>
+		<form>
+			<div class="modal-body">
+				<fieldset>
+					<div class="clearfix">
+						<label for="vdi-create-vm-name">Name</label>
+						<div class="input">
+							<input class="span4" id="vdi-create-vm-name" type="text">
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-description">Beschreibung</label>
+						<div class="input">
+							<input class="span4" id="vdi-create-vm-description" type="text">
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-type-family">Betriebssystem Typ</label>
+						<div class="input">
+							<select class="span4" id="vdi-create-vm-type-family">
+								<option value=''></option>
+							</select>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-type">Betriebssystem Vers.</label>
+						<div class="input">
+							<select class="span4" id="vdi-create-vm-type">
+								<option value=''></option>
+							</select>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-image">ISO Image einbinden</label>
+						<div class="input">
+							<select class="span4" id="vdi-create-vm-image">
+								<option value=''></option>
+							</select>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-memory">Arbeitsspeicher (MB)</label>
+						<div class="input">
+							<div id="vdi-create-vm-memory-slider" class="span4 vdi-slider"></div>
+							<span class="span2 uneditable-input vdi-slider-output" id="vdi-create-vm-memory"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-harddrive">Festplatte (GB)</label>
+						<div class="input">
+							<div id="vdi-create-vm-harddrive-slider" class="span4 vdi-slider"></div>
+							<span class="span2 uneditable-input vdi-slider-output" id="vdi-create-vm-harddrive"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-vram">Video RAM (MB)</label>
+						<div class="input">
+							<div id="vdi-create-vm-vram-slider" class="span4 vdi-slider"></div>
+							<span class="span2 uneditable-input vdi-slider-output" id="vdi-create-vm-vram"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-2d-acceleration">2D Beschleunigung</label>
+						<div class="input">
+							<ul class="inputs-list">
+								<li>
+									<input id="vdi-create-vm-2d-acceleration" type="checkbox">
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-3d-acceleration">3D Beschleunigung</label>
+						<div class="input">
+							<ul class="inputs-list">
+								<li>
+									<input id="vdi-create-vm-3d-acceleration" type="checkbox">
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-create-vm-tags">Tags</label>
+						<div class="input">
+							<input class="span4" id="vdi-create-vm-tags" type="text">
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn primary">Erstellen</button>
+				<span class="btn secondary">Abbrechen</span>
+			</div>
+		</form>
+	</div>
 
-		<div id="vdi-edit-vm-dialog" class="vdi-dialog vdi-dialog-create-edit">
-			<h2>VM bearbeiten</h2>
-
-			<input type="hidden" id="vdi-edit-vm-machine-id">
-
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-name">Name:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-edit-vm-name" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-description">Beschreibung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-edit-vm-description" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-memory">RAM (MB):</label>
-				</div>
-				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-edit-vm-memory-slider" class="vdi-slider"></div>
-					<input type="text" id="vdi-edit-vm-memory" disabled/>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-vram">VRAM (MB):</label>
-				</div>
-				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-edit-vm-vram-slider" class="vdi-slider"></div>
-					<input type="text" id="vdi-edit-vm-vram" disabled/>
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-2d-acceleration">2D Beschleunigung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="checkbox" id="vdi-edit-vm-2d-acceleration" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-3d-acceleration">3D Beschleunigung:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="checkbox" id="vdi-edit-vm-3d-acceleration" />
-				</div>
-			</div>
-			<div class="vdi-dialog-option">
-				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-tags">Tags:</label>
-				</div>
-				<div class="vdi-dialog-option-input">
-					<input type="text" id="vdi-edit-vm-tags" />
-				</div>
-			</div>
-
-			<p>Änderungen an RAM, VRAM, 2D & 3D Beschleunigung werden erst beim nächsten Start der Maschine aktiv.</p>
-
-			<div class="dialog-button">
-				<button class="vdi-edit-vm-button">Bearbeiten</button>
-			</div>
+	<div id="vdi-edit-vm-dialog" class="modal hide fade">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>VM bearbeiten</h3>
 		</div>
-
-		<div id="vdi-mount-image-dialog" class="vdi-dialog">
-			<h2>Image mounten</h2>
-
-			<input type="hidden" id="vdi-mount-image-machine-id">
-
-			<div class="vdi-mount-image-machine-info">
-				<span class="vdi-mount-image-machine-name-title">VM: </span>
-				<span class="vdi-mount-image-machine-name"></span>
+		<form>
+			<div class="modal-body">
+				<fieldset>
+					<input type="hidden" id="vdi-edit-vm-machine-id">
+					<div class="clearfix">
+						<label for="vdi-edit-vm-name">Name</label>
+						<div class="input">
+							<input class="span4" id="vdi-edit-vm-name" type="text">
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-description">Beschreibung</label>
+						<div class="input">
+							<input class="span4" id="vdi-edit-vm-description" type="text">
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-memory">Arbeitsspeicher (MB)</label>
+						<div class="input">
+							<div id="vdi-edit-vm-memory-slider" class="span4 vdi-slider"></div>
+							<span class="span2 uneditable-input vdi-slider-output" id="vdi-edit-vm-memory"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-vram">Video RAM (MB)</label>
+						<div class="input">
+							<div id="vdi-edit-vm-vram-slider" class="span4 vdi-slider"></div>
+							<span class="span2 uneditable-input vdi-slider-output" id="vdi-edit-vm-vram"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-2d-acceleration">2D Beschleunigung</label>
+						<div class="input">
+							<ul class="inputs-list">
+								<li>
+									<input id="vdi-edit-vm-2d-acceleration" type="checkbox">
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-3d-acceleration">3D Beschleunigung</label>
+						<div class="input">
+							<ul class="inputs-list">
+								<li>
+									<input id="vdi-edit-vm-3d-acceleration" type="checkbox">
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-edit-vm-tags">Tags</label>
+						<div class="input">
+							<input class="span4" id="vdi-edit-vm-tags" type="text">
+						</div>
+					</div>
+				</fieldset>
+				<p>
+					<span class="label notice">Notice</span>
+					Änderungen an RAM, VRAM, 2D &amp; 3D Beschleunigung werden erst beim nächsten Start der Maschine aktiv.
+				</p>
 			</div>
-
-			<div class="vdi-dialog-option">
-				<label for="vdi-mount-image-identifier">Image:</label>
-				<select id="vdi-mount-image-identifier"></select>
+			<div class="modal-footer">
+				<button type="submit" class="btn primary">Bearbeiten</button>
+				<span class="btn secondary">Abbrechen</span>
 			</div>
+		</form>
+	</div>
 
-			<div class="dialog-button">
-				<button class="vdi-mount-image-button">Einbinden</button>
-			</div>
+	<div id="vdi-mount-image-dialog" class="modal hide fade">
+		<div class="modal-header">
+			<a href="#" class="close">&times;</a>
+			<h3>ISO Image einbinden</h3>
 		</div>
+		<form>
+			<div class="modal-body">
+				<fieldset>
+					<input type="hidden" id="vdi-mount-image-machine-id">
+					<div class="clearfix">
+						<label for="vdi-mount-image-name">VM Name</label>
+						<div class="input">
+							<span class="uneditable-input" id="vdi-mount-image-name"></span>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="vdi-mount-image-identifier">ISO Image</label>
+						<div class="input">
+							<select class="span4" id="vdi-mount-image-identifier"></select>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn primary">Einbinden</button>
+				<span class="btn secondary">Abbrechen</span>
+			</div>
+		</form>
 	</div>
 
 </body>
