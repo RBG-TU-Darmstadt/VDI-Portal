@@ -7,14 +7,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 /**
- * Helper class for Hibernate.
+ * Helper class for Hibernate providing basic object transactions.
  */
 public final class Hibernate {
 
 	private static final Logger LOGGER = Logger.getLogger(Hibernate.class.getName());
 
 	/**
-	 * Private Constructor.
+	 * Utility class mustn't be instantiable.
 	 */
 	private Hibernate() {
 	}
