@@ -1,3 +1,7 @@
+**Virtual Desktop Infrastructure Portal**
+
+Bachelor-Praktikum Sommersemester 2011 TU Darmstadt
+
 ## Developer Guide
 
 1. Clone this project
