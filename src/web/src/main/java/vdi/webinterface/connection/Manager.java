@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.core.Response.Status;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -202,11 +204,18 @@ public class Manager {
 
 	@RemoteMethod
 	public String removeVM(Long id) {
-		mangementVMService.removeVirtualMachine(userId, id);
+		boolean success = true;
+		try {
+			mangementVMService.removeVirtualMachine(userId, id);
+		} catch (ClientResponseFailure f) {
+			if (f.getResponse().getStatus() == Status.CONFLICT.getStatusCode()) {
+				success = false;
+			}
+		}
 
 		JSONObject json = new JSONObject();
 
-		json.put("success", true);
+		json.put("success", success);
 
 		return json.toString();
 	}
