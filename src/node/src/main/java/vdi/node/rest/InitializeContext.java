@@ -48,6 +48,7 @@ public class InitializeContext implements ServletContextListener {
 		try {
 			VirtualMachine.cleanup();
 		} catch (ExceptionInInitializerError e) {
+			// if contextInitialized has failed contextDextroyed is also called.
 		}
 
 		// unregister this NodeController at ManagementServer

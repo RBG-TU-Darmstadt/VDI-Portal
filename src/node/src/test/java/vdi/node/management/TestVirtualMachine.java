@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
 
 import vdi.commons.common.Configuration;
@@ -58,6 +59,7 @@ public class TestVirtualMachine {
 	@BeforeClass
 	public static void setupAll() {
 		Configuration.setProperty("vbox.home", "");
+		//Configuration.setProperty("node.vdifolder", "/usr/share/tomcat6/VirtualBox VMs");
 	}
 
 	@AfterClass
@@ -78,9 +80,11 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					vm.stop();
 				}
-				String vdi = vm.getHarddiskMedium().getLocation();
+				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
 			}
@@ -99,9 +103,11 @@ public class TestVirtualMachine {
 					vm.stop();
 					Thread.sleep(10 * 1000);
 				}
-				String vdi = vm.getHarddiskMedium().getLocation();
+				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -112,9 +118,11 @@ public class TestVirtualMachine {
 			if (vm != null) {
 				if (vm.getState() != VirtualMachineStatus.STOPPED)
 					vm.stop();
-				String vdi = vm.getHarddiskMedium().getLocation();
+				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				vm = null;
 			}
 		} catch (Throwable e) {
@@ -183,14 +191,17 @@ public class TestVirtualMachine {
 			try {
 				VirtualMachine vm2 = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L,
 						false, false, 32L);
-				String vdi = vm2.getHarddiskMedium().getLocation();
+				IMedium vdi = vm2.getHarddiskMedium();
 				vm2.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
 			}
 		} catch (Exception e) {
-			throw (AssertionFailedError) new AssertionFailedError("Cought unexpected exception:" + e.getMessage())
+			e.printStackTrace();
+			throw (AssertionFailedError) new AssertionFailedError("Caught unexpected exception:" + e.getMessage())
 					.initCause(e);
 		}
 	}
@@ -200,9 +211,9 @@ public class TestVirtualMachine {
 
 		Assert.assertNotNull("Machine '" + name + "' not found", vm);
 
-		String vdi = vm.getHarddiskMedium().getLocation();
+		IMedium vdi = vm.getHarddiskMedium();
 		vm.delete();
-		VirtualMachine.deleteDisk(vdi);
+		VirtualMachine.deleteDisk(vdi.getLocation());
 
 		vm = getVMByName(name);
 		Assert.assertNull("Machine '" + name + "' found after delete()", vm);
@@ -238,9 +249,9 @@ public class TestVirtualMachine {
 
 	private boolean deleteVM(VirtualMachine vm) throws Exception {
 		try {
-			String vdi = vm.getHarddiskMedium().getLocation();
+			IMedium vdi = vm.getHarddiskMedium();
 			vm.delete();
-			VirtualMachine.deleteDisk(vdi);
+			VirtualMachine.deleteDisk(vdi.getLocation());
 		} catch (VBoxException e) {
 			// catching
 			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"

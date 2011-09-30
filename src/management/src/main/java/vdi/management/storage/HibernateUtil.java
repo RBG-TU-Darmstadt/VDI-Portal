@@ -6,7 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 /**
- * HibernateUtil helper class.
+ * Helper class for hibernate providing a configured {@link SessionFactory}.
  */
 public final class HibernateUtil {
 

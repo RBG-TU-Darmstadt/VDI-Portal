@@ -41,6 +41,11 @@ public class VirtualMachine {
 
 	private static final Logger LOGGER = Logger.getLogger(VirtualMachine.class.getName());
 
+	/**
+	 * The timeout for guest authentications to the VBox RDE Server.
+	 */
+	private static final long RDE_SERVER_AUTH_TIMEOUT = 5000L;
+
 	private IMachine machine = null;
 
 	/**
@@ -91,22 +96,35 @@ public class VirtualMachine {
 
 		return osTypes;
 	}
-	
+
 	/**
-	 * Deletes a vdi-file
+	 * Deletes a vdi-file by filename.
 	 * 
 	 * @param hddFile
 	 *            filename of the virtual harddisk
+	 * 
+	 * @throws FileNotFoundException
+	 *             thrown when the file does not exist.
+	 * @throws IllegalAccessException
+	 *             thrown when the file is write protected.
+	 * @throws Exception
+	 *             thrown when file could not be deleted.
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
-		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
-		
+		File file;
+		if (Configuration.getProperty("node.vdifolder") != null
+				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
+			file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
+		} else {
+			file = new File(hddFile);
+		}
+
 		if (file.exists()) {
 			if (file.canWrite()) {
 				if (file.isDirectory()) {
 					throw new IllegalArgumentException();
 				} else {
-					if (file.delete() == false) {
+					if (!file.delete()) {
 						throw new Exception("Error while deleting vdi-file.");
 					}
 				}
@@ -141,7 +159,7 @@ public class VirtualMachine {
 	}
 
 	/**
-	 * Creates a new virtual machine.
+	 * Creates a new virtual machine with a new hdd file.
 	 * 
 	 * @param name
 	 *            the name of the machine
@@ -167,16 +185,17 @@ public class VirtualMachine {
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		if (Configuration.getProperty("node.vdifolder") != null && ! Configuration.getProperty("node.vdifolder").isEmpty()) {
+		if (Configuration.getProperty("node.vdifolder") != null
+				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
 			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 		} else {
 			createHdd(hddSize, getPath() + "hdd0.vdi");
 		}
-		
+
 	}
 
 	/**
-	 * Creates a new virtual machine.
+	 * Creates a new virtual machine using an existing hdd file.
 	 * 
 	 * @param name
 	 *            the name of the machine
@@ -194,7 +213,7 @@ public class VirtualMachine {
 	 * @param vramSize
 	 *            Video-RAM size in MB
 	 * @param hddFile
-	 *            Filename for the VDI-Image
+	 *            Filename of the VDI-Image
 	 * @throws DuplicateMachineNameException
 	 *             Indicates, that a machine with the given name already exists.
 	 */
@@ -272,7 +291,7 @@ public class VirtualMachine {
 			rde.setEnabled(true);
 			rde.setAllowMultiConnection(false);
 			rde.setAuthType(AuthType.Null);
-			rde.setAuthTimeout(5000L);
+			rde.setAuthTimeout(RDE_SERVER_AUTH_TIMEOUT);
 		}
 
 		mutable.saveSettings();
@@ -281,21 +300,34 @@ public class VirtualMachine {
 		LOGGER.info("Created virtual machine with ID " + newMachine.getId());
 	}
 
+	/**
+	 * Attaches a vdi file to the vm.
+	 * 
+	 * @param pathAndFilename
+	 *            full path to the vdi file.
+	 */
 	private void attachHdd(String pathAndFilename) {
 		ISession session = manager.getSessionObject();
 		machine.lockMachine(session, LockType.Write);
-		IMachine mutable = session.getMachine();
+		try {
+			IMachine mutable = session.getMachine();
 
-		// Attach HDD
-		IMedium hdd = virtualBox.openMedium(pathAndFilename, DeviceType.HardDisk, AccessMode.ReadWrite, true);
-		mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
+			// Attach HDD
+			IMedium hdd = virtualBox.openMedium(pathAndFilename, DeviceType.HardDisk, AccessMode.ReadWrite, true);
+			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
-		mutable.saveSettings();
-		session.unlockMachine();
+			mutable.saveSettings();
+		} catch (VBoxException e) {
+			// assume that file not exists:
+			throw new InvalidParameterException("Vhd file '" + pathAndFilename + "' could not be attached to vm '"
+					+ machine.getName() + "' (" + machine.getId() + ")");
+		} finally {
+			session.unlockMachine();
+		}
 	}
 
 	/**
-	 * Creates and attachs a virtual harddisk.
+	 * Creates and attaches a virtual harddisk.
 	 * 
 	 * @param size
 	 *            the size in MB
@@ -377,19 +409,29 @@ public class VirtualMachine {
 	/**
 	 * Retrieve the currently mounted ISO image.
 	 * 
-	 * @return the medium
+	 * @return the medium or null
 	 */
 	public synchronized IMedium getMountedMedium() {
-		return machine.getMedium("ide", 1, 0);
+		try {
+			return machine.getMedium("ide", 1, 0);
+		} catch (VBoxException e) {
+			// no medium:
+			return null;
+		}
 	}
 
 	/**
 	 * Retrieve the virtual hard disk medium.
 	 * 
-	 * @return the vhd medium. No error handling.
+	 * @return the vhd medium or null
 	 */
 	public synchronized IMedium getHarddiskMedium() {
-		return machine.getMedium("ide", 0, 0);
+		try {
+			return machine.getMedium("ide", 0, 0);
+		} catch (VBoxException e) {
+			// no medium:
+			return null;
+		}
 	}
 
 	/**

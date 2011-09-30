@@ -63,6 +63,9 @@ public final class SystemInformation {
 		}
 	}
 
+	/**
+	 * @return free memory or -1 if not available.
+	 */
 	private static long getFreeMemoryFromVmStat() {
 		try {
 			Process proc = Runtime.getRuntime().exec("vm_stat");

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IMedium;
 
 import vdi.commons.common.objects.VirtualMachineStatus;
 import vdi.commons.node.interfaces.NodeVMService;
@@ -31,6 +33,7 @@ import vdi.node.management.VirtualMachine;
  */
 @Path("/vm")
 public class VirtualMachineResource implements NodeVMService {
+	private static final Logger LOGGER = Logger.getLogger(VirtualMachineResource.class.getName());
 
 	@Override
 	public NodeCreateVMResponse createVirtualMachine(NodeCreateVMRequest request) {
@@ -53,8 +56,17 @@ public class VirtualMachineResource implements NodeVMService {
 
 		NodeCreateVMResponse response = new NodeCreateVMResponse();
 		response.machineId = machine.getId();
-		File file = new File(machine.getHarddiskMedium().getLocation());
-		response.hddFile = file.getName();
+		IMedium vdi = machine.getHarddiskMedium();
+		if (vdi != null) {
+			File file = new File(vdi.getLocation());
+			response.hddFile = file.getName();
+		} else {
+			// VM has no attached vdi file!
+			// TODO: delete invalid vm?
+			LOGGER.warning("Invalid VM state: no vdi file attached to new vm '" + request.name + "'");
+			throw new NoLogWebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR)
+					.type(MediaType.TEXT_PLAIN).entity("Invalid VM creation: no vdi file attached.").build());
+		}
 
 		return response;
 	}

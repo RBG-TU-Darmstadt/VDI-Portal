@@ -15,7 +15,7 @@ import vdi.management.storage.entities.Tag;
  * The DAO for Tags Entity.
  */
 public final class TagsDAO {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(NodeDAO.class.getName());
 
 	/**

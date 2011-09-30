@@ -243,6 +243,8 @@ public class VirtualMachineRessource implements ManagementVMService {
 				} catch (InterruptedException e) {
 					// if this empty block will remain after fixing above, there
 					// needs to be an useful comment
+					// The problem is, that a vm is not immediately unlocked after
+					// the vm is stopped.
 				}
 
 				// delete virtual machine from NodeController
