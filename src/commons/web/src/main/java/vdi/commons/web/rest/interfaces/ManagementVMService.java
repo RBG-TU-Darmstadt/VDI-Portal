@@ -114,7 +114,7 @@ public interface ManagementVMService {
 	@GET
 	@Path("/{id: [a-zA-Z0-9-_]+}/screenshot")
 	@Produces("image/png")
-	byte[] getMachineScreenshot(@HeaderParam("User") String userId, @PathParam("id") String id,
+	byte[] getMachineScreenshot(@HeaderParam("User") String userId, @PathParam("id") Long id,
 			@QueryParam("width") int width, @QueryParam("height") int height);
 
 	/**

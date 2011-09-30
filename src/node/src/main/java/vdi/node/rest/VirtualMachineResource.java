@@ -62,7 +62,6 @@ public class VirtualMachineResource implements NodeVMService {
 			response.hddFile = file.getName();
 		} else {
 			// VM has no attached vdi file!
-			// TODO: delete invalid vm?
 			LOGGER.warning("Invalid VM state: no vdi file attached to new vm '" + request.name + "'");
 			throw new NoLogWebApplicationException(Response.status(Status.INTERNAL_SERVER_ERROR)
 					.type(MediaType.TEXT_PLAIN).entity("Invalid VM creation: no vdi file attached.").build());

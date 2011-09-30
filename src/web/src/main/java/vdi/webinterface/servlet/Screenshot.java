@@ -43,7 +43,7 @@ public class Screenshot extends HttpServlet {
 		String userId = "123456";
 
 		// Get request parameters
-		String id = request.getParameter("machine");
+		long id = Long.valueOf(request.getParameter("machine"));
 		int width = Integer.valueOf(request.getParameter("width"));
 		int height = Integer.valueOf(request.getParameter("height"));
 

@@ -335,9 +335,6 @@ public class VirtualMachine {
 			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 			mutable.saveSettings();
-		} catch (VBoxException e) {
-			// TODO: something went wrong.
-			throw e;
 		} finally {
 			session.unlockMachine();
 		}

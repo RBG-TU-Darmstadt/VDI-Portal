@@ -252,7 +252,6 @@ public class TestVirtualMachine {
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 
 		// starting Machine:
-		// TODO: ask, why it is called launch instead of start
 		Socket s = vm.launch();
 		Assert.assertNotNull("starting vm failed", s);
 
