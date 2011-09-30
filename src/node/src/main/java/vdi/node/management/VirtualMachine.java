@@ -311,7 +311,7 @@ public class VirtualMachine {
 			// Attach HDD
 			IMedium hdd = virtualBox.createHardDisk("vdi", pathAndFilename);
 			IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
-			createHdd.waitForCompletion(10000);
+			createHdd.waitForCompletion(-1);
 			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 			mutable.saveSettings();
@@ -488,7 +488,7 @@ public class VirtualMachine {
 		ISession session2 = manager.getSessionObject();
 		IProgress progress = machine.launchVMProcess(session2, "headless", "");
 
-		progress.waitForCompletion(5000);
+		progress.waitForCompletion(-1);
 		session2.unlockMachine();
 
 		if (progress.getResultCode() != 0) {
@@ -560,7 +560,7 @@ public class VirtualMachine {
 
 		machine.lockMachine(session, LockType.Shared);
 		IProgress progress = session.getConsole().powerDown();
-		progress.waitForCompletion(15000);
+		progress.waitForCompletion(-1);
 
 		if (progress.getResultCode() != 0) {
 			LOGGER.warning("Machine shutdown timed out." + machine.getName());
