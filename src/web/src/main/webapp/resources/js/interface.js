@@ -338,8 +338,8 @@ vdi = {
 
 			var vmDom = $("<div class='well vdi-machine' id='vdi-machine-id-" + vm.id + "'>"
 			+ "	<div class='vdi-machine-buttons'>"
-			+ "		<span class='vdi-machine-edit'></span>"
-			+ "		<span class='vdi-machine-remove'></span>"
+			+ "		<span class='vdi-machine-remove' onclick=''></span>" //  onclick='' as Mobile Safari workaround
+			+ "		<span class='vdi-machine-edit' onclick=''></span>"
 			+ "	</div>"
 			+ "	<div class='vdi-machine-screenshot'>"
 			+ "		<img src='" + screenshot + "'>"

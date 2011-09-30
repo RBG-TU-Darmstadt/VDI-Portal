@@ -84,7 +84,9 @@ body {
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons span {
-	position: absolute;
+	display: block;
+	float: right;
+	margin-left: 6px;
 	width: 18px;
 	height: 18px;
 	background: #666;
@@ -100,12 +102,10 @@ body {
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons span.vdi-machine-edit {
 	background-position: -288px 50%;
-	right: 26px;
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons span.vdi-machine-remove {
 	background-position: -72px 50%;
-	right: 0;
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
@@ -188,4 +188,5 @@ body {
  */
 .container > footer p {
 	text-align: center;
+	margin-bottom: 20px;
 }

@@ -3,6 +3,8 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<meta name="viewport" content="width=1024px" />
 
 	<title>VDI Portal - TUD FB20</title>
 
