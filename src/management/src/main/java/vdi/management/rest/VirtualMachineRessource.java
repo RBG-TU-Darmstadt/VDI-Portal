@@ -144,7 +144,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		}
 
 		// Remove disk image if exists
-		if(vm.getHddFile() != null) {
+		if (vm.getHddFile() != null) {
 			selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddFile());
 		}
 
