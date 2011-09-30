@@ -387,7 +387,6 @@ public class VirtualMachine {
 		IMedium medium = getMountedMedium();
 
 		if (medium == null) {
-			LOGGER.warning("No medium mounted -- could not return medium location.");
 			return null;
 		} else {
 			return medium.getLocation();
