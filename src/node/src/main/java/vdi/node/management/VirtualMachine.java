@@ -353,8 +353,43 @@ public class VirtualMachine {
 	 * Deletes the virtual machine.
 	 */
 	public synchronized void delete() {
-		LOGGER.info("Delete virtual machine with ID " + this.getId());
-		machine.delete(machine.unregister(CleanupMode.DetachAllReturnNone));
+		LOGGER.info("Deleting virtual machine with ID " + this.getId());
+
+		while (true) {
+			try {
+				// Unregister machine
+				List<IMedium> mediums = machine.unregister(CleanupMode.DetachAllReturnNone);
+
+				// Delete mediums
+				machine.delete(mediums);
+
+				LOGGER.info("Deleting '" + this.getId() + "' successful");
+
+				break;
+			} catch(VBoxException e) {
+				if (e.getMessage().endsWith("(0x80bb0007)")) {
+					LOGGER.info("Deleting '" + this.getId() + "' failed, retrying in 0,5s");
+
+					try {
+						/*
+						 * We have to wait here for some time since the VirtualBox does not guarantee
+						 * that the VM is unlocked immediately. Unfortunately the state is changed to 'Unlocked'
+						 * directly as soon as unlockMachine() is executed, which stands in contrast to the docs.
+						 * 
+						 * See note on ISession.unlockMachine():
+						 * https://www.virtualbox.org/sdkref/interface_i_session.html#87571b3c87d705ee013b24f135f43715
+						 */
+						Thread.sleep(500);
+					} catch (InterruptedException ie) {
+						// ignored.
+					}
+
+					continue;
+				}
+
+				throw e;
+			}
+		}
 	}
 
 	/**
@@ -583,20 +618,6 @@ public class VirtualMachine {
 		}
 
 		session.unlockMachine();
-
-		try {
-			/*
-			 * We have to wait here for at least 1s since the VirtualBox does not guarantee
-			 * that the VM is unlocked immediately. Unfortunately the state is changed to 'Unlocked'
-			 * directly as soon as unlockMachine() is executed, which stands in contrast to the docs.
-			 * 
-			 * See note on ISession.unlockMachine():
-			 * https://www.virtualbox.org/sdkref/interface_i_session.html#87571b3c87d705ee013b24f135f43715
-			 */
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// ignored.
-		}
 	}
 
 	/**
