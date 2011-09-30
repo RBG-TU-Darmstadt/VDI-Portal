@@ -26,6 +26,11 @@ vdi = {
 		}, this.fancyboxOptions));
 		$('#vdi-create-vm-type-family').change($.proxy(this, 'populateVMTypes'));
 
+		$('.vdi-edit-vm').fancybox($.extend({
+			onStart: $.proxy(this, 'initEditVMDialog'),
+			onClosed: $.proxy(this, 'resetEditVMDialog')
+		}, this.fancyboxOptions));
+
 		$('.vdi-mount-image').fancybox($.extend({
 			onStart: $.proxy(this, 'initMountImageDialog'),
 			onClosed: $.proxy(this, 'resetImageDialog')
@@ -42,11 +47,13 @@ vdi = {
 		$('.vdi-machine-pause').live('click', $.proxy(this, 'pauseVM'));
 		$('.vdi-machine-stop').live('click', $.proxy(this, 'stopVM'));
 		$('.vdi-machine-remove').live('click', $.proxy(this, 'removeVM'));
+		$('.vdi-machine-edit').live('click', $.proxy(this, 'prepareEditVM'));
 		$('.vdi-machine-mount').live('click', $.proxy(this, 'prepareMountImage'));
 		$('.vdi-machine-eject').live('click', $.proxy(this, 'unmountImage'));
 
 		// Dialog buttons
 		$('.vdi-create-vm-button').click($.proxy(this, 'createVM'));
+		$('.vdi-edit-vm-button').click($.proxy(this, 'editVM'));
 		$('.vdi-mount-image-button').click($.proxy(this, 'mountImage'));
 
 		// Register screenshot refresher
@@ -54,6 +61,100 @@ vdi = {
 	},
 	
 	initCreateDialog: function() {
+		// Init tagging
+		this.initTagInput($("#vdi-create-vm-tags"));
+
+		// Populate VM type families
+		Manager.getVMTypes(function(json) {
+			var response = $.parseJSON(json);
+
+			if (response.success) {
+				var familySelect = $('#vdi-create-vm-type-family');
+
+				familySelect.data('vm_types', response.types);
+
+				$.each(response.types, function(familyName, familyTypes) {
+					familySelect.append("<option value='" + familyName + "'>" + familyName + "</option>");
+				});
+			}
+		});
+
+		// Populate ISO images
+		var imageSelect = $('#vdi-create-vm-image');
+		imageSelect.append("<option value=''>keines</option>");
+		this.populateImages(imageSelect);
+
+		// Init sliders
+		this.initResourceSliders(
+			$('#vdi-create-vm-memory').val('256 MB'),
+			$('#vdi-create-vm-harddrive').val('5 GB'),
+			$('#vdi-create-vm-vram').val('32 MB')
+		);
+	},
+	
+	populateVMTypes: function(event) {
+		var types = $('#vdi-create-vm-type-family').data('vm_types')[$(event.target).val()];
+
+		var typeSelect = $('#vdi-create-vm-type');
+		typeSelect.empty();
+
+		$.each(types, function(typeName, typeDescription) {
+			typeSelect.append("<option value='" + typeName + "'>" + typeDescription + "</option>");
+		});
+	},
+
+	initResourceSliders: function(memoryInput, hddInput, vramInput) {
+		Manager.getRestrictions(function(json) {
+			var response = $.parseJSON(json);
+
+			if (response.success) {
+				// Memory slider
+				var memoryValues = [4, 8, 16, 32, 64, 128, 384, 256, 512, 786, 1024, 1536, 2048, 3072, 4096, 6144, 8192],
+					minMemory = memoryValues.indexOf(response.restrictions.minMemory),
+					maxMemory = memoryValues.indexOf(response.restrictions.maxMemory);
+				memoryValues = memoryValues.splice(minMemory, maxMemory - minMemory + 1);
+				memoryInput.prev('.vdi-slider').slider({
+					value: memoryValues.indexOf(parseInt(memoryInput.val(), 10)),
+					min: 0,
+					max: memoryValues.length-1,
+					step: 1,
+					slide: function(event, ui) {
+						memoryInput.val(memoryValues[ui.value] + " MB");
+					}
+				});
+
+				if(hddInput != null) {
+					// HDD slider
+					hddInput.prev('.vdi-slider').slider({
+						value: parseInt(hddInput.val(), 10),
+						min: response.restrictions.minHdd / 1024,
+						max: response.restrictions.maxHdd / 1024,
+						step: 1,
+						slide: function(event, ui) {
+							hddInput.val(ui.value + " GB");
+						}
+					});
+				}
+
+				// VRam slider
+				var vramValues = [4, 8, 16, 32, 64, 128, 384, 256, 512],
+					minVRam = vramValues.indexOf(response.restrictions.minVRam),
+					maxVRam = vramValues.indexOf(response.restrictions.maxVRam);
+				vramValues = vramValues.splice(minVRam, maxVRam - minVRam + 1);
+				vramInput.prev('.vdi-slider').slider({
+					value: vramValues.indexOf(parseInt(vramInput.val(), 10)),
+					min: 0,
+					max: vramValues.length-1,
+					step: 1,
+					slide: function(event, ui) {
+						vramInput.val(vramValues[ui.value] + " MB");
+					}
+				});
+			}
+		});
+	},
+
+	initTagInput: function(tagInput) {
 		var self = this;
 
 		// Start autosuggest plugin on tag input field
@@ -63,7 +164,7 @@ vdi = {
 			if (response.success) {
 				var tags = response.tags;
 
-		 		$("#vdi-create-vm-tags")
+		 		tagInput
 		 			// don't navigate away from the field on tab when selecting an item
 		 			.bind("keydown", function(event) {
 		 				if (event.keyCode === $.ui.keyCode.TAB &&
@@ -109,88 +210,6 @@ vdi = {
 		 				}
 		 			});
 			}
-		});
-
-		// Populate VM type families
-		Manager.getVMTypes(function(json) {
-			var response = $.parseJSON(json);
-
-			if (response.success) {
-				var familySelect = $('#vdi-create-vm-type-family');
-
-				familySelect.data('vm_types', response.types);
-
-				$.each(response.types, function(familyName, familyTypes) {
-					familySelect.append("<option value='" + familyName + "'>" + familyName + "</option>");
-				});
-			}
-		});
-
-		// Populate ISO images
-		var imageSelect = $('#vdi-create-vm-image');
-		imageSelect.append("<option value=''>keines</option>");
-		this.populateImages(imageSelect);
-
-		// Retrieve resource restrictions
-		Manager.getRestrictions(function(json) {
-			var response = $.parseJSON(json);
-
-			if (response.success) {
-				// Memory slider
-				var memoryValues = [4, 8, 16, 32, 64, 128, 384, 256, 512, 786, 1024, 1536, 2048, 3072, 4096, 6144, 8192],
-					minMemory = memoryValues.indexOf(response.restrictions.minMemory),
-					maxMemory = memoryValues.indexOf(response.restrictions.maxMemory);
-				memoryValues = memoryValues.splice(minMemory, maxMemory - minMemory + 1);
-				$('#vdi-create-vm-memory-slider').slider({
-					value: 5,
-					min: 0,
-					max: memoryValues.length-1,
-					step: 1,
-					slide: function(event, ui) {
-						$("#vdi-create-vm-memory").val(memoryValues[ui.value] + " MB");
-					}
-				});
-				$("#vdi-create-vm-memory").val(memoryValues[5] + " MB");
-
-				// HDD slider
-				$('#vdi-create-vm-harddrive-slider').slider({
-					value: 5,
-					min: response.restrictions.minHdd / 1024,
-					max: response.restrictions.maxHdd / 1024,
-					step: 1,
-					slide: function(event, ui) {
-						$("#vdi-create-vm-harddrive").val(ui.value + " GB");
-					}
-				});
-				$("#vdi-create-vm-harddrive").val(5 + " GB");
-
-				// VRam slider
-				var vramValues = [4, 8, 16, 32, 64, 128, 384, 256, 512],
-					minVRam = vramValues.indexOf(response.restrictions.minVRam),
-					maxVRam = vramValues.indexOf(response.restrictions.maxVRam);
-				vramValues = vramValues.splice(minVRam, maxVRam - minVRam + 1);
-				$('#vdi-create-vm-vram-slider').slider({
-					value: 2,
-					min: 0,
-					max: vramValues.length-1,
-					step: 1,
-					slide: function(event, ui) {
-						$("#vdi-create-vm-vram").val(vramValues[ui.value] + " MB");
-					}
-				});
-				$("#vdi-create-vm-vram").val(vramValues[2] + " MB");
-			}
-		});
-	},
-	
-	populateVMTypes: function(event) {
-		var types = $('#vdi-create-vm-type-family').data('vm_types')[$(event.target).val()];
-
-		var typeSelect = $('#vdi-create-vm-type');
-		typeSelect.empty();
-
-		$.each(types, function(typeName, typeDescription) {
-			typeSelect.append("<option value='" + typeName + "'>" + typeDescription + "</option>");
 		});
 	},
 
@@ -332,9 +351,7 @@ vdi = {
 			+ "</div>");
 
 			// Add hidden data for VM
-			vmDom.data("id", vm.id);
-			vmDom.data("status", vm.status);
-			vmDom.data("name", vm.name);
+			vmDom.data("vm", vm);
 
 			vmDrawer.append(vmDom);
 		});
@@ -373,7 +390,7 @@ vdi = {
 	},
 	
 	getMachineData: function(event) {
-		return $(event.target).parents('.vdi-machine').data();
+		return $(event.target).parents('.vdi-machine').data('vm');
 	},
 	
 	startVM: function(event) {
@@ -438,6 +455,67 @@ vdi = {
 				self.getVMs();
 			} else {
 				alert('VM konnte nicht entfernt werden, läuft sie evtl. noch?');
+			}
+		});
+	},
+
+	prepareEditVM: function(event) {
+		var vm = this.getMachineData(event);
+		$('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val(vm.id);
+
+		// Populate inputs
+		$('#vdi-edit-vm-name').val(vm.name);
+		$('#vdi-edit-vm-description').val(vm.description);
+		$('#vdi-edit-vm-memory').val(vm.memory + " MB");
+		$('#vdi-edit-vm-vram').val(vm.vram + " MB");
+		$('#vdi-edit-vm-2d-acceleration').prop("checked", vm.accelerate2d);
+		$('#vdi-edit-vm-3d-acceleration').prop("checked", vm.accelerate3d);
+		var tags = $.map(vm.tags, function(tag) {
+			return tag.name;
+		});
+		$('#vdi-edit-vm-tags').val(tags.join(', '));
+
+		$('.vdi-edit-vm').click();
+	},
+
+	initEditVMDialog: function() {
+		// Init tagging
+		this.initTagInput($("#vdi-edit-vm-tags"));
+
+		// Init sliders
+		this.initResourceSliders(
+			$('#vdi-edit-vm-memory'),
+			null,
+			$('#vdi-edit-vm-vram')
+		);
+	},
+	
+	editVM: function() {
+		var id = $('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val();
+
+		var name = $("#vdi-edit-vm-name").val();
+		var description = $("#vdi-edit-vm-description").val();
+		var memory = $("#vdi-edit-vm-memory").val();
+		var vram = $("#vdi-edit-vm-vram").val();
+		var acceleration2d = $("#vdi-edit-vm-2d-acceleration").prop("checked");
+		var acceleration3d = $("#vdi-edit-vm-3d-acceleration").prop("checked");
+		var tags = $("#vdi-edit-vm-tags").val();
+
+		// Sanitize input
+		memory = parseInt(memory, 10);
+		vram = parseInt(vram, 10);
+		tags = this.cleanTags(this.split(tags));
+
+		var self = this;
+		Manager.editVM(id, name, description, memory, vram, acceleration2d,
+				acceleration3d, tags, function(json) {
+			var response = $.parseJSON(json);
+
+			if (response.success) {
+				$.fancybox.close();
+
+				// Reload VMs
+				self.getVMs();
 			}
 		});
 	},
