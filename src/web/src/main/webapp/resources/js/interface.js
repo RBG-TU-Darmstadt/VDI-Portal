@@ -67,7 +67,7 @@ vdi = {
 		// Register screenshot refresher
 		setInterval($.proxy(this, 'refreshVMScreenshots'), 5*1000);
 	},
-	
+
 	initCreateDialog: function() {
 		// Init tagging
 		this.initTagInput($("#vdi-create-vm-tags"));
@@ -102,7 +102,7 @@ vdi = {
 		// Show dialog
 		$('#vdi-create-vm-dialog').modal('show');
 	},
-	
+
 	populateVMTypes: function(event) {
 		var types = $('#vdi-create-vm-type-family').data('vm_types')[$(event.target).val()];
 
@@ -370,7 +370,7 @@ vdi = {
 			vmDrawer.append(vmDom);
 		});
 	},
-	
+
 	createVM: function(event) {
 		event.preventDefault();
 
@@ -411,11 +411,11 @@ vdi = {
 			}
 		});
 	},
-	
+
 	getMachineData: function(event) {
 		return $(event.target).parents('.vdi-machine').data('vm');
 	},
-	
+
 	startVM: function(event) {
 		var id = this.getMachineData(event).id;
 
@@ -432,7 +432,7 @@ vdi = {
 			}
 		});
 	},
-	
+
 	pauseVM: function(event) {
 		var id = this.getMachineData(event).id;
 
@@ -446,7 +446,7 @@ vdi = {
 			}
 		});
 	},
-	
+
 	stopVM: function(event) {
 		var id = this.getMachineData(event).id;
 
@@ -469,7 +469,7 @@ vdi = {
 
 		$('#vdi-delete-vm-dialog').modal('show');
 	},
-	
+
 	removeVM: function() {
 		var id = $('#vdi-delete-vm-machine-id').val();
 
@@ -516,7 +516,7 @@ vdi = {
 
 		$('#vdi-edit-vm-dialog').modal('show');
 	},
-	
+
 	editVM: function(event) {
 		event.preventDefault();
 
@@ -548,7 +548,7 @@ vdi = {
 			}
 		});
 	},
-	
+
 	resetCreateDialog: function() {
 		$('#vdi-create-vm-name').val('');
 		$('#vdi-create-vm-description').val('');
