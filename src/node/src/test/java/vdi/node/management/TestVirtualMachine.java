@@ -197,7 +197,7 @@ public class TestVirtualMachine {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw (AssertionFailedError) new AssertionFailedError("Cought unexpected exception:" + e.getMessage())
+			throw (AssertionFailedError) new AssertionFailedError("Caught unexpected exception:" + e.getMessage())
 					.initCause(e);
 		}
 	}
