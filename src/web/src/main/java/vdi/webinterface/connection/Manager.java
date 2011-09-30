@@ -30,6 +30,9 @@ import vdi.commons.web.rest.objects.ManagementUpdateVMRequest;
 import vdi.commons.web.rest.objects.ManagementVM;
 import vdi.commons.web.rest.objects.ResourceRestrictions;
 
+/**
+ * DWR Manager class, exports remote methods for the webinterface Javascript.
+ */
 @RemoteProxy
 public class Manager {
 
@@ -38,7 +41,7 @@ public class Manager {
 	 */
 	private static String userId = "123456";
 
-	protected List<ServerContext> serverContextList = null;
+	private List<ServerContext> serverContextList = null;
 
 	ManagementVMService mangementVMService;
 	ManagementImageService mangementImageService;
@@ -49,13 +52,20 @@ public class Manager {
 	 */
 	public Manager() {
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
-				Configuration.getProperty("managementserver.uri") + "/vm/", RESTEasyClientExecutor.get());
-		mangementImageService = ProxyFactory.create(ManagementImageService.class,
-				Configuration.getProperty("managementserver.uri") + "/images/", RESTEasyClientExecutor.get());
+				Configuration.getProperty("managementserver.uri") + "/vm/",
+				RESTEasyClientExecutor.get());
+		mangementImageService = ProxyFactory.create(
+				ManagementImageService.class,
+				Configuration.getProperty("managementserver.uri") + "/images/",
+				RESTEasyClientExecutor.get());
 		mangementTagService = ProxyFactory.create(ManagementTagService.class,
-				Configuration.getProperty("managementserver.uri") + "/tags/", RESTEasyClientExecutor.get());
+				Configuration.getProperty("managementserver.uri") + "/tags/",
+				RESTEasyClientExecutor.get());
 	}
 
+	/**
+	 * Registers a new client e.g. the webinterface loaded in a browser.
+	 */
 	@RemoteMethod
 	public void register() {
 		ServerContext serverContext = null;
@@ -71,9 +81,36 @@ public class Manager {
 		}
 	}
 
+	/**
+	 * Creates a new VM and mounts an image into it, if given.
+	 * 
+	 * @param name
+	 *            the VM name
+	 * @param description
+	 *            the VM description
+	 * @param type
+	 *            the VM OS type
+	 * @param image
+	 *            the initial image to mount
+	 * @param memory
+	 *            the VM RAM
+	 * @param harddisk
+	 *            the VM HDD space
+	 * @param vram
+	 *            the VM VRAM
+	 * @param acceleration2d
+	 *            enable 2D acceleration for the VM
+	 * @param acceleration3d
+	 *            enable 3D acceleration for the VM
+	 * @param tags
+	 *            a list of tags for the VM
+	 * @return JSON object containing the success status of the action and the
+	 *         ID of the new machine
+	 */
 	@RemoteMethod
-	public String createVM(String name, String description, String type, String image, Long memory, Long harddisk,
-			Long vram, boolean acceleration2d, boolean acceleration3d, List<String> tags) {
+	public String createVM(String name, String description, String type,
+			String image, Long memory, Long harddisk, Long vram,
+			boolean acceleration2d, boolean acceleration3d, List<String> tags) {
 		ManagementCreateVMRequest createRequest = new ManagementCreateVMRequest();
 		createRequest.name = name;
 		createRequest.osTypeId = type;
@@ -86,14 +123,16 @@ public class Manager {
 		createRequest.tags = tags;
 
 		// Create machine
-		ManagementCreateVMResponse createResponse = mangementVMService.createVirtualMachine(userId, createRequest);
+		ManagementCreateVMResponse createResponse = mangementVMService
+				.createVirtualMachine(userId, createRequest);
 
 		// Mount image (if any)
 		if (!image.isEmpty()) {
 			ManagementUpdateVMRequest mountRequest = new ManagementUpdateVMRequest();
 			mountRequest.image = image;
 
-			mangementVMService.updateVirtualMachine(userId, createResponse.id, mountRequest);
+			mangementVMService.updateVirtualMachine(userId, createResponse.id,
+					mountRequest);
 		}
 
 		JSONObject json = new JSONObject();
@@ -104,10 +143,16 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Retrieves all VMs for the current user.
+	 * 
+	 * @return JSON object containing the VMs
+	 */
 	@RemoteMethod
 	public String getVMs() {
 		// second Parameter null is an optional Tag
-		ArrayList<ManagementVM> response = mangementVMService.getVMs(userId, null);
+		ArrayList<ManagementVM> response = mangementVMService.getVMs(userId,
+				null);
 
 		JSONObject json = new JSONObject();
 
@@ -153,6 +198,13 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Start VM with the given ID.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String startVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
@@ -162,7 +214,8 @@ public class Manager {
 		try {
 			mangementVMService.updateVirtualMachine(userId, id, request);
 		} catch (ClientResponseFailure f) {
-			if (f.getResponse().getStatus() == HttpStatus.INSUFFICIENT_STORAGE.getStatusCode()) {
+			if (f.getResponse().getStatus() == HttpStatus.INSUFFICIENT_STORAGE
+					.getStatusCode()) {
 				success = false;
 			}
 		}
@@ -174,6 +227,13 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Pause VM with the given ID.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String pauseVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
@@ -188,9 +248,31 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Edit the VM with the given ID.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @param name
+	 *            new name of the VM
+	 * @param description
+	 *            new description of the VM
+	 * @param memory
+	 *            new RAM of the VM
+	 * @param vram
+	 *            the VRAm of the VM
+	 * @param acceleration2d
+	 *            the 2D acceleration setting
+	 * @param acceleration3d
+	 *            the 3D acceleration setting
+	 * @param tags
+	 *            new list of tags for the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
-	public String editVM(Long id, String name, String description, Long memory, Long vram, boolean acceleration2d,
-			boolean acceleration3d, List<String> tags) {
+	public String editVM(Long id, String name, String description, Long memory,
+			Long vram, boolean acceleration2d, boolean acceleration3d,
+			List<String> tags) {
 		ManagementUpdateVMRequest createRequest = new ManagementUpdateVMRequest();
 		createRequest.name = name;
 		createRequest.description = description;
@@ -210,6 +292,13 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Stop VM with the given ID.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String stopVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
@@ -224,6 +313,13 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Remove VM with the given ID.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String removeVM(Long id) {
 		boolean success = true;
@@ -242,9 +338,16 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Retrieves the possible VM OS types.
+	 * 
+	 * @return a JSON object containing the success status and the possible OS
+	 *         types
+	 */
 	@RemoteMethod
 	public String getVMTypes() {
-		HashMap<String, HashMap<String, String>> response = mangementVMService.getVMTypes();
+		HashMap<String, HashMap<String, String>> response = mangementVMService
+				.getVMTypes();
 
 		JSONObject json = new JSONObject();
 
@@ -254,9 +357,16 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Retrieves the resource restrictions for RAM, HDD & VRAM.
+	 * 
+	 * @return a JSON object containing the success status and resource
+	 *         restrictions
+	 */
 	@RemoteMethod
 	public String getRestrictions() {
-		ResourceRestrictions response = mangementVMService.getResourceRestrictions();
+		ResourceRestrictions response = mangementVMService
+				.getResourceRestrictions();
 
 		JSONObject json = new JSONObject();
 		json.put("success", true);
@@ -273,6 +383,12 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Retrieves the available ISO images.
+	 * 
+	 * @return a JSON object containing the success status and a list of
+	 *         available ISO images
+	 */
 	@RemoteMethod
 	public String getImages() {
 		List<String> response = mangementImageService.getImages();
@@ -285,6 +401,15 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Mounts an ISO image into a VM.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @param imageName
+	 *            the image file
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String mountImage(Long id, String imageName) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
@@ -299,6 +424,13 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Unmounts the currently mounted ISO image from VM.
+	 * 
+	 * @param id
+	 *            the ID of the VM
+	 * @return a JSON object containing the success status
+	 */
 	@RemoteMethod
 	public String unmountImage(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
@@ -313,6 +445,11 @@ public class Manager {
 		return json.toString();
 	}
 
+	/**
+	 * Retrieve the already create tags for doing autocompletition.
+	 * 
+	 * @return a JSON object containing the success status and a list of tags
+	 */
 	@RemoteMethod
 	public String getTags() {
 		List<ManagementTag> response = mangementTagService.getTags();
