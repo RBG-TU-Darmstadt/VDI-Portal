@@ -112,13 +112,16 @@ body {
 	border-bottom:none;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
 	float:right;
+	cursor:pointer;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
 	margin-right:4px;
 }
 
 .vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-remove {
-	float:right;
 }
 
 .vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
@@ -164,6 +167,45 @@ div.vdi-dialog h2 {
 }
 
 /*
+ * Create & Edit Dialog
+ */
+.vdi-dialog-create-edit div.vdi-dialog-option {
+	margin-bottom:3px;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-label {
+	display:inline-block;
+	vertical-align:top;
+	width:120px;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input {
+	display:inline-block;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input span.vdi-dialog-option-input-description {
+	display:inline-block;
+	width:100px;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-slider {
+	width:200px;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-slider .ui-slider {
+	margin-bottom:5px;
+}
+
+.vdi-dialog-create-edit div.vdi-dialog-option div.vdi-dialog-option-input input {
+	margin:0;
+	padding:0;
+}
+
+.vdi-dialog-create-edit div.dialog-button {
+	margin-top:30px;
+}
+
+/*
  * Create dialog
  */
 
@@ -172,40 +214,12 @@ div.vdi-dialog h2 {
 	height:380px;
 }
 
-#vdi-create-vm-dialog div.vdi-dialog-option {
-	margin-bottom:3px;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-label {
-	display:inline-block;
-	vertical-align:top;
-	width:120px;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input {
-	display:inline-block;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input span.vdi-dialog-option-input-description {
-	display:inline-block;
-	width:100px;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-slider {
-	width:200px;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-slider .ui-slider {
-	margin-bottom:5px;
-}
-
-#vdi-create-vm-dialog div.vdi-dialog-option div.vdi-dialog-option-input input {
-	margin:0;
-	padding:0;
-}
-
-#vdi-create-vm-dialog div.dialog-button {
-	margin-top:30px;
+/*
+ * Edit dialog
+ */
+#vdi-edit-vm-dialog {
+	width:500px;
+	height:350px;
 }
 
 /*

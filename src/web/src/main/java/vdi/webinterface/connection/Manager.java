@@ -124,6 +124,9 @@ public class Manager {
 			vm.put("description", managementVM.description);
 			vm.put("memory", managementVM.memorySize);
 			vm.put("harddisk", managementVM.hddSize);
+			vm.put("vram", managementVM.vRamSize);
+			vm.put("accelerate2d", managementVM.accelerate2d);
+			vm.put("accelerate3d", managementVM.accelerate3d);
 
 			JSONArray tags = new JSONArray();
 			for (ManagementTag managementTag : managementVM.tags) {
@@ -186,6 +189,35 @@ public class Manager {
 		json.put("success", true);
 
 		return json.toString();
+	}
+
+	@RemoteMethod
+	public String editVM(Long id, String name, String description,
+			Long memory, Long vram, boolean acceleration2d,
+			boolean acceleration3d, List<String> tags) {
+		try {
+		ManagementUpdateVMRequest createRequest = new ManagementUpdateVMRequest();
+		createRequest.name = name;
+		createRequest.description = description;
+		createRequest.memorySize = memory;
+		createRequest.vramSize = vram;
+		createRequest.accelerate2d = acceleration2d;
+		createRequest.accelerate3d = acceleration3d;
+		createRequest.tags = tags;
+
+		// Update machine
+		mangementVMService.updateVirtualMachine(userId, id, createRequest);
+
+		JSONObject json = new JSONObject();
+
+		json.put("success", true);
+
+		return json.toString();
+		} catch(Throwable t) {
+			t.printStackTrace();
+			
+			return "{}";
+		}
 	}
 
 	@RemoteMethod

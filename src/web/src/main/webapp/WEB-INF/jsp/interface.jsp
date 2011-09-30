@@ -33,6 +33,7 @@
 
 		<div class="vdi-control">
 			<a class="vdi-create-vm" href="#vdi-create-vm-dialog">Neue VM</a>
+			<a class='vdi-edit-vm' href='#vdi-edit-vm-dialog'></a>
 			<a class='vdi-mount-image' href='#vdi-mount-image-dialog'></a>
 		</div>
 
@@ -57,7 +58,7 @@
 	</div>
 
 	<div class="vdi-dialog-container">
-		<div id="vdi-create-vm-dialog" class="vdi-dialog">
+		<div id="vdi-create-vm-dialog" class="vdi-dialog vdi-dialog-create-edit">
 			<h2>Neue VM erstellen</h2>
 
 			<div class="vdi-dialog-option">
@@ -103,7 +104,7 @@
 					<label for="vdi-create-vm-memory">RAM (MB):</label>
 				</div>
 				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-memory-slider"></div>
+					<div id="vdi-create-vm-memory-slider" class="vdi-slider"></div>
 					<input type="text" id="vdi-create-vm-memory" disabled/>
 				</div>
 			</div>
@@ -112,7 +113,7 @@
 					<label for="vdi-create-vm-harddrive">HDD (GB):</label>
 				</div>
 				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-harddrive-slider"></div>
+					<div id="vdi-create-vm-harddrive-slider" class="vdi-slider"></div>
 					<input type="text" id="vdi-create-vm-harddrive" disabled/>
 				</div>
 			</div>
@@ -121,7 +122,7 @@
 					<label for="vdi-create-vm-vram">VRAM (MB):</label>
 				</div>
 				<div class="vdi-dialog-option-input vdi-dialog-slider">
-					<div id="vdi-create-vm-vram-slider"></div>
+					<div id="vdi-create-vm-vram-slider" class="vdi-slider"></div>
 					<input type="text" id="vdi-create-vm-vram" disabled/>
 				</div>
 			</div>
@@ -152,6 +153,75 @@
 
 			<div class="dialog-button">
 				<button class="vdi-create-vm-button">Erstellen</button>
+			</div>
+		</div>
+
+		<div id="vdi-edit-vm-dialog" class="vdi-dialog vdi-dialog-create-edit">
+			<h2>VM bearbeiten</h2>
+
+			<input type="hidden" id="vdi-edit-vm-machine-id">
+
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-name">Name:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="text" id="vdi-edit-vm-name" />
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-description">Beschreibung:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="text" id="vdi-edit-vm-description" />
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-memory">RAM (MB):</label>
+				</div>
+				<div class="vdi-dialog-option-input vdi-dialog-slider">
+					<div id="vdi-edit-vm-memory-slider" class="vdi-slider"></div>
+					<input type="text" id="vdi-edit-vm-memory" disabled/>
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-vram">VRAM (MB):</label>
+				</div>
+				<div class="vdi-dialog-option-input vdi-dialog-slider">
+					<div id="vdi-edit-vm-vram-slider" class="vdi-slider"></div>
+					<input type="text" id="vdi-edit-vm-vram" disabled/>
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-2d-acceleration">2D Acceleration:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="checkbox" id="vdi-edit-vm-2d-acceleration" />
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-3d-acceleration">3D Acceleration:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="checkbox" id="vdi-edit-vm-3d-acceleration" />
+				</div>
+			</div>
+			<div class="vdi-dialog-option">
+				<div class="vdi-dialog-option-label">
+					<label for="vdi-edit-vm-tags">Tags:</label>
+				</div>
+				<div class="vdi-dialog-option-input">
+					<input type="text" id="vdi-edit-vm-tags" />
+				</div>
+			</div>
+
+			<div class="dialog-button">
+				<button class="vdi-edit-vm-button">Bearbeiten</button>
 			</div>
 		</div>
 

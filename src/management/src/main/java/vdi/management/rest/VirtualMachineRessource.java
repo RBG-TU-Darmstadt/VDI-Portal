@@ -181,6 +181,9 @@ public class VirtualMachineRessource implements ManagementVMService {
 			resultVM.osTypeId = vm.getOsType();
 			resultVM.memorySize = vm.getMemorySize();
 			resultVM.hddSize = vm.getHddSize();
+			resultVM.vRamSize = vm.getVram();
+			resultVM.accelerate2d = vm.isAccelerate2d();
+			resultVM.accelerate3d = vm.isAccelerate3d();
 
 			resultVM.tags = new ArrayList<ManagementTag>();
 			for (Tag tag : vm.getTags()) {
