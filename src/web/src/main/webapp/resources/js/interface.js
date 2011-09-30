@@ -336,7 +336,7 @@ vdi = {
 				show_paused = true;
 			}
 
-			var vmDom = $("<div class='well vdi-machine'>"
+			var vmDom = $("<div class='well vdi-machine' id='vdi-machine-id-" + vm.id + "'>"
 			+ "	<div class='vdi-machine-buttons'>"
 			+ "		<span class='vdi-machine-edit'></span>"
 			+ "		<span class='vdi-machine-remove'></span>"
@@ -411,11 +411,13 @@ vdi = {
 	},
 
 	getMachineData: function(event) {
-		return $(event.target).parents('.vdi-machine').data('vm');
+		return $(event.target).closest('.vdi-machine').data('vm');
 	},
 
 	startVM: function(event) {
 		var id = this.getMachineData(event).id;
+
+		this.showActionActivity(event.target);
 
 		var self = this;
 		Manager.startVM(id, function(json) {
@@ -434,6 +436,8 @@ vdi = {
 	pauseVM: function(event) {
 		var id = this.getMachineData(event).id;
 
+		this.showActionActivity(event.target);
+
 		var self = this;
 		Manager.pauseVM(id, function(json) {
 			var response = $.parseJSON(json);
@@ -447,6 +451,8 @@ vdi = {
 
 	stopVM: function(event) {
 		var id = this.getMachineData(event).id;
+
+		this.showActionActivity(event.target);
 
 		var self = this;
 		Manager.stopVM(id, function(json) {
@@ -518,7 +524,9 @@ vdi = {
 	editVM: function(event) {
 		event.preventDefault();
 
-		var id = $('#vdi-edit-vm-dialog #vdi-edit-vm-machine-id').val();
+		var id = $('#vdi-edit-vm-machine-id').val();
+
+		this.showActionActivity($('#vdi-machine-id-' + id).find('.vdi-machine-edit'));
 
 		var name = $.trim($("#vdi-edit-vm-name").val());
 		var description = $.trim($("#vdi-edit-vm-description").val());
@@ -607,6 +615,8 @@ vdi = {
 		var id = $("#vdi-mount-image-machine-id").val();
 		var image = $("#vdi-mount-image-identifier").val();
 
+		this.showActionActivity($('#vdi-machine-id-' + id).find('.vdi-machine-mount'));
+
 		var self = this;
 		Manager.mountImage(id, image, function(json) {
 			var response = $.parseJSON(json);
@@ -623,6 +633,8 @@ vdi = {
 	unmountImage: function(event) {
 		var id = this.getMachineData(event).id;
 
+		this.showActionActivity(event.target);
+
 		var self = this;
 		Manager.unmountImage(id, function(json) {
 			var response = $.parseJSON(json);
@@ -637,6 +649,10 @@ vdi = {
 	resetMountImageDialog: function() {
 		// Clear images
 		$('#vdi-mount-image-identifier').empty();
+	},
+
+	showActionActivity: function(target) {
+		$(target).closest('.vdi-machine').find('.vdi-machine-actions').html('<img src="../resources/images/ajax-loader.gif">');
 	},
 
 	formatDate: function(timestamp) {
