@@ -26,7 +26,6 @@ import vdi.commons.node.objects.NodeUpdateVMResponse;
 
 public class StressTest {
 	public static String baseURI = null;
-	public static String vhdBasePath = "";
 	public static String vhdFileName = "vhd"; // + threadNum + ".vdi"
 
 	public static int userCount = 5;
@@ -145,16 +144,11 @@ public class StressTest {
 			baseURI = value;
 		System.out.println("baseURI = " + baseURI);
 
-		value = Configuration.getProperty("vm.vhdBasePath");
-		if (value != null)
-			vhdBasePath = value;
-		System.out.println("vm.vhdBasePath = " + vhdBasePath);
-
 		value = Configuration.getProperty("vm.vhdFileName");
 		if (value != null)
 			vhdFileName = value;
 		System.out.println("vm.vhdFileName = " + vhdFileName);
-		System.out.println("User 0 vhd file: " + vhdBasePath + "/" + vhdFileName + "0.vdi");
+		System.out.println("User 0 vhd file: " + vhdFileName + "0.vdi");
 
 		value = Configuration.getProperty("wait.betweenUsers");
 		if (value != null)
@@ -201,7 +195,7 @@ public class StressTest {
 		vm.name = "stresstest_vm_";
 		vm.osTypeId = "DOS";
 		vm.description = "";
-		vm.hddFile = StressTest.vhdBasePath + "/" + StressTest.vhdFileName;
+		vm.hddFile = StressTest.vhdFileName;
 		vm.memorySize = 32;
 		vm.vramSize = 8;
 		vm.accelerate2d = true;
