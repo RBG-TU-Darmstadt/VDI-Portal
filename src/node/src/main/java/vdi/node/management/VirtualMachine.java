@@ -111,13 +111,7 @@ public class VirtualMachine {
 	 *             thrown when file could not be deleted.
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
-		File file;
-		if (Configuration.getProperty("node.vdifolder") != null
-				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
-			file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
-		} else {
-			file = new File(hddFile);
-		}
+		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
 
 		if (file.exists()) {
 			if (file.canWrite()) {

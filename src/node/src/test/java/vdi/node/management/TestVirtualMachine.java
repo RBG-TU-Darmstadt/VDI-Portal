@@ -1,7 +1,7 @@
 package vdi.node.management;
 
+import java.io.File;
 import java.security.InvalidParameterException;
-import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -12,7 +12,6 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IMedium;
 import org.virtualbox_4_1.VBoxException;
 
@@ -31,18 +30,9 @@ public class TestVirtualMachine {
 	}
 
 	private VirtualMachine getVMByName(String name) {
-		List<IMachine> machines = VirtualMachine.getAllMachines();
-		if (machines != null) {
-			for (IMachine machine : machines) {
-				if (machine.getName().equals(name)) {
-					try {
-						return new VirtualMachine(machine.getId());
-					} catch (MachineNotFoundException e) {
-						throw (AssertionError) new AssertionError("VirtualMachine did not find an existing machine!")
-								.initCause(e);
-					}
-				}
-			}
+		try {
+			return new VirtualMachine(name);
+		} catch (MachineNotFoundException e) {
 		}
 		return null;
 	}
@@ -59,7 +49,7 @@ public class TestVirtualMachine {
 	@BeforeClass
 	public static void setupAll() {
 		Configuration.setProperty("vbox.home", "");
-		//Configuration.setProperty("node.vdifolder", "/usr/share/tomcat6/VirtualBox VMs");
+		Configuration.setProperty("node.vdifolder", "/usr/share/tomcat6/VirtualBox VMs");
 	}
 
 	@AfterClass
@@ -83,7 +73,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
@@ -106,7 +97,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				vm = null;
 			}
@@ -121,7 +113,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				vm = null;
 			}
@@ -194,7 +187,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm2.getHarddiskMedium();
 				vm2.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
@@ -213,7 +207,10 @@ public class TestVirtualMachine {
 
 		IMedium vdi = vm.getHarddiskMedium();
 		vm.delete();
-		VirtualMachine.deleteDisk(vdi.getLocation());
+		if (vdi != null) {
+			File file = new File(vdi.getLocation());
+			VirtualMachine.deleteDisk(file.getName());
+		}
 
 		vm = getVMByName(name);
 		Assert.assertNull("Machine '" + name + "' found after delete()", vm);
@@ -285,7 +282,8 @@ public class TestVirtualMachine {
 			vm.delete();
 
 			if (vdi != null) {
-				VirtualMachine.deleteDisk(vdi.getLocation());
+				File file = new File(vdi.getLocation());
+				VirtualMachine.deleteDisk(file.getName());
 			}
 		} catch (VBoxException e) {
 			// catching
