@@ -194,7 +194,7 @@ public class VirtualMachine {
 	 * @param vramSize
 	 *            Video-RAM size in MB
 	 * @param hddFile
-	 *            Path and Filename for the VDI-Image
+	 *            Filename for the VDI-Image
 	 * @throws DuplicateMachineNameException
 	 *             Indicates, that a machine with the given name already exists.
 	 */
@@ -202,7 +202,7 @@ public class VirtualMachine {
 			boolean accelerate3d, long vramSize, String hddFile) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		attachHdd(hddFile);
+		attachHdd(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
 	}
 
 	/**
