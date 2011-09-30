@@ -13,7 +13,7 @@ public class NodeCreateVMResponse {
 	public String machineId;
 
 	/**
-	 * Path to the virtual hard disk file.
+	 * Filename of the virtual hard disk file.
 	 */
 	public String hddFile;
 
