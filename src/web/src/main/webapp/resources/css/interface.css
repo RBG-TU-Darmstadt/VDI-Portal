@@ -112,13 +112,16 @@ body {
 	border-bottom:none;
 }
 
-.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
 	float:right;
+	cursor:pointer;
+}
+
+.vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-edit {
 	margin-right:4px;
 }
 
 .vdi-view .vdi-content .vdi-machine-drawer .vdi-machine div.vdi-machine-remove {
-	float:right;
 }
 
 .vdi-view .vdi-content .vdi-machine-drawer .vdi-machine .vdi-machine-screenshot {
