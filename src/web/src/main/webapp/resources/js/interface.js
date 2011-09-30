@@ -436,6 +436,8 @@ vdi = {
 			if (response.success) {
 				// Reload VMs
 				self.getVMs();
+			} else {
+				alert('VM konnte nicht entfernt werden, läuft sie evtl. noch?');
 			}
 		});
 	},

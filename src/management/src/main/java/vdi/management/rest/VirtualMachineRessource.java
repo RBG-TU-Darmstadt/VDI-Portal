@@ -138,14 +138,15 @@ public class VirtualMachineRessource implements ManagementVMService {
 	public void removeVirtualMachine(String userId, Long vmId) {
 		VirtualMachine vm = VirtualMachineDAO.get(vmId);
 
-		// Remove machine if deployed
+		// If machine is deployed (which means running in some form) it can not be deleted
 		if (vm.getNode() != null) {
-			NodeVMService service = selectNodeService(vm.getNode());
-			service.removeVirtualMachine(vm.getMachineId());
+			throw new NoLogWebApplicationException(Response.status(Status.CONFLICT).build());
 		}
 
-		// Remove disk image
-		selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddFile());
+		// Remove disk image if exists
+		if(vm.getHddFile() != null) {
+			selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddFile());
+		}
 
 		// Delete VM from the database
 		Hibernate.deleteObject(vm);
