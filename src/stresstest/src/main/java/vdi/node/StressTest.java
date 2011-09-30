@@ -33,12 +33,12 @@ public class StressTest {
 
 	private static long testDuration = 10 * 60 * 1000;
 
-	// between
+	// wait after:
 	private static int waitBetweenUsers = 500;
-	private static int waitBeforeCreate = 10 * 1000;
-	private static int waitBeforeStart = 60 * 1000;
-	private static int waitBeforeStop = 5 * 60 * 1000;
-	private static int waitBeforeRemove = 2 * 60 * 1000;
+	private static int waitAfterCreate = 10 * 1000;
+	private static int waitAfterStart = 60 * 1000;
+	private static int waitAfterStop = 5 * 60 * 1000;
+	private static int waitAfterRemove = 2 * 60 * 1000;
 
 	private static int performanceCheckInterval = 60 * 1000;
 
@@ -155,25 +155,25 @@ public class StressTest {
 			waitBetweenUsers = Integer.parseInt(value);
 		System.out.println("wait.betweenUsers = " + waitBetweenUsers + " (" + getHMS(waitBetweenUsers) + ")");
 
-		value = Configuration.getProperty("wait.beforeCreate");
+		value = Configuration.getProperty("wait.AfterCreate");
 		if (value != null)
-			waitBeforeCreate = Integer.parseInt(value);
-		System.out.println("wait.beforeCreate = " + waitBeforeCreate + " (" + getHMS(waitBeforeCreate) + ")");
+			waitAfterCreate = Integer.parseInt(value);
+		System.out.println("wait.AfterCreate = " + waitAfterCreate + " (" + getHMS(waitAfterCreate) + ")");
 
-		value = Configuration.getProperty("wait.beforeStart");
+		value = Configuration.getProperty("wait.AfterStart");
 		if (value != null)
-			waitBeforeStart = Integer.parseInt(value);
-		System.out.println("wait.beforeStart = " + waitBeforeStart + " (" + getHMS(waitBeforeStart) + ")");
+			waitAfterStart = Integer.parseInt(value);
+		System.out.println("wait.AfterStart = " + waitAfterStart + " (" + getHMS(waitAfterStart) + ")");
 
-		value = Configuration.getProperty("wait.beforeStop");
+		value = Configuration.getProperty("wait.AfterStop");
 		if (value != null)
-			waitBeforeStop = Integer.parseInt(value);
-		System.out.println("wait.beforeStop = " + waitBeforeStop + " (" + getHMS(waitBeforeStop) + ")");
+			waitAfterStop = Integer.parseInt(value);
+		System.out.println("wait.AfterStop = " + waitAfterStop + " (" + getHMS(waitAfterStop) + ")");
 
-		value = Configuration.getProperty("wait.beforeRemove");
+		value = Configuration.getProperty("wait.AfterRemove");
 		if (value != null)
-			waitBeforeRemove = Integer.parseInt(value);
-		System.out.println("wait.beforeRemove = " + waitBeforeRemove + " (" + getHMS(waitBeforeRemove) + ")");
+			waitAfterRemove = Integer.parseInt(value);
+		System.out.println("wait.AfterRemove = " + waitAfterRemove + " (" + getHMS(waitAfterRemove) + ")");
 
 		value = Configuration.getProperty("performance.checkInterval");
 		if (value != null)
@@ -271,8 +271,8 @@ public class StressTest {
 
 		ArrayList<TestVMThread> users = new ArrayList<TestVMThread>();
 		for (int i = 0; i < userCount; ++i) {
-			TestVMThread thread = new TestVMThread(i, waitBeforeCreate, waitBeforeStart, waitBeforeStop,
-					waitBeforeRemove, vm);
+			TestVMThread thread = new TestVMThread(i, waitAfterCreate, waitAfterStart, waitAfterStop,
+					waitAfterRemove, vm);
 			users.add(thread);
 			thread.start();
 			try {
@@ -366,10 +366,10 @@ class TestVMThread extends Thread {
 	private String machineID;
 	private boolean _running = true;
 
-	private int waitBeforeCreate;
-	private int waitBeforeStart;
-	private int waitBeforeStop;
-	private int waitBeforeRemove;
+	private int waitAfterCreate;
+	private int waitAfterStart;
+	private int waitAfterStop;
+	private int waitAfterRemove;
 
 	private NodeVMService vmService;
 	private NodeCreateVMRequest vm;
@@ -379,10 +379,10 @@ class TestVMThread extends Thread {
 	public TestVMThread(int threadNum, int waitBeforeCreate, int waitBeforeStart, int waitBeforeStop,
 			int waitBeforeRemove, NodeCreateVMRequest vm) {
 		this.threadNum = threadNum;
-		this.waitBeforeCreate = waitBeforeCreate;
-		this.waitBeforeRemove = waitBeforeRemove;
-		this.waitBeforeStart = waitBeforeStart;
-		this.waitBeforeStop = waitBeforeStop;
+		this.waitAfterCreate = waitBeforeCreate;
+		this.waitAfterRemove = waitBeforeRemove;
+		this.waitAfterStart = waitBeforeStart;
+		this.waitAfterStop = waitBeforeStop;
 
 		this.vm = new NodeCreateVMRequest();
 
@@ -525,13 +525,13 @@ class TestVMThread extends Thread {
 			}
 
 			try {
-				sleep(waitBeforeCreate);
+				sleep(waitAfterCreate);
 			} catch (InterruptedException e) {
 			}
 
 			if (startVM()) {
 				try {
-					sleep(waitBeforeStart);
+					sleep(waitAfterStart);
 				} catch (InterruptedException e) {
 				}
 
@@ -541,7 +541,7 @@ class TestVMThread extends Thread {
 				}
 
 				try {
-					sleep(waitBeforeStop);
+					sleep(waitAfterStop);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -551,7 +551,7 @@ class TestVMThread extends Thread {
 			}
 
 			try {
-				sleep(waitBeforeRemove);
+				sleep(waitAfterRemove);
 			} catch (InterruptedException e) {
 			}
 		
