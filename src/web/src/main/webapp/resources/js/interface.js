@@ -22,34 +22,26 @@ vdi = {
 		$('.vdi-create-vm').click($.proxy(this, 'initCreateDialog'));
 		$('#vdi-create-vm-dialog').bind('hidden', $.proxy(this, 'resetCreateDialog'));
 		$('#vdi-create-vm-type-family').change($.proxy(this, 'populateVMTypes'));
-		$('#vdi-create-vm-dialog .secondary').click(function() {
-			$('#vdi-create-vm-dialog').modal('hide');
-		});
+		$('#vdi-create-vm-dialog .secondary').click(this.hideDialog);
 		$('#vdi-create-vm-dialog form').submit($.proxy(this, 'createVM'));
 
 		// Edit dialog
 		$('#vdi-edit-vm-dialog').modal(this.modalOptions);
 		$('.vdi-machine-edit').live('click', $.proxy(this, 'initEditVMDialog'));
-		$('#vdi-edit-vm-dialog .secondary').click(function() {
-			$('#vdi-edit-vm-dialog').modal('hide');
-		});
+		$('#vdi-edit-vm-dialog .secondary').click(this.hideDialog);
 		$('#vdi-edit-vm-dialog form').submit($.proxy(this, 'editVM'));
 
 		// Mount dialog
 		$('#vdi-mount-image-dialog').modal(this.modalOptions);
 		$('.vdi-machine-mount').live('click', $.proxy(this, 'initMountImageDialog'));
 		$('#vdi-mount-image-dialog').bind('hidden', $.proxy(this, 'resetMountImageDialog'));
-		$('#vdi-mount-image-dialog .secondary').click(function() {
-			$('#vdi-mount-image-dialog').modal('hide');
-		});
+		$('#vdi-mount-image-dialog .secondary').click(this.hideDialog);
 		$('#vdi-mount-image-dialog form').submit($.proxy(this, 'mountImage'));
 
 		// Delete dialog
 		$('#vdi-delete-vm-dialog').modal(this.modalOptions);
 		$('.vdi-machine-remove').live('click', $.proxy(this, 'initRemoveVMDialog'));
-		$('#vdi-delete-vm-dialog .secondary').click(function() {
-			$('#vdi-delete-vm-dialog').modal('hide');
-		});
+		$('#vdi-delete-vm-dialog .secondary').click(this.hideDialog);
 		$('#vdi-delete-vm-dialog .danger').click($.proxy(this, 'removeVM'));
 
 		// Tag navigation
@@ -66,6 +58,10 @@ vdi = {
 
 		// Register screenshot refresher
 		setInterval($.proxy(this, 'refreshVMScreenshots'), 5*1000);
+	},
+
+	hideDialog: function() {
+		$(this).closest('.modal').modal('hide');
 	},
 
 	initCreateDialog: function() {
