@@ -34,6 +34,12 @@ IMPORTANT: Due to Java XPCOM-issues the VirtualBox-API can not be accessed from 
 
 IMPORTANT: The home folder must be writeable for the user executing the NodeController, i.e. tomcat6
 
+## Build and install the project
+
+The entire project can be build with `mvn package`. This creates all .war-files in the target-directories of every subproject.
+
+To install the applications, move the .war-files to the Tomcat webapps directory.
+
 ## Project configuration
 
 ### NodeController
@@ -46,7 +52,3 @@ Edit the `configuration.properties` file located in `src/management/src/main/web
 
 ### WebInterface
 Edit the `configuration.properties` file located in `src/web/src/main/webapp/WEB-INF` and fill in appropriate values.
-
-## Build the project
-
-The entire project can be build with `mvn package`. This creates all .war-files in the target-directories of every subproject.
