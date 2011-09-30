@@ -36,7 +36,7 @@ public class TestVirtualMachine {
 		return null;
 	}
 
-	private void deleteVmAndVdi(VirtualMachine vm) {
+	private void deleteVmAndVdi(VirtualMachine vm) throws Exception {
 		String hddFilename = null;
 
 		IMedium vdi = vm.getHarddiskMedium();
@@ -45,7 +45,20 @@ public class TestVirtualMachine {
 			hddFilename = file.getName();
 		}
 
-		vm.delete();
+		try {
+			vm.delete();
+		} catch (Exception e) {
+			e.printStackTrace();
+			if (hddFilename != null) {
+				try {
+					VirtualMachine.deleteDisk(hddFilename);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					System.err.println("Removing of hdd '" + hddFilename + "' failed.");
+				}
+			}
+			throw e;
+		}
 
 		if (hddFilename != null) {
 			try {
@@ -193,12 +206,9 @@ public class TestVirtualMachine {
 			try {
 				VirtualMachine vm2 = new VirtualMachine(name, osTypeId, "testing create delete vm", 128L, 512L,
 						false, false, 32L);
-				IMedium vdi = vm2.getHarddiskMedium();
-				vm2.delete();
-				if (vdi != null) {
-					File file = new File(vdi.getLocation());
-					VirtualMachine.deleteDisk(file.getName());
-				}
+
+				deleteVmAndVdi(vm2);
+
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
 			}
