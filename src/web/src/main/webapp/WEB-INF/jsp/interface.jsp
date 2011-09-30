@@ -128,7 +128,7 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-2d-acceleration">2D Acceleration:</label>
+					<label for="vdi-create-vm-2d-acceleration">2D Beschleunigung:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
 					<input type="checkbox" id="vdi-create-vm-2d-acceleration" />
@@ -136,7 +136,7 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
-					<label for="vdi-create-vm-3d-acceleration">3D Acceleration:</label>
+					<label for="vdi-create-vm-3d-acceleration">3D Beschleunigung:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
 					<input type="checkbox" id="vdi-create-vm-3d-acceleration" />
@@ -197,7 +197,7 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-2d-acceleration">2D Acceleration:</label>
+					<label for="vdi-edit-vm-2d-acceleration">2D Beschleunigung:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
 					<input type="checkbox" id="vdi-edit-vm-2d-acceleration" />
@@ -205,7 +205,7 @@
 			</div>
 			<div class="vdi-dialog-option">
 				<div class="vdi-dialog-option-label">
-					<label for="vdi-edit-vm-3d-acceleration">3D Acceleration:</label>
+					<label for="vdi-edit-vm-3d-acceleration">3D Beschleunigung:</label>
 				</div>
 				<div class="vdi-dialog-option-input">
 					<input type="checkbox" id="vdi-edit-vm-3d-acceleration" />
