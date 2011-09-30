@@ -345,17 +345,19 @@ vdi = {
 			+ "		<img src='" + screenshot + "'>"
 			+ 		(show_paused && "<img src='../resources/images/machine-paused.png'>")
 			+ "	</div>"
-			+ "	<div class='vdi-machine-infos'>"
+			+ "	<div class='vdi-machine-container'>"
 			+ "		<div class='vdi-machine-actions'>"
 			+ active_buttons.join("\n")
 			+ "		</div>"
-			+ "		<span class='vdi-machine-info-title'>Name:</span> " + vm.name + "<br />"
-			+ "		<span class='vdi-machine-info-title'>Beschreibung:</span> " + vm.description + "<br />"
-			+ "		<span class='vdi-machine-info-title'>Tags:</span> "
+			+ "		<div class='vdi-machine-infos'>"
+			+ "			<span class='vdi-machine-info-title'>Name:</span> " + vm.name + "<br />"
+			+ "			<span class='vdi-machine-info-title'>Beschreibung:</span> " + vm.description + "<br />"
+			+ "			<span class='vdi-machine-info-title'>Tags:</span> "
 			+ "			<span class='vdi-machine-tags'>" + vm_tags.join(", ") + "</span><br />"
-			+ "		<span class='vdi-machine-info-title'>Status:</span> " + status + "<br />"
-			+ 		(rpd_url && "<span class='vdi-machine-info-title'>RDP:</span> " + rpd_url + "<br />")
-			+ 		(image && "<span class='vdi-machine-info-title'>Image:</span> " + image + "<br />")
+			+ "			<span class='vdi-machine-info-title'>Status:</span> " + status + "<br />"
+			+ 			(rpd_url && "<span class='vdi-machine-info-title'>RDP:</span> " + rpd_url + "<br />")
+			+ 			(image && "<span class='vdi-machine-info-title'>Image:</span> " + image + "<br />")
+			+ "		</div>"
 			+ "	</div>"
 			+ "<div class='clear-layout'></div>"
 			+ "</div>");

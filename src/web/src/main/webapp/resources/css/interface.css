@@ -71,13 +71,16 @@ body {
  */
 
 .vdi-machine-drawer .well {
+	position: relative;
 	padding: 14px;
 	margin-bottom: 15px;
 	height: 100px;
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
-	position: relative;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons span {
@@ -124,13 +127,29 @@ body {
 	        box-shadow: 0 0 4px 0.5px #333;
 }
 
-.vdi-machine-drawer .vdi-machine .vdi-machine-infos span.vdi-machine-info-title {
+.vdi-machine-drawer .vdi-machine span.vdi-machine-info-title {
 	font-weight:bold;
 }
 
-.vdi-machine-drawer .vdi-machine .vdi-machine-infos div.vdi-machine-actions {
-	float:right;
-	margin-top:60px;
+.vdi-machine-drawer .vdi-machine .vdi-machine-infos {
+	width: 510px;
+	height: 100px;
+	-webkit-column-width: 250px;
+	   -moz-column-width: 250px;
+	    -ms-column-width: 250px;
+	     -o-column-width: 250px;
+	        column-width: 250px;
+	-webkit-column-gap: 10px;
+	   -moz-column-gap: 10px;
+	    -ms-column-gap: 10px;
+	     -o-column-gap: 10px;
+	        column-gap: 10px;
+}
+
+.vdi-machine-drawer .vdi-machine div.vdi-machine-actions {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
 }
 
 /*
