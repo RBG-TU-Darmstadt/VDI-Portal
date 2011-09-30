@@ -80,9 +80,11 @@ public class TestVirtualMachine {
 				if (vm.getState() != VirtualMachineStatus.STOPPED) {
 					vm.stop();
 				}
-				String vdi = vm.getHarddiskMedium().getLocation();
+				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
 				System.out.println("'" + vm_name + "' deleted.");
 			}
@@ -116,9 +118,11 @@ public class TestVirtualMachine {
 			if (vm != null) {
 				if (vm.getState() != VirtualMachineStatus.STOPPED)
 					vm.stop();
-				String vdi = vm.getHarddiskMedium().getLocation();
+				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				VirtualMachine.deleteDisk(vdi);
+				if(vdi != null) {
+					VirtualMachine.deleteDisk(vdi.getLocation());
+				}
 				vm = null;
 			}
 		} catch (Throwable e) {

@@ -72,7 +72,7 @@ public class TestVirtualMachineRessource {
 		createVMRequest.vramSize = 32L;
 		createVMRequest.accelerate2d = false;
 		createVMRequest.accelerate3d = false;
-		
+
 		// TODO: implement tests for testing hdd and memory boundary checks
 
 		ManagementVM vm = getVMByName(createVMRequest.name);
@@ -160,6 +160,11 @@ public class TestVirtualMachineRessource {
 			}
 			Assert.assertTrue("VM was not deleted", machineDeleted);
 
+		} catch (ClientResponseFailure f) {
+			LOGGER.warning(f.getResponse().getResponseStatus().toString());
+			LOGGER.info(((ClientResponse<?>)f.getResponse()).getEntity(String.class));
+			AssertionFailedError err = new AssertionFailedError("Unexpected response failure: " + f.getResponse().getResponseStatus().toString());
+			throw err;
 		} catch (Exception e) {
 			e.printStackTrace();
 			AssertionFailedError err = new AssertionFailedError("Unexpected: " + e.getMessage());
