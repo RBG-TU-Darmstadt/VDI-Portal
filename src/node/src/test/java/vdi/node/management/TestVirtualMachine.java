@@ -97,7 +97,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				vm = null;
 			}
@@ -112,7 +113,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				vm = null;
 			}
@@ -185,7 +187,8 @@ public class TestVirtualMachine {
 				IMedium vdi = vm2.getHarddiskMedium();
 				vm2.delete();
 				if (vdi != null) {
-					VirtualMachine.deleteDisk(vdi.getLocation());
+					File file = new File(vdi.getLocation());
+					VirtualMachine.deleteDisk(file.getName());
 				}
 				Assert.assertTrue("No exception with creation of same machine name", true);
 			} catch (DuplicateMachineNameException e) {
