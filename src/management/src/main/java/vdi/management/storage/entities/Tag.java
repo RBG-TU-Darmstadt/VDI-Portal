@@ -79,8 +79,9 @@ public class Tag {
 	}
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@Cascade({CascadeType.SAVE_UPDATE })
-	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "TAG_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+	@Cascade({ CascadeType.SAVE_UPDATE })
+	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "TAG_ID"),
+		inverseJoinColumns = @JoinColumn(name = "ID"))
 	@ForeignKey(name = "FK_Tag_VirtualMachine", inverseName = "FK_VirtualMachine_Tag")
 	public Set<VirtualMachine> getVirtualMachines() {
 		return virtualMachines;

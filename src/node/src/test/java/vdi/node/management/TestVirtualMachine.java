@@ -190,6 +190,7 @@ public class TestVirtualMachine {
 			} catch (DuplicateMachineNameException e) {
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw (AssertionFailedError) new AssertionFailedError("Cought unexpected exception:" + e.getMessage())
 					.initCause(e);
 		}

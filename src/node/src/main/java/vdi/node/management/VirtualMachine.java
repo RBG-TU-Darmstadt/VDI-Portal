@@ -41,6 +41,11 @@ public class VirtualMachine {
 
 	private static final Logger LOGGER = Logger.getLogger(VirtualMachine.class.getName());
 
+	/**
+	 * The timeout for guest authentications to the VBox RDE Server.
+	 */
+	private static final long RDE_SERVER_AUTH_TIMEOUT = 5000L;
+
 	private IMachine machine = null;
 
 	/**
@@ -91,22 +96,29 @@ public class VirtualMachine {
 
 		return osTypes;
 	}
-	
+
 	/**
-	 * Deletes a vdi-file
+	 * Deletes a vdi-file.
 	 * 
 	 * @param hddFile
 	 *            filename of the virtual harddisk
+	 * 
+	 * @throws FileNotFoundException
+	 *             thrown when the file does not exist.
+	 * @throws IllegalAccessException
+	 *             thrown when the file is write protected.
+	 * @throws Exception
+	 *             thrown when file could not be deleted.
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
 		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
-		
+
 		if (file.exists()) {
 			if (file.canWrite()) {
 				if (file.isDirectory()) {
 					throw new IllegalArgumentException();
 				} else {
-					if (file.delete() == false) {
+					if (!file.delete()) {
 						throw new Exception("Error while deleting vdi-file.");
 					}
 				}
@@ -167,12 +179,13 @@ public class VirtualMachine {
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		if (Configuration.getProperty("node.vdifolder") != null && ! Configuration.getProperty("node.vdifolder").isEmpty()) {
+		if (Configuration.getProperty("node.vdifolder") != null
+				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
 			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 		} else {
 			createHdd(hddSize, getPath() + "hdd0.vdi");
 		}
-		
+
 	}
 
 	/**
@@ -272,7 +285,7 @@ public class VirtualMachine {
 			rde.setEnabled(true);
 			rde.setAllowMultiConnection(false);
 			rde.setAuthType(AuthType.Null);
-			rde.setAuthTimeout(5000L);
+			rde.setAuthTimeout(RDE_SERVER_AUTH_TIMEOUT);
 		}
 
 		mutable.saveSettings();
@@ -281,6 +294,12 @@ public class VirtualMachine {
 		LOGGER.info("Created virtual machine with ID " + newMachine.getId());
 	}
 
+	/**
+	 * Attaches a vdi file to the vm.
+	 * 
+	 * @param pathAndFilename
+	 *            full path to the vdi file.
+	 */
 	private void attachHdd(String pathAndFilename) {
 		ISession session = manager.getSessionObject();
 		machine.lockMachine(session, LockType.Write);

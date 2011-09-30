@@ -17,6 +17,8 @@ public final class Scheduling {
 
 	private static final Logger LOGGER = Logger.getLogger(Scheduling.class.getName());
 
+	private static final double MIN_CPU_LOAD = 0.001;
+
 	/**
 	 * Private constructor.
 	 */
@@ -47,9 +49,10 @@ public final class Scheduling {
 	 * <p>
 	 * (freeRAM / RAM) calculates the free Memory percentage. Since we want to
 	 * prefer Nodes with more free RAM but equal percentage, we multiply by
-	 * freeRAM again to get a higher score. <br />As the load is relative to the number
-	 * of processor cores available, we divide (load / core), but as a higher
-	 * load means lower scores we use the multiplicative inverse (core / load).
+	 * freeRAM again to get a higher score. <br />
+	 * As the load is relative to the number of processor cores available, we
+	 * divide (load / core), but as a higher load means lower scores we use the
+	 * multiplicative inverse (core / load).
 	 * </p>
 	 * 
 	 * <p>
@@ -68,7 +71,8 @@ public final class Scheduling {
 			return null;
 		}
 
-		// sorted Map containing suitable Nodes (value) and their performance index (key)
+		// sorted Map containing suitable Nodes (value) and their performance
+		// index (key)
 		TreeMap<Integer, Node> sortedNodes = new TreeMap<Integer, Node>();
 
 		// first of all check available RAM and available HDD space
@@ -80,12 +84,11 @@ public final class Scheduling {
 				// choose best Node from available resources
 				// calculate performance index
 				// index = (freeRAM^2 / availRAM) * (core / load)
-				if (n.getCpuLoad() == 0) {
-					n.setCpuLoad(0.001);
+				if (n.getCpuLoad() < MIN_CPU_LOAD) {
+					n.setCpuLoad(MIN_CPU_LOAD);
 				}
-				Integer index = (int) ((n.getFreeMemorySize()
-						* n.getFreeMemorySize() / n.getMemorySize()) * (n
-						.getCores() / n.getCpuLoad()));
+				Integer index = (int) ((n.getFreeMemorySize() * n.getFreeMemorySize() / n.getMemorySize())
+						* (n.getCores() / n.getCpuLoad()));
 				// add to TreeMap
 				sortedNodes.put(index, n);
 			}
