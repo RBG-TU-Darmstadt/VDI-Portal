@@ -16,8 +16,6 @@
 
 IMPORTANT: Due to Java XPCOM-issues the VirtualBox-API can not be accessed from Windows machines. Linux and Mac OS X works just fine.
 
----
-
 ## PostgreSQL Setup
 
 1. Install PostgreSQL Server
@@ -28,8 +26,6 @@ IMPORTANT: Due to Java XPCOM-issues the VirtualBox-API can not be accessed from 
     * connection.username
     * connection.password
 
----
-
 ## VirtualBox Setup
 
 1. Install the latest VirtualBox, get it from the VirtualBox [(download page)](https://www.virtualbox.org/wiki/Downloads)
@@ -37,8 +33,6 @@ IMPORTANT: Due to Java XPCOM-issues the VirtualBox-API can not be accessed from 
 3. Create the following symbolic link: `ln -s /usr/lib/virtualbox/libvboxjxpcom.so /usr/lib/libvboxjxpcom.so
 
 IMPORTANT: The home folder must be writeable for the user executing the NodeController, i.e. tomcat6
-
----
 
 ## Project configuration
 
@@ -52,8 +46,6 @@ Edit the `configuration.properties` file located in `src/management/src/main/web
 
 ### WebInterface
 Edit the `configuration.properties` file located in `src/web/src/main/webapp/WEB-INF` and fill in appropriate values.
-
----
 
 ## Build the project
 
