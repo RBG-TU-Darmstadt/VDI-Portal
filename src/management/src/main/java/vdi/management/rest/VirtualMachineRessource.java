@@ -241,21 +241,10 @@ public class VirtualMachineRessource implements ManagementVMService {
 				nodeRequest.image = null;
 				selectNodeService(vm.getNode()).updateVirtualMachine(vm.getMachineId(), nodeRequest);
 
-				// FIXME
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// if this empty block will remain after fixing above, there
-					// needs to be an useful comment
-					// The problem is, that a vm is not immediately unlocked after
-					// the vm is stopped.
-				}
-
 				// delete virtual machine from NodeController
 				selectNodeService(vm.getNode()).removeVirtualMachine(vm.getMachineId());
 
 				vm.setRdpUrl(null);
-				vm.setMachineId(null);
 				vm.setMachineId(null);
 				vm.setNode(null);
 			} else {
