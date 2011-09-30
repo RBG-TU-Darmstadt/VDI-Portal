@@ -145,7 +145,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 		}
 
 		// Remove disk image
-		selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddPath());
+		selectNodeService(Scheduling.selectRandomNode()).removeDisk(vm.getHddFile());
 
 		// Delete VM from the database
 		Hibernate.deleteObject(vm);
@@ -334,12 +334,12 @@ public class VirtualMachineRessource implements ManagementVMService {
 		nodeCreateRequest.osTypeId = vm.getOsType();
 		nodeCreateRequest.description = "'" + vm.getMachineName() + "' of user: " + vm.getUser().getTuid();
 		nodeCreateRequest.memorySize = vm.getMemorySize();
-		if (vm.getHddPath() == null) {
+		if (vm.getHddFile() == null) {
 			nodeCreateRequest.hddSize = vm.getHddSize();
 		} else {
 			// hdd is already created
 			nodeCreateRequest.hddSize = 0;
-			nodeCreateRequest.hddFile = vm.getHddPath();
+			nodeCreateRequest.hddFile = vm.getHddFile();
 		}
 		nodeCreateRequest.vramSize = vm.getVram();
 		nodeCreateRequest.accelerate2d = vm.isAccelerate2d();
@@ -359,7 +359,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 
 		// save the machine id and hdd path
 		vm.setMachineId(nodeResponse.machineId);
-		vm.setHddPath(nodeResponse.hddFile);
+		vm.setHddFile(nodeResponse.hddFile);
 	}
 
 	@Override
