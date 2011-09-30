@@ -597,7 +597,9 @@ public class VirtualMachine {
 			 * https://www.virtualbox.org/sdkref/interface_i_session.html#87571b3c87d705ee013b24f135f43715
 			 */
 			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+			// ignored.
+		}
 	}
 
 	/**
