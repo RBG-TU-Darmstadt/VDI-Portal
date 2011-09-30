@@ -237,8 +237,8 @@ public class TestVirtualMachine {
 
 		try {
 			vm = new VirtualMachine(vm_name, osTypeId, description, 128L, 512L, false, false, 32L);
-		} catch (DuplicateMachineNameException e) {
-			Assume.assumeNoException(e);
+		} catch (Throwable t) {
+			Assume.assumeNoException(t);
 		}
 
 		Assume.assumeNotNull(vm);
