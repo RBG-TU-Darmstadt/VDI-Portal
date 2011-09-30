@@ -185,13 +185,7 @@ public class VirtualMachine {
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		if (Configuration.getProperty("node.vdifolder") != null
-				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
-			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
-		} else {
-			createHdd(hddSize, getPath() + "/hdd0.vdi");
-		}
-
+		createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 	}
 
 	/**
@@ -441,16 +435,6 @@ public class VirtualMachine {
 	 */
 	public synchronized String getOSTypeId() {
 		return machine.getOSTypeId();
-	}
-
-	/**
-	 * Returns the virtual machine's path by taking the log-path's parent
-	 * directory.
-	 * 
-	 * @return the virtual machine's path
-	 */
-	private synchronized String getPath() {
-		return new File(machine.getLogFolder()).getParent();
 	}
 
 	/**
