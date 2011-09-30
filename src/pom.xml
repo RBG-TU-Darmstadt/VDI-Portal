@@ -16,6 +16,7 @@
 		<module>node</module>
 		<module>web</module>
 		<module>test</module>
+		<module>stresstest</module>
 	</modules>
 
 	<properties>

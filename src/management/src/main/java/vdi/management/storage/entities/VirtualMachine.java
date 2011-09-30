@@ -32,7 +32,7 @@ public class VirtualMachine {
 	private Long id;
 	private String machineId;
 	private String machineName;
-	private String hddPath;
+	private String hddFile;
 	private Node node;
 	private Date creationDate;
 	private String description;
@@ -106,13 +106,13 @@ public class VirtualMachine {
 		this.machineName = machineName;
 	}
 
-	@Column(name = "HDD_PATH")
-	public String getHddPath() {
-		return hddPath;
+	@Column(name = "HDD_FILE")
+	public String getHddFile() {
+		return hddFile;
 	}
 
-	public void setHddPath(String hddPath) {
-		this.hddPath = hddPath;
+	public void setHddFile(String hddFile) {
+		this.hddFile = hddFile;
 	}
 
 	@Column(name = "CREATION_DATE")
@@ -199,7 +199,7 @@ public class VirtualMachine {
 	}
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@Cascade({ CascadeType.SAVE_UPDATE })
+	@Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE })
 	@JoinTable(name = "VirtualMachineTags", joinColumns = @JoinColumn(name = "ID"),
 		inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
 	@ForeignKey(name = "FK_VirtualMachine_Tag", inverseName = "FK_Tag_VirtualMachine")

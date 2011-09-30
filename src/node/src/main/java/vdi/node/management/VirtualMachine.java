@@ -111,13 +111,7 @@ public class VirtualMachine {
 	 *             thrown when file could not be deleted.
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
-		File file;
-		if (Configuration.getProperty("node.vdifolder") != null
-				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
-			file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
-		} else {
-			file = new File(hddFile);
-		}
+		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
 
 		if (file.exists()) {
 			if (file.canWrite()) {
@@ -185,13 +179,7 @@ public class VirtualMachine {
 			boolean accelerate2d, boolean accelerate3d, long vramSize) throws DuplicateMachineNameException {
 		createVirtualMachine(name, osTypeId, description, memorySize, accelerate2d, accelerate3d, vramSize);
 
-		if (Configuration.getProperty("node.vdifolder") != null
-				&& !Configuration.getProperty("node.vdifolder").isEmpty()) {
-			createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
-		} else {
-			createHdd(hddSize, getPath() + "hdd0.vdi");
-		}
-
+		createHdd(hddSize, Configuration.getProperty("node.vdifolder") + "/" + name + ".vdi");
 	}
 
 	/**
@@ -399,7 +387,6 @@ public class VirtualMachine {
 		IMedium medium = getMountedMedium();
 
 		if (medium == null) {
-			LOGGER.warning("No medium mounted -- could not return medium location.");
 			return null;
 		} else {
 			return medium.getLocation();
@@ -441,16 +428,6 @@ public class VirtualMachine {
 	 */
 	public synchronized String getOSTypeId() {
 		return machine.getOSTypeId();
-	}
-
-	/**
-	 * Returns the virtual machine's path by taking the log-path's parent
-	 * directory.
-	 * 
-	 * @return the virtual machine's path
-	 */
-	private synchronized String getPath() {
-		return machine.getLogFolder().substring(0, machine.getLogFolder().lastIndexOf('/') + 1);
 	}
 
 	/**
@@ -609,6 +586,18 @@ public class VirtualMachine {
 		}
 
 		session.unlockMachine();
+
+		try {
+			/*
+			 * We have to wait here for at least 1s since the VirtualBox does not guarantee
+			 * that the VM is unlocked immediately. Unfortunately the state is changed to 'Unlocked'
+			 * directly as soon as unlockMachine() is executed, which stands in contrast to the docs.
+			 * 
+			 * See note on ISession.unlockMachine():
+			 * https://www.virtualbox.org/sdkref/interface_i_session.html#87571b3c87d705ee013b24f135f43715
+			 */
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {}
 	}
 
 	/**

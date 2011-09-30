@@ -15,7 +15,7 @@ import vdi.commons.common.RESTEasyClientExecutor;
 import vdi.commons.web.rest.interfaces.ManagementVMService;
 
 /**
- * Servlet implementation class Home
+ * Servlet implementation class Home.
  */
 public class Screenshot extends HttpServlet {
 
@@ -34,10 +34,7 @@ public class Screenshot extends HttpServlet {
 				RESTEasyClientExecutor.get());
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
 			IOException {
 		/*

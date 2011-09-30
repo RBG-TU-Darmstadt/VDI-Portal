@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.ws.rs.core.Response.Status;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -43,18 +45,15 @@ public class Manager {
 	ManagementTagService mangementTagService;
 
 	/**
-	 * Default constructor initializing ManagementServer services. 
+	 * Default constructor initializing ManagementServer services.
 	 */
 	public Manager() {
 		mangementVMService = ProxyFactory.create(ManagementVMService.class,
-				Configuration.getProperty("managementserver.uri") + "/vm/",
-				RESTEasyClientExecutor.get());
+				Configuration.getProperty("managementserver.uri") + "/vm/", RESTEasyClientExecutor.get());
 		mangementImageService = ProxyFactory.create(ManagementImageService.class,
-				Configuration.getProperty("managementserver.uri") + "/images/",
-				RESTEasyClientExecutor.get());
+				Configuration.getProperty("managementserver.uri") + "/images/", RESTEasyClientExecutor.get());
 		mangementTagService = ProxyFactory.create(ManagementTagService.class,
-				Configuration.getProperty("managementserver.uri") + "/tags/",
-				RESTEasyClientExecutor.get());
+				Configuration.getProperty("managementserver.uri") + "/tags/", RESTEasyClientExecutor.get());
 	}
 
 	@RemoteMethod
@@ -68,13 +67,13 @@ public class Manager {
 			// Register function under current session id
 			this.serverContextList.add(serverContext);
 		} catch (Exception e) {
+			// this is bad.
 		}
 	}
 
 	@RemoteMethod
-	public String createVM(String name, String description, String type,
-			String image, Long memory, Long harddisk, Long vram,
-			boolean acceleration2d, boolean acceleration3d, List<String> tags) {
+	public String createVM(String name, String description, String type, String image, Long memory, Long harddisk,
+			Long vram, boolean acceleration2d, boolean acceleration3d, List<String> tags) {
 		ManagementCreateVMRequest createRequest = new ManagementCreateVMRequest();
 		createRequest.name = name;
 		createRequest.osTypeId = type;
@@ -89,7 +88,8 @@ public class Manager {
 		// Create machine
 		ManagementCreateVMResponse createResponse = mangementVMService.createVirtualMachine(userId, createRequest);
 
-		if ( ! image.isEmpty()) {
+		// Mount image (if any)
+		if (!image.isEmpty()) {
 			ManagementUpdateVMRequest mountRequest = new ManagementUpdateVMRequest();
 			mountRequest.image = image;
 
@@ -121,6 +121,9 @@ public class Manager {
 			vm.put("description", managementVM.description);
 			vm.put("memory", managementVM.memorySize);
 			vm.put("harddisk", managementVM.hddSize);
+			vm.put("vram", managementVM.vRamSize);
+			vm.put("accelerate2d", managementVM.accelerate2d);
+			vm.put("accelerate3d", managementVM.accelerate3d);
 
 			JSONArray tags = new JSONArray();
 			for (ManagementTag managementTag : managementVM.tags) {
@@ -186,6 +189,34 @@ public class Manager {
 	}
 
 	@RemoteMethod
+	public String editVM(Long id, String name, String description, Long memory, Long vram, boolean acceleration2d,
+			boolean acceleration3d, List<String> tags) {
+		try {
+			ManagementUpdateVMRequest createRequest = new ManagementUpdateVMRequest();
+			createRequest.name = name;
+			createRequest.description = description;
+			createRequest.memorySize = memory;
+			createRequest.vramSize = vram;
+			createRequest.accelerate2d = acceleration2d;
+			createRequest.accelerate3d = acceleration3d;
+			createRequest.tags = tags;
+
+			// Update machine
+			mangementVMService.updateVirtualMachine(userId, id, createRequest);
+
+			JSONObject json = new JSONObject();
+
+			json.put("success", true);
+
+			return json.toString();
+		} catch (Throwable t) {
+			t.printStackTrace();
+
+			return "{}";
+		}
+	}
+
+	@RemoteMethod
 	public String stopVM(Long id) {
 		ManagementUpdateVMRequest request = new ManagementUpdateVMRequest();
 		request.status = VirtualMachineStatus.STOPPED;
@@ -201,11 +232,18 @@ public class Manager {
 
 	@RemoteMethod
 	public String removeVM(Long id) {
-		mangementVMService.removeVirtualMachine(userId, id);
+		boolean success = true;
+		try {
+			mangementVMService.removeVirtualMachine(userId, id);
+		} catch (ClientResponseFailure f) {
+			if (f.getResponse().getStatus() == Status.CONFLICT.getStatusCode()) {
+				success = false;
+			}
+		}
 
 		JSONObject json = new JSONObject();
 
-		json.put("success", true);
+		json.put("success", success);
 
 		return json.toString();
 	}

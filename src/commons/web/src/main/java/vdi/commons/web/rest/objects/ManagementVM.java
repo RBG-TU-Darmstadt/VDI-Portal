@@ -44,6 +44,21 @@ public class ManagementVM {
 	public Long hddSize;
 
 	/**
+	 * VRAM size in MB.
+	 */
+	public Long vRamSize;
+
+	/**
+	 * 2D acceleration.
+	 */
+	public boolean accelerate2d;
+
+	/**
+	 * 3D acceleration.
+	 */
+	public boolean accelerate3d;
+
+	/**
 	 * List of tags assign to this VM.
 	 */
 	public ArrayList<ManagementTag> tags;

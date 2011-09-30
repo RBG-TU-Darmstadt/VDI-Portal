@@ -18,7 +18,7 @@ import vdi.commons.web.rest.interfaces.ManagementVMService;
 import vdi.commons.web.rest.objects.ManagementVM;
 
 /**
- * Servlet implementation class RDP
+ * Servlet implementation class RDP.
  */
 public class RDP extends HttpServlet {
 
@@ -37,10 +37,7 @@ public class RDP extends HttpServlet {
 				RESTEasyClientExecutor.get());
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException,
 			IOException {
 		/*
@@ -72,10 +69,7 @@ public class RDP extends HttpServlet {
 		out.println("displayconnectionbar:i:1");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
 			IOException {
 		doGet(request, response);
