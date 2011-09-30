@@ -89,6 +89,7 @@ public class Manager {
 		// Create machine
 		ManagementCreateVMResponse createResponse = mangementVMService.createVirtualMachine(userId, createRequest);
 
+		// Mount image (if any)
 		if ( ! image.isEmpty()) {
 			ManagementUpdateVMRequest mountRequest = new ManagementUpdateVMRequest();
 			mountRequest.image = image;
