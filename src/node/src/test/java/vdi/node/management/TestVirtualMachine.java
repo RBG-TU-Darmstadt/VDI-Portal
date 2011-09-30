@@ -82,7 +82,7 @@ public class TestVirtualMachine {
 				}
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				if(vdi != null) {
+				if (vdi != null) {
 					VirtualMachine.deleteDisk(vdi.getLocation());
 				}
 				Assert.assertNull("Deletion of '" + vm_name + "' failed!", getVMByName(vm_name));
@@ -105,7 +105,7 @@ public class TestVirtualMachine {
 				}
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				if(vdi != null) {
+				if (vdi != null) {
 					VirtualMachine.deleteDisk(vdi.getLocation());
 				}
 				vm = null;
@@ -120,7 +120,7 @@ public class TestVirtualMachine {
 					vm.stop();
 				IMedium vdi = vm.getHarddiskMedium();
 				vm.delete();
-				if(vdi != null) {
+				if (vdi != null) {
 					VirtualMachine.deleteDisk(vdi.getLocation());
 				}
 				vm = null;
@@ -193,7 +193,7 @@ public class TestVirtualMachine {
 						false, false, 32L);
 				IMedium vdi = vm2.getHarddiskMedium();
 				vm2.delete();
-				if(vdi != null) {
+				if (vdi != null) {
 					VirtualMachine.deleteDisk(vdi.getLocation());
 				}
 				Assert.assertTrue("No exception with creation of same machine name", true);
@@ -247,20 +247,6 @@ public class TestVirtualMachine {
 		Assume.assumeNotNull(vm);
 	}
 
-	private boolean deleteVM(VirtualMachine vm) throws Exception {
-		IMedium vdi = vm.getHarddiskMedium();
-		try {
-			vm.delete();
-		} catch (VBoxException e) {
-			// catching
-			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
-			// (0x80bb0007)
-			return false;
-		}
-		VirtualMachine.deleteDisk(vdi.getLocation());
-		return true;
-	}
-
 	@Test
 	public void vmStartPauseResumeTest() throws Exception {
 		getTestVM("vm status test");
@@ -294,21 +280,20 @@ public class TestVirtualMachine {
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 
-		// delete machine:
-		// TODO: move waiting to delete() method?
-		int i;
-		int maxcount = 20;
-		int millisecs = 1000;
-		for (i = 0; i < maxcount && !deleteVM(vm); i++) {
-			try {
-				Thread.sleep(millisecs);
-			} catch (InterruptedException e) {
-				i--;
+		IMedium vdi = vm.getHarddiskMedium();
+		try {
+			vm.delete();
+
+			if (vdi != null) {
+				VirtualMachine.deleteDisk(vdi.getLocation());
 			}
+		} catch (VBoxException e) {
+			// catching
+			// "Cannot unregister the machine 'Unit_Test_VM' while it is locked"
+			// (0x80bb0007)
+			e.printStackTrace();
+			throw new AssertionFailedError("Deleting VM failed.");
 		}
-		System.out.println("Delete failed " + i + " times. Had to wait " + i * millisecs + " secs.");
-		Assert.assertTrue("Could not delete VM after waiting " + maxcount * millisecs / 1000 + " seconds.",
-				i < maxcount);
 
 		vm = null;
 	}
