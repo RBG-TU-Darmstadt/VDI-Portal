@@ -79,8 +79,8 @@ body {
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons {
 	position: absolute;
-	right: 10px;
-	top: 10px;
+	right: 14px;
+	top: 14px;
 }
 
 .vdi-machine-drawer .vdi-machine .vdi-machine-buttons span {
@@ -148,8 +148,8 @@ body {
 
 .vdi-machine-drawer .vdi-machine div.vdi-machine-actions {
 	position: absolute;
-	right: 10px;
-	bottom: 10px;
+	right: 14px;
+	bottom: 14px;
 }
 
 /*
