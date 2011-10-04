@@ -112,6 +112,8 @@ public class VirtualMachine {
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
 		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
+		
+		LOGGER.finest("deleting '"+Configuration.getProperty("node.vdifolder") + "/" + hddFile+"'");
 
 		if (file.exists()) {
 			if (file.canWrite()) {
@@ -119,13 +121,16 @@ public class VirtualMachine {
 					throw new IllegalArgumentException();
 				} else {
 					if (!file.delete()) {
+						LOGGER.finest("Deletion failed!");
 						throw new Exception("Error while deleting vdi-file.");
 					}
 				}
 			} else {
+				LOGGER.finest("File is write protected.");
 				throw new IllegalAccessException();
 			}
 		} else {
+			LOGGER.finest("File not found.");
 			throw new FileNotFoundException();
 		}
 	}

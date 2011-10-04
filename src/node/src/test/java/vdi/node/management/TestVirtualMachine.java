@@ -49,15 +49,6 @@ public class TestVirtualMachine {
 			vm.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (hddFilename != null) {
-				try {
-					System.out.println("removing hdd file: " + hddFilename);
-					VirtualMachine.deleteDisk(hddFilename);
-				} catch (Exception e2) {
-					e2.printStackTrace();
-					System.err.println("Removing of hdd '" + hddFilename + "' failed.");
-				}
-			}
 			throw e;
 		}
 
@@ -68,6 +59,7 @@ public class TestVirtualMachine {
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.println("Removing of hdd '" + hddFilename + "' failed.");
+				throw e;
 			}
 		}
 	}

@@ -60,6 +60,7 @@ public class VirtualMachineResource implements NodeVMService {
 		if (vdi != null) {
 			File file = new File(vdi.getLocation());
 			response.hddFile = file.getName();
+			LOGGER.finest("hddFile: " + response.hddFile);
 		} else {
 			// VM has no attached vdi file!
 			LOGGER.warning("Invalid VM state: no vdi file attached to new vm '" + request.name + "'");
