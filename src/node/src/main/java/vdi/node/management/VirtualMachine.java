@@ -390,6 +390,9 @@ public class VirtualMachine {
 					medium.close();
 				}
 
+				// removing vm configuration files: 
+				machine.delete(null);
+
 				LOGGER.info("Deleting '" + this.getId() + "' successful");
 
 				break;

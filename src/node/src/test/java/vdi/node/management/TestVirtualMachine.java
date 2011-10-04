@@ -21,7 +21,7 @@ import vdi.node.exception.MachineNotFoundException;
 
 public class TestVirtualMachine {
 	boolean init = false;
-	String vm_name = "test_vm";
+	String vm_name = "unit_test";
 	VirtualMachine vm = null;
 
 	private void skipOnInitFailure() {
