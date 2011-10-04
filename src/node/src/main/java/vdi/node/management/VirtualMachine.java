@@ -3,6 +3,7 @@ package vdi.node.management;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -391,7 +392,7 @@ public class VirtualMachine {
 				}
 
 				// removing vm configuration files: 
-				machine.delete(null);
+				machine.delete(new ArrayList<IMedium>());
 
 				LOGGER.info("Deleting '" + this.getId() + "' successful");
 
