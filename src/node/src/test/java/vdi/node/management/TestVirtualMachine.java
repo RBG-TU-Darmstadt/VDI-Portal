@@ -25,6 +25,9 @@ public class TestVirtualMachine {
 	VirtualMachine vm = null;
 
 	private void skipOnInitFailure() {
+		if(!init) {
+			System.err.println("Init failed: Skipping test.");
+		}
 		Assume.assumeTrue(init);
 	}
 
@@ -113,6 +116,7 @@ public class TestVirtualMachine {
 		} catch (MachineNotFoundException e) {
 		} catch (Exception e) {
 			e.printStackTrace();
+			init = false;
 		}
 
 		// checking for file:
@@ -121,10 +125,13 @@ public class TestVirtualMachine {
 			System.err.println(vm_name + ".vdi still exists!");
 			if (!file.delete()) {
 				System.err.println("... and it could not be removed!");
+				init = false;
 			} else {
 				System.err.println("... successfully removed!");
 			}
 		}
+
+		vm = null;
 	}
 
 	@After
@@ -265,18 +272,25 @@ public class TestVirtualMachine {
 	private void getTestVM(String description) {
 		skipOnInitFailure();
 
-		Assume.assumeTrue(vm == null);
+		if (vm != null) {
+			System.err.println("Error: vm is not null: Skipping test.");
+			Assume.assumeTrue(vm == null);
+		}
 
 		String osTypeId = null;
 		try {
 			osTypeId = getOsTypeId();
 		} catch (Throwable t) {
+			t.printStackTrace();
+			System.err.println("Error: Couldn't get osTypeId: Skipping test.");
 			Assume.assumeNoException(t);
 		}
 
 		try {
 			vm = new VirtualMachine(vm_name, osTypeId, description, 128L, 512L, false, false, 32L);
 		} catch (Throwable t) {
+			t.printStackTrace();
+			System.err.println("Error: Couldn't create test vm: Skipping test.");
 			Assume.assumeNoException(t);
 		}
 
@@ -315,7 +329,12 @@ public class TestVirtualMachine {
 		vmStatus = vm.getState();
 		Assert.assertEquals("Expected state 'STOPPED' but '" + vmStatus + "'", VirtualMachineStatus.STOPPED, vmStatus);
 
-		deleteVmAndVdi(vm);
+		try {
+			deleteVmAndVdi(vm);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AssertionFailedError("deleteVmAndVdi failed: " + e.getMessage());
+		}
 
 		vm = null;
 	}
