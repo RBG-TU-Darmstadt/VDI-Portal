@@ -112,8 +112,8 @@ public class VirtualMachine {
 	 */
 	public static void deleteDisk(String hddFile) throws FileNotFoundException, IllegalAccessException, Exception {
 		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + hddFile);
-		
-		LOGGER.finest("deleting '"+Configuration.getProperty("node.vdifolder") + "/" + hddFile+"'");
+
+		LOGGER.finest("deleting '" + Configuration.getProperty("node.vdifolder") + "/" + hddFile + "'");
 
 		if (file.exists()) {
 			if (file.canWrite()) {
@@ -371,7 +371,7 @@ public class VirtualMachine {
 				LOGGER.info("Deleting '" + this.getId() + "' successful");
 
 				break;
-			} catch(VBoxException e) {
+			} catch (VBoxException e) {
 				if (e.getMessage().endsWith("(0x80bb0007)")) {
 					LOGGER.info("Deleting '" + this.getId() + "' failed, retrying in 0,5s");
 
