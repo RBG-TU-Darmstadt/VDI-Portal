@@ -21,6 +21,7 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.IVRDEServer;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.IVirtualBoxErrorInfo;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
@@ -339,9 +340,13 @@ public class VirtualMachine {
 			createHdd.waitForCompletion(-1);
 			LOGGER.fine(hdd.getName() + " state: " + hdd.getState().toString());
 			if (createHdd.getCompleted()) {
-				LOGGER.finest("hdd.CreateBaseStorage() resultCode = " + createHdd.getResultCode());
-				if (createHdd.getResultCode() > 0) {
+				LOGGER.finest("hdd.CreateBaseStorage() resultCode = "
+						+ Integer.toHexString(createHdd.getResultCode()));
+
+				IVirtualBoxErrorInfo errorInfo = createHdd.getErrorInfo();
+				while (errorInfo != null) {
 					LOGGER.warning(createHdd.getErrorInfo().getText());
+					errorInfo = errorInfo.getNext();
 				}
 			} else {
 				LOGGER.warning("hdd.createBaseStorage was not completed.");
@@ -386,12 +391,16 @@ public class VirtualMachine {
 
 					try {
 						/*
-						 * We have to wait here for some time since the VirtualBox does not guarantee
-						 * that the VM is unlocked immediately. Unfortunately the state is changed to 'Unlocked'
-						 * directly as soon as unlockMachine() is executed, which stands in contrast to the docs.
+						 * We have to wait here for some time since the
+						 * VirtualBox does not guarantee that the VM is unlocked
+						 * immediately. Unfortunately the state is changed to
+						 * 'Unlocked' directly as soon as unlockMachine() is
+						 * executed, which stands in contrast to the docs.
 						 * 
 						 * See note on ISession.unlockMachine():
-						 * https://www.virtualbox.org/sdkref/interface_i_session.html#87571b3c87d705ee013b24f135f43715
+						 * https://www.virtualbox
+						 * .org/sdkref/interface_i_session.
+						 * html#87571b3c87d705ee013b24f135f43715
 						 */
 						Thread.sleep(500);
 					} catch (InterruptedException ie) {
