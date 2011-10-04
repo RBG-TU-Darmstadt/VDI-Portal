@@ -106,13 +106,19 @@ public class TestVirtualMachine {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// checking for file:
 		File file = new File(Configuration.getProperty("node.vdifolder") + "/" + vm_name + ".vdi");
-		if(file.exists()) {
+		if (file.exists()) {
 			System.err.println(vm_name + ".vdi still exists!");
-			if(!file.delete()) {
+			if (!file.delete()) {
 				System.err.println("... and it could not be removed!");
+			} else {
+				System.err.println("... successfully removed!");
+				file = new File(Configuration.getProperty("node.vdifolder") + "/" + vm_name + ".vdi");
+				if (file.exists()) {
+					throw new AssertionFailedError("HDD file exits after successfull deletion!");
+				}
 			}
 		}
 	}
