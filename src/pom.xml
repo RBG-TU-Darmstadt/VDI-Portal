@@ -106,6 +106,12 @@
 							<goal>test</goal>
 						</goals>
 						<configuration>
+							<systemProperties>
+								<property>
+									<name>java.util.logging.config.file</name>
+									<value>${project.build.directory}/test-classes/logging.properties</value>
+								</property>
+							</systemProperties>
 							<skipTests>false</skipTests>
 							<!-- <testFailureIgnore>true</testFailureIgnore> -->
 						</configuration>

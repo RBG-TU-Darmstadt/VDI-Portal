@@ -2,6 +2,8 @@ package vdi.node.management;
 
 import java.io.File;
 import java.security.InvalidParameterException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -37,17 +39,24 @@ public class TestVirtualMachine {
 	}
 
 	private void deleteVmAndVdi(VirtualMachine vm) throws Exception {
+		System.out.println("deleteVmAndVdi: " + vm.getName());
+		
 		String hddFilename = null;
 
 		IMedium vdi = vm.getHarddiskMedium();
 		if (vdi != null) {
 			File file = new File(vdi.getLocation());
 			hddFilename = file.getName();
+			
+			System.out.println(vm.getName() + " hdd file: " + file.getName());
+		} else {
+			System.out.println(vm.getName() + " has no hdd file.");
 		}
 
 		try {
 			vm.delete();
 		} catch (Exception e) {
+			System.out.println("VM deletion failed.");
 			e.printStackTrace();
 			throw e;
 		}
@@ -86,6 +95,8 @@ public class TestVirtualMachine {
 
 	@Before
 	public void setup() {
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.ALL);
+		
 		// Suche Test VM:
 		try {
 			VirtualMachine.getAllMachines();
