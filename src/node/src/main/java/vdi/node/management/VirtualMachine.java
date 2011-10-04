@@ -338,6 +338,14 @@ public class VirtualMachine {
 			IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
 			createHdd.waitForCompletion(-1);
 			LOGGER.fine(hdd.getName() + " state: " + hdd.getState().toString());
+			if (createHdd.getCompleted()) {
+				LOGGER.finest("hdd.CreateBaseStorage() resultCode = " + createHdd.getResultCode());
+				if (createHdd.getResultCode() > 0) {
+					LOGGER.warning(createHdd.getErrorInfo().getText());
+				}
+			} else {
+				LOGGER.warning("hdd.createBaseStorage was not completed.");
+			}
 			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 			mutable.saveSettings();
