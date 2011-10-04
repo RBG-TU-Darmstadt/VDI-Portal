@@ -163,6 +163,8 @@ public class TestVirtualMachine {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+		
+		Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.INFO);
 	}
 
 	@Test

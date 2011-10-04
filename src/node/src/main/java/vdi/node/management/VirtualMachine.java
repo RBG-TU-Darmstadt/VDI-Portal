@@ -152,7 +152,7 @@ public class VirtualMachine {
 		}
 
 		if (machine == null) {
-			LOGGER.warning("Could not find virtual machine with ID " + machineId);
+			LOGGER.info("Could not find virtual machine with ID " + machineId);
 			throw new MachineNotFoundException(machineId);
 		}
 	}
@@ -337,6 +337,7 @@ public class VirtualMachine {
 			IMedium hdd = virtualBox.createHardDisk("vdi", pathAndFilename);
 			IProgress createHdd = hdd.createBaseStorage(size * 1024 * 1024, MediumVariant.Standard);
 			createHdd.waitForCompletion(-1);
+			LOGGER.fine(hdd.getName() + " state: " + hdd.getState().toString());
 			mutable.attachDevice("ide", 0, 0, DeviceType.HardDisk, hdd);
 
 			mutable.saveSettings();
