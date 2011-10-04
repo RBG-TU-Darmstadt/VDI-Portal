@@ -47,6 +47,11 @@ public class VirtualMachine {
 	 */
 	private static final long RDE_SERVER_AUTH_TIMEOUT = 5000L;
 
+	/**
+	 * Time in ms before retry after deletion failure.
+	 */
+	private static final long DELETE_VM_RETRY_DELAY = 500L;
+
 	private IMachine machine = null;
 
 	/**
@@ -377,17 +382,21 @@ public class VirtualMachine {
 		while (true) {
 			try {
 				// Unregister machine
-				List<IMedium> mediums = machine.unregister(CleanupMode.DetachAllReturnNone);
+				List<IMedium> mediums = machine.unregister(CleanupMode.DetachAllReturnHardDisksOnly);
 
-				// Delete mediums
-				machine.delete(mediums);
+				// close all:
+				for (IMedium medium : mediums) {
+					LOGGER.info("Closing '" + medium.getId() + "'");
+					medium.close();
+				}
 
 				LOGGER.info("Deleting '" + this.getId() + "' successful");
 
 				break;
 			} catch (VBoxException e) {
 				if (e.getMessage().endsWith("(0x80bb0007)")) {
-					LOGGER.info("Deleting '" + this.getId() + "' failed, retrying in 0,5s");
+					LOGGER.info("Deleting '" + this.getId() + "' failed, retrying in "
+							+ (DELETE_VM_RETRY_DELAY / 1000.0) + "s");
 
 					try {
 						/*
@@ -402,7 +411,7 @@ public class VirtualMachine {
 						 * .org/sdkref/interface_i_session.
 						 * html#87571b3c87d705ee013b24f135f43715
 						 */
-						Thread.sleep(500);
+						Thread.sleep(DELETE_VM_RETRY_DELAY);
 					} catch (InterruptedException ie) {
 						// ignored.
 					}
