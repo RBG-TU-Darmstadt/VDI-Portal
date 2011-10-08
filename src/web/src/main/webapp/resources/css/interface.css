@@ -164,6 +164,10 @@ body {
  * Dialogs
  */
 
+.modal form {
+    margin-bottom: 0;
+}
+
 .modal div.clearfix {
 	margin-bottom: 10px;	
 }
