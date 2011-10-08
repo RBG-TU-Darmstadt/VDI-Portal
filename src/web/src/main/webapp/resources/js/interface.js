@@ -310,7 +310,7 @@ vdi = {
 			// Visualize VM status
 			var status = '',
 				active_buttons = [],
-				screenshot = "./screenshot/?machine=" + vm.id + "&width=120&height=90&" + (new Date()).getTime(),
+				screenshot = "./screenshot/?machine=" + vm.id + "&width=132&height=99&" + (new Date()).getTime(),
 				show_paused = "", // false
 				rpd_url = "",
 				image = vm.image || "",
