@@ -298,7 +298,7 @@ public class VirtualMachineRessource implements ManagementVMService {
 	@Override
 	public byte[] getMachineScreenshot(String userId, Long id, int width, int height) {
 		VirtualMachine vm = VirtualMachineDAO.get(id);
-		
+
 		if (vm.getNode() == null) {
 			return null;
 		}
