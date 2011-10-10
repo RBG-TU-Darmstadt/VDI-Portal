@@ -92,7 +92,7 @@
 			<!-- vboxjxpcom.jar needs to be known by tomcat shared.loader -->
 			<groupId>virtualbox.binding.java</groupId>
 			<artifactId>vboxjxpcom</artifactId>
-			<version>4.1.2</version>
+			<version>4.1.4</version>
 			<scope>provided</scope>
 		</dependency>
 
