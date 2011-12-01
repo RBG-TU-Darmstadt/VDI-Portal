@@ -6,7 +6,7 @@ Bachelor-Praktikum Sommersemester 2011 TU Darmstadt
 
 1. Clone this project
 2. Install VirtualBox (see below)
-3. Install Eclipse
+3. Install the Eclipse IDE for Java EE Developers
     * Install Maven for Eclipse: [m2e](http://download.eclipse.org/technology/m2e/milestones/1.0), [m2e-wtp](http://download.jboss.org/jbosstools/updates/m2eclipse-wtp)
     * Install tomcat, Windows -> Preferences -> Servers -> Runtime Environments -> Add 
 4. Import sourcecode:
